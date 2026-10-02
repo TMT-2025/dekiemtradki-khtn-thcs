@@ -51,5 +51,6 @@ test_pdf.js
 # Large binary reference scans (Textbooks & circulars)
 *.pdf
 *.doc
+~$*
 
 .vercel

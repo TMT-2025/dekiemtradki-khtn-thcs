@@ -170,6 +170,7 @@ ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE departments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE memberships ENABLE ROW LEVEL SECURITY;
 ALTER TABLE teaching_assignments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE question_bank ENABLE ROW LEVEL SECURITY;
 
 -- Organizations policies
 CREATE POLICY "Public read active organizations" ON organizations
@@ -207,6 +208,8 @@ CREATE POLICY "School and Dept heads manage assignments" ON teaching_assignments
     USING (auth_user_has_org_role(organization_id, ARRAY['super_admin', 'school_admin', 'dept_head']));
 
 -- Multi-Tenant Question Bank Isolation Policy
+DROP POLICY IF EXISTS "Public read question bank" ON question_bank;
+DROP POLICY IF EXISTS "Multi-tenant question read policy" ON question_bank;
 CREATE POLICY "Multi-tenant question read policy" ON question_bank
     FOR SELECT TO authenticated
     USING (
