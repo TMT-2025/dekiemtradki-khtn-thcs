@@ -3,6 +3,8 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { GradeLevel, Semester, Lesson, SubjectArea } from '@/types/curriculum';
+import { AssessmentType } from '@/types/matrix';
+import { AssessmentScopeService } from '@/features/curriculum/assessment-scope';
 import {
   GraduationCap,
   CheckSquare,
@@ -13,7 +15,8 @@ import {
   Clock,
   Layers,
   Sparkles,
-  Info
+  Info,
+  CalendarCheck
 } from 'lucide-react';
 
 export default function CurriculumPage() {
@@ -32,6 +35,7 @@ function CurriculumContent() {
   const [selectedGrade, setSelectedGrade] = useState<GradeLevel>(initialGrade);
   const [selectedSemester, setSelectedSemester] = useState<Semester | 'ALL'>('ALL');
   const [selectedSubject, setSelectedSubject] = useState<SubjectArea | 'ALL'>('ALL');
+  const [selectedAssessmentType, setSelectedAssessmentType] = useState<AssessmentType | 'ALL'>('ALL');
   const [selectedLessons, setSelectedLessons] = useState<string[]>([]);
   const [activeLessonModal, setActiveLessonModal] = useState<Lesson | null>(null);
 
@@ -50,6 +54,18 @@ function CurriculumContent() {
       })
       .catch(err => console.error('Error loading curriculum', err));
   }, []);
+
+  const handleSelectAssessmentType = (type: AssessmentType | 'ALL') => {
+    setSelectedAssessmentType(type);
+    if (type === 'ALL') {
+      setSelectedLessons([]);
+      return;
+    }
+    const targetSem = (type === 'MID_TERM_1' || type === 'FINAL_TERM_1') ? 'HK1' : 'HK2';
+    setSelectedSemester(targetSem);
+    const rec = AssessmentScopeService.getRecommendedLessonIds(selectedGrade, type, curriculumData.lessons);
+    setSelectedLessons(rec);
+  };
 
   const filteredLessons = curriculumData.lessons.filter(l => {
     if (l.grade !== selectedGrade) return false;
@@ -107,8 +123,14 @@ function CurriculumContent() {
             <button
               key={g}
               onClick={() => {
-                setSelectedGrade(g as GradeLevel);
-                setSelectedLessons([]);
+                const nextGrade = g as GradeLevel;
+                setSelectedGrade(nextGrade);
+                if (selectedAssessmentType !== 'ALL') {
+                  const rec = AssessmentScopeService.getRecommendedLessonIds(nextGrade, selectedAssessmentType, curriculumData.lessons);
+                  setSelectedLessons(rec);
+                } else {
+                  setSelectedLessons([]);
+                }
               }}
               className={`px-4 py-2 rounded-lg font-bold text-xs transition ${
                 selectedGrade === g
@@ -120,6 +142,108 @@ function CurriculumContent() {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Assessment Scope Quick Selector Ribbon */}
+      <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center space-x-2 text-xs font-bold text-slate-700">
+            <CalendarCheck className="h-4 w-4 text-blue-600" />
+            <span>Định vị nhanh theo đợt kiểm tra định kỳ (Chuẩn KHDH):</span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-bold">
+            <button
+              onClick={() => handleSelectAssessmentType('ALL')}
+              className={`px-3 py-1.5 rounded-lg transition ${
+                selectedAssessmentType === 'ALL'
+                  ? 'bg-white text-slate-800 shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Tất cả
+            </button>
+            <button
+              onClick={() => handleSelectAssessmentType('MID_TERM_1')}
+              className={`px-3 py-1.5 rounded-lg transition ${
+                selectedAssessmentType === 'MID_TERM_1'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Giữa HK1 (GK1)
+            </button>
+            <button
+              onClick={() => handleSelectAssessmentType('FINAL_TERM_1')}
+              className={`px-3 py-1.5 rounded-lg transition ${
+                selectedAssessmentType === 'FINAL_TERM_1'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Cuối HK1 (CK1)
+            </button>
+            <button
+              onClick={() => handleSelectAssessmentType('MID_TERM_2')}
+              className={`px-3 py-1.5 rounded-lg transition ${
+                selectedAssessmentType === 'MID_TERM_2'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Giữa HK2 (GK2)
+            </button>
+            <button
+              onClick={() => handleSelectAssessmentType('FINAL_TERM_2')}
+              className={`px-3 py-1.5 rounded-lg transition ${
+                selectedAssessmentType === 'FINAL_TERM_2'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Cuối HK2 (CK2)
+            </button>
+          </div>
+        </div>
+
+        {/* Scope Standard Details if selected */}
+        {selectedAssessmentType !== 'ALL' && (() => {
+          const detail = AssessmentScopeService.getScopeDetail(selectedGrade, selectedAssessmentType);
+          if (!detail) return null;
+
+          return (
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-3 text-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="space-y-1">
+                <div className="flex items-center space-x-2">
+                  <span className="font-bold text-blue-900">{detail.title}</span>
+                  <span className="bg-blue-600 text-white font-bold px-2 py-0.5 rounded text-[10px]">
+                    {detail.timing}
+                  </span>
+                  <span className="text-slate-500 text-[11px]">
+                    Tích lũy: {detail.accumulatedPeriods} tiết
+                  </span>
+                </div>
+                <p className="text-slate-600 text-[11px]">
+                  <span className="font-bold text-slate-700">Tỉ lệ phân môn:</span> {detail.subjectRatio} •{' '}
+                  <span className="font-bold text-slate-700">Trọng tâm:</span> {detail.description}
+                </p>
+              </div>
+
+              <div className="flex items-center space-x-2 flex-shrink-0">
+                <button
+                  onClick={() => {
+                    const rec = AssessmentScopeService.getRecommendedLessonIds(selectedGrade, selectedAssessmentType, curriculumData.lessons);
+                    setSelectedLessons(rec);
+                  }}
+                  className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition shadow-sm inline-flex items-center space-x-1"
+                >
+                  <Sparkles className="h-3.5 w-3.5" />
+                  <span>Chọn chuẩn ({detail.recommendedLessonNumbers.length} bài)</span>
+                </button>
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Filter Toolbar */}
@@ -196,7 +320,16 @@ function CurriculumContent() {
                       />
                     </td>
                     <td className="py-3 px-4 font-bold text-slate-700">Bài {lesson.lessonNumber}</td>
-                    <td className="py-3 px-4 font-bold text-slate-800">{lesson.title}</td>
+                    <td className="py-3 px-4 font-bold text-slate-800">
+                      <div className="flex items-center space-x-2">
+                        <span>{lesson.title}</span>
+                        {selectedAssessmentType !== 'ALL' && AssessmentScopeService.getScopeDetail(selectedGrade, selectedAssessmentType)?.recommendedLessonNumbers.includes(lesson.lessonNumber) && (
+                          <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.5 rounded flex-shrink-0">
+                            ★ Chuẩn KHDH
+                          </span>
+                        )}
+                      </div>
+                    </td>
                     <td className="py-3 px-4">
                       <span
                         className={`inline-flex px-2 py-0.5 rounded text-[11px] font-semibold ${

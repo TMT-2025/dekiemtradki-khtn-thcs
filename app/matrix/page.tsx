@@ -26,6 +26,7 @@ import {
   X
 } from 'lucide-react';
 import { ClientStorage } from '@/lib/storage/client-storage';
+import { AssessmentScopeService, ASSESSMENT_SCOPE_STANDARDS } from '@/features/curriculum/assessment-scope';
 
 export default function MatrixPage() {
   return (
@@ -92,7 +93,17 @@ function MatrixContent() {
         if (data.templates && data.templates.length > 0) {
           setSelectedTemplateId(data.templates[0].id);
         }
-        setAllLessons(data.lessons || []);
+        const lessons = data.lessons || [];
+        setAllLessons(lessons);
+
+        // If lessons were passed in URL, auto-generate initial matrix
+        if (initialLessons.length > 0) {
+          handleGenerateMatrix(data.templates[0].id, initialLessons);
+        } else {
+          // Auto-apply recommended lessons according to official syllabus guidelines
+          const rec = AssessmentScopeService.getRecommendedLessonIds(grade, assessmentType, lessons);
+          setSelectedLessonIds(rec);
+        }
 
         // Also merge any server matrices if available
         fetch('/api/matrix/list')
@@ -107,11 +118,6 @@ function MatrixContent() {
             }
           })
           .catch(() => {});
-
-        // If lessons were passed in URL, auto-generate initial matrix
-        if (initialLessons.length > 0) {
-          handleGenerateMatrix(data.templates[0].id, initialLessons);
-        }
       })
       .catch(err => console.error('Error loading setup data', err));
   }, []);
@@ -329,8 +335,10 @@ function MatrixContent() {
               <select
                 value={grade}
                 onChange={e => {
-                  setGrade(Number(e.target.value) as GradeLevel);
-                  setSelectedLessonIds([]);
+                  const nextGrade = Number(e.target.value) as GradeLevel;
+                  setGrade(nextGrade);
+                  const rec = AssessmentScopeService.getRecommendedLessonIds(nextGrade, assessmentType, allLessons);
+                  setSelectedLessonIds(rec);
                 }}
                 className="w-full border border-slate-200 bg-slate-50 rounded-xl p-2.5 font-bold focus:ring-2 focus:ring-blue-500"
               >
@@ -355,7 +363,14 @@ function MatrixContent() {
               <label className="block text-slate-700 font-bold mb-1.5">3. Học kì</label>
               <select
                 value={semester}
-                onChange={e => setSemester(e.target.value as Semester)}
+                onChange={e => {
+                  const nextSem = e.target.value as Semester;
+                  setSemester(nextSem);
+                  const nextType = nextSem === 'HK1' ? 'MID_TERM_1' : 'MID_TERM_2';
+                  setAssessmentType(nextType);
+                  const rec = AssessmentScopeService.getRecommendedLessonIds(grade, nextType, allLessons);
+                  setSelectedLessonIds(rec);
+                }}
                 className="w-full border border-slate-200 bg-slate-50 rounded-xl p-2.5 font-bold"
               >
                 <option value="HK1">Học kì I</option>
@@ -367,13 +382,20 @@ function MatrixContent() {
               <label className="block text-slate-700 font-bold mb-1.5">4. Loại kì kiểm tra</label>
               <select
                 value={assessmentType}
-                onChange={e => setAssessmentType(e.target.value as any)}
-                className="w-full border border-slate-200 bg-slate-50 rounded-xl p-2.5 font-bold"
+                onChange={e => {
+                  const nextType = e.target.value as any;
+                  setAssessmentType(nextType);
+                  const nextSem = (nextType === 'MID_TERM_1' || nextType === 'FINAL_TERM_1') ? 'HK1' : 'HK2';
+                  setSemester(nextSem);
+                  const rec = AssessmentScopeService.getRecommendedLessonIds(grade, nextType, allLessons);
+                  setSelectedLessonIds(rec);
+                }}
+                className="w-full border border-slate-200 bg-slate-50 rounded-xl p-2.5 font-bold text-blue-700"
               >
-                <option value="MID_TERM_1">Kiểm tra Giữa Học kì I</option>
-                <option value="FINAL_TERM_1">Kiểm tra Cuối Học kì I</option>
-                <option value="MID_TERM_2">Kiểm tra Giữa Học kì II</option>
-                <option value="FINAL_TERM_2">Kiểm tra Cuối Học kì II</option>
+                <option value="MID_TERM_1">Kiểm tra Giữa Học kì I (GK1)</option>
+                <option value="FINAL_TERM_1">Kiểm tra Cuối Học kì I (CK1)</option>
+                <option value="MID_TERM_2">Kiểm tra Giữa Học kì II (GK2)</option>
+                <option value="FINAL_TERM_2">Kiểm tra Cuối Học kì II (CK2)</option>
               </select>
             </div>
 
@@ -459,86 +481,151 @@ function MatrixContent() {
       )}
 
       {/* STEP 2: CHỌN PHẠM VI BÀI HỌC */}
-      {currentStep === 2 && (
-        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-5">
-          <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-            <div>
-              <h2 className="text-base font-bold text-slate-800">
-                Bước 2: Chọn các bài học đưa vào phạm vi kiểm tra (KHTN {grade} - {semester})
-              </h2>
-              <p className="text-xs text-slate-500">
-                Đã chọn {selectedLessonIds.length} bài. Hệ thống sẽ căn cứ chính xác số tiết thực dạy để phân bổ tỉ trọng.
-              </p>
+      {currentStep === 2 && (() => {
+        const scopeDetail = AssessmentScopeService.getScopeDetail(grade, assessmentType);
+        const recommendedLessonNumbers = scopeDetail ? scopeDetail.recommendedLessonNumbers : [];
+
+        return (
+          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-5">
+            {/* Scope Standards Banner from Official Reports */}
+            {scopeDetail && (
+              <div className="bg-gradient-to-r from-blue-50 via-indigo-50 to-sky-50 border border-blue-200 rounded-2xl p-4 space-y-2">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center space-x-2">
+                    <Sparkles className="h-4 w-4 text-blue-600" />
+                    <h3 className="font-black text-sm text-blue-900">{scopeDetail.title}</h3>
+                    <span className="bg-blue-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-full">
+                      {scopeDetail.timing}
+                    </span>
+                  </div>
+                  <div className="text-[11px] font-bold text-slate-600 bg-white/80 px-2.5 py-1 rounded-lg border border-blue-100">
+                    Tích lũy chuẩn: <span className="text-blue-700">{scopeDetail.accumulatedPeriods} tiết</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                  <p className="text-slate-700 leading-relaxed font-medium">
+                    <span className="font-bold text-slate-800">Cơ cấu phân môn: </span>
+                    {scopeDetail.subjectRatio}
+                  </p>
+                  <p className="text-slate-600 leading-relaxed font-medium">
+                    <span className="font-bold text-slate-800">Mạch YCCĐ: </span>
+                    {scopeDetail.description}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+              <div>
+                <h2 className="text-base font-bold text-slate-800">
+                  Bước 2: Chọn các bài học đưa vào phạm vi kiểm tra (KHTN {grade} - {semester})
+                </h2>
+                <p className="text-xs text-slate-500">
+                  Đã chọn <span className="font-bold text-blue-600">{selectedLessonIds.length} bài</span> ({gradeFilteredLessons.filter(l => selectedLessonIds.includes(l.id)).reduce((s, l) => s + l.periods, 0)} tiết). Thuật toán sẽ tính toán cân đối chính xác số tiết và 3 mạch kiến thức.
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => {
+                    const rec = AssessmentScopeService.getRecommendedLessonIds(grade, assessmentType, allLessons);
+                    setSelectedLessonIds(rec);
+                  }}
+                  className="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-3 py-1.5 rounded-xl shadow-sm transition inline-flex items-center space-x-1"
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-white" />
+                  <span>Áp dụng đề xuất chuẩn ({recommendedLessonNumbers.length} bài)</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    const ids = gradeFilteredLessons.map(l => l.id);
+                    setSelectedLessonIds(ids);
+                  }}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-3 py-1.5 rounded-xl transition"
+                >
+                  Chọn tất cả {semester} ({gradeFilteredLessons.length} bài)
+                </button>
+
+                <button
+                  onClick={() => setSelectedLessonIds([])}
+                  className="text-xs text-slate-400 hover:text-slate-600 font-semibold px-2 py-1"
+                >
+                  Bỏ chọn
+                </button>
+              </div>
             </div>
-            <div className="flex items-center space-x-3">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[55vh] overflow-y-auto p-1">
+              {gradeFilteredLessons.map(l => {
+                const isChecked = selectedLessonIds.includes(l.id);
+                const isRecommended = recommendedLessonNumbers.includes(l.lessonNumber);
+
+                return (
+                  <div
+                    key={l.id}
+                    onClick={() => {
+                      if (isChecked) {
+                        setSelectedLessonIds(selectedLessonIds.filter(id => id !== l.id));
+                      } else {
+                        setSelectedLessonIds([...selectedLessonIds, l.id]);
+                      }
+                    }}
+                    className={`p-3 rounded-xl border transition cursor-pointer text-xs flex items-start space-x-3 relative ${
+                      isChecked
+                        ? 'border-blue-400 bg-blue-50/50 shadow-sm'
+                        : isRecommended
+                        ? 'border-amber-200/80 bg-amber-50/30 hover:bg-amber-50/60'
+                        : 'border-slate-100 bg-slate-50/60 hover:bg-slate-100/60'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => {}}
+                      className="h-4 w-4 rounded text-blue-600 focus:ring-blue-500 mt-0.5 flex-shrink-0"
+                    />
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="font-bold text-slate-800">Bài {l.lessonNumber}</span>
+                        <div className="flex items-center space-x-1.5">
+                          {isRecommended && (
+                            <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.2 rounded">
+                              ★ Chuẩn KHDH
+                            </span>
+                          )}
+                          <span className="text-[10px] font-semibold text-slate-500">{l.periods} tiết</span>
+                        </div>
+                      </div>
+                      <p className="text-slate-700 font-medium line-clamp-1">{l.title}</p>
+                      <span className="text-[10px] text-blue-600 font-semibold">{l.subjectArea}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="flex justify-between items-center pt-3 border-t border-slate-100">
               <button
-                onClick={() => {
-                  const ids = gradeFilteredLessons.map(l => l.id);
-                  setSelectedLessonIds(selectedLessonIds.length === ids.length ? [] : ids);
-                }}
-                className="text-xs text-blue-600 font-bold hover:underline"
+                onClick={() => setCurrentStep(1)}
+                className="px-4 py-2 border border-slate-200 text-slate-600 font-bold text-xs rounded-xl hover:bg-slate-50"
               >
-                Chọn tất cả ({gradeFilteredLessons.length} bài)
+                Quay lại
+              </button>
+              <button
+                onClick={() => handleGenerateMatrix()}
+                disabled={selectedLessonIds.length === 0 || isGenerating}
+                className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-lg shadow-blue-500/20 transition disabled:opacity-50"
+              >
+                <Sparkles className="h-4 w-4 text-amber-300" />
+                <span>{isGenerating ? 'ĐANG TÍNH TOÁN MA TRẬN...' : 'TỰ ĐỘNG SINH MA TRẬN ĐỀ (16 BƯỚC)'}</span>
               </button>
             </div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[55vh] overflow-y-auto p-1">
-            {gradeFilteredLessons.map(l => {
-              const isChecked = selectedLessonIds.includes(l.id);
-              return (
-                <div
-                  key={l.id}
-                  onClick={() => {
-                    if (isChecked) {
-                      setSelectedLessonIds(selectedLessonIds.filter(id => id !== l.id));
-                    } else {
-                      setSelectedLessonIds([...selectedLessonIds, l.id]);
-                    }
-                  }}
-                  className={`p-3 rounded-xl border transition cursor-pointer text-xs flex items-start space-x-3 ${
-                    isChecked
-                      ? 'border-blue-400 bg-blue-50/50 shadow-sm'
-                      : 'border-slate-100 bg-slate-50/60 hover:bg-slate-100/60'
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={() => {}}
-                    className="h-4 w-4 rounded text-blue-600 focus:ring-blue-500 mt-0.5"
-                  />
-                  <div className="flex-1">
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="font-bold text-slate-800">Bài {l.lessonNumber}</span>
-                      <span className="text-[10px] font-semibold text-slate-500">{l.periods} tiết</span>
-                    </div>
-                    <p className="text-slate-700 font-medium line-clamp-1">{l.title}</p>
-                    <span className="text-[10px] text-blue-600 font-semibold">{l.subjectArea}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="flex justify-between items-center pt-3 border-t border-slate-100">
-            <button
-              onClick={() => setCurrentStep(1)}
-              className="px-4 py-2 border border-slate-200 text-slate-600 font-bold text-xs rounded-xl hover:bg-slate-50"
-            >
-              Quay lại
-            </button>
-            <button
-              onClick={() => handleGenerateMatrix()}
-              disabled={selectedLessonIds.length === 0 || isGenerating}
-              className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-lg shadow-blue-500/20 transition disabled:opacity-50"
-            >
-              <Sparkles className="h-4 w-4 text-amber-300" />
-              <span>{isGenerating ? 'ĐANG TÍNH TOÁN MA TRẬN...' : 'TỰ ĐỘNG SINH MA TRẬN ĐỀ (16 BƯỚC)'}</span>
-            </button>
-          </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* STEP 3: BẢNG MA TRẬN LỚN (STICKY HEADER & CELL EDITING) */}
       {currentStep === 3 && matrix && (
