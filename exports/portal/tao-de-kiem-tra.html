@@ -1,0 +1,800 @@
+<!-- ================================================================= -->
+<!-- TRANG TẠO ĐỀ KIỂM TRA ĐỊNH KỲ — AI HỖ TRỢ GIÁO VIÊN              -->
+<!-- Tương thích WordPress Gutenberg Custom HTML & Elementor HTML Widget -->
+<!-- URL đích môn KHTN: https://dekiemtradki-khtn-thcs.vercel.app/     -->
+<!-- Phong cách màu sắc nổi bật, hiện đại theo https://tokhtn-pvt.com/?page_id=247 -->
+<!-- ================================================================= -->
+
+<div class="khtn-portal-root">
+  <style>
+    .khtn-portal-root {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 10px 14px 40px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #1f2937;
+      line-height: 1.65;
+      box-sizing: border-box;
+    }
+    .khtn-portal-root * {
+      box-sizing: border-box;
+    }
+
+    /* ===== HERO BANNER ===== */
+    .khtn-p-hero {
+      background: linear-gradient(135deg, #0d9488 0%, #0891b2 45%, #4f46e5 100%);
+      border-radius: 20px;
+      padding: 42px 28px 36px;
+      margin-bottom: 26px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 32px rgba(13, 148, 136, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .khtn-p-hero::before {
+      content: "";
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .khtn-p-hero::after {
+      content: "";
+      position: absolute;
+      bottom: -70px;
+      left: -50px;
+      width: 220px;
+      height: 220px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .khtn-p-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255, 255, 255, 0.22);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      padding: 6px 18px;
+      border-radius: 30px;
+      font-size: 0.82em;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      color: #ffffff;
+      font-weight: 700;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .khtn-p-hero h1 {
+      color: #ffffff;
+      margin: 0 0 12px;
+      font-size: clamp(1.6em, 3.2vw, 2.3em);
+      font-weight: 800;
+      line-height: 1.25;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+    .khtn-p-hero p {
+      color: #f0fdfa;
+      max-width: 780px;
+      margin: 0 auto;
+      font-size: 1.03em;
+      line-height: 1.65;
+      opacity: 0.95;
+    }
+
+    /* ===== CALLOUT Ý NGHĨA ===== */
+    .khtn-p-callout {
+      background: #f0fdfa;
+      border-left: 5px solid #0d9488;
+      border-radius: 0 14px 14px 0;
+      padding: 18px 22px;
+      margin-bottom: 26px;
+      box-shadow: 0 2px 10px rgba(15, 118, 110, 0.06);
+    }
+    .khtn-p-callout-title {
+      margin: 0 0 6px;
+      font-weight: 800;
+      color: #0f766e;
+      font-size: 1.08em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .khtn-p-callout p {
+      margin: 0;
+      color: #134e4a;
+      line-height: 1.75;
+      font-size: 0.96em;
+    }
+
+    /* ===== GRID 4 THẺ MÔN HỌC TỔNG QUAN ===== */
+    .khtn-p-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+    .khtn-p-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 22px 20px;
+      border: 1.5px solid #e5e7eb;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .khtn-p-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.09);
+    }
+    .khtn-p-card.active-card {
+      border-color: #0d9488;
+      background: linear-gradient(180deg, #f0fdfa 0%, #ffffff 40%);
+    }
+    .khtn-p-card.active-card:hover {
+      box-shadow: 0 12px 28px rgba(13, 148, 136, 0.22);
+      border-color: #0f766e;
+    }
+    .khtn-p-card-icon {
+      font-size: 2.2em;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .khtn-p-card-tag {
+      display: inline-block;
+      align-self: flex-start;
+      font-size: 0.72em;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .khtn-p-tag-live {
+      background: #ccfbf1;
+      color: #0f766e;
+      border: 1px solid #5eead4;
+    }
+    .khtn-p-tag-soon {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fde68a;
+    }
+    .khtn-p-card h3 {
+      margin: 0 0 8px;
+      font-size: 1.12em;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+    .khtn-p-card p {
+      margin: 0 0 14px;
+      font-size: 0.9em;
+      color: #6b7280;
+      line-height: 1.55;
+      flex-grow: 1;
+    }
+    .khtn-p-btn-card {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      background: #0d9488;
+      color: #ffffff !important;
+      text-decoration: none !important;
+      font-weight: 700;
+      font-size: 0.92em;
+      padding: 10px 16px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 3px 10px rgba(13, 148, 136, 0.3);
+      width: 100%;
+      text-align: center;
+    }
+    .khtn-p-btn-card:hover {
+      background: #0f766e;
+      box-shadow: 0 6px 16px rgba(13, 148, 136, 0.4);
+      transform: translateY(-1px);
+    }
+    .khtn-p-btn-disabled {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #f3f4f6;
+      color: #9ca3af !important;
+      font-weight: 600;
+      font-size: 0.88em;
+      padding: 9px 14px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      width: 100%;
+      cursor: not-allowed;
+      text-decoration: none !important;
+    }
+
+    /* ===== CÁC MỤC NỘI DUNG MỞ RA (DETAILS / ACCORDION) ===== */
+    .khtn-p-accordion {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .khtn-p-details {
+      border: 1.5px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 0;
+      background: #ffffff;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+      transition: all 0.25s ease;
+      overflow: hidden;
+    }
+    .khtn-p-details:hover {
+      border-color: #cbd5e1;
+    }
+    .khtn-p-details[open] {
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    }
+    .khtn-p-details.theme-khtn {
+      border-color: #99f6e4;
+    }
+    .khtn-p-details.theme-khtn[open] {
+      border-color: #0d9488;
+    }
+    .khtn-p-details.theme-hoa {
+      border-color: #fed7aa;
+    }
+    .khtn-p-details.theme-sinh {
+      border-color: #a7f3d0;
+    }
+    .khtn-p-details.theme-ly {
+      border-color: #bfdbfe;
+    }
+
+    .khtn-p-summary {
+      cursor: pointer;
+      padding: 20px 24px;
+      font-weight: 700;
+      font-size: 1.18em;
+      outline: none;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: background-color 0.2s ease;
+      list-style: none;
+    }
+    .khtn-p-summary::-webkit-details-marker {
+      display: none;
+    }
+    .khtn-p-summary:hover {
+      background-color: #f8fafc;
+    }
+    .khtn-p-sum-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .khtn-p-sum-title {
+      margin: 0;
+      font-size: 1.05em;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+    .khtn-p-sum-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .khtn-p-arrow {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s ease, background 0.2s ease;
+      flex-shrink: 0;
+    }
+    .khtn-p-details[open] .khtn-p-arrow {
+      transform: rotate(180deg);
+      background: #e2e8f0;
+    }
+    .khtn-p-body {
+      padding: 0 24px 26px 24px;
+      border-top: 1px solid #f1f5f9;
+      margin-top: 4px;
+      animation: khtnFadeIn 0.3s ease;
+    }
+    @keyframes khtnFadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== NỘI DUNG CHI TIẾT MÔN KHTN (ACTIVE) ===== */
+    .khtn-active-banner {
+      background: linear-gradient(135deg, #f0fdfa 0%, #e6fffa 100%);
+      border: 1.5px solid #5eead4;
+      border-radius: 14px;
+      padding: 22px 24px;
+      margin: 18px 0 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 3px 12px rgba(13, 148, 136, 0.08);
+    }
+    .khtn-active-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+      color: #ffffff !important;
+      text-decoration: none !important;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 1.08em;
+      letter-spacing: 0.02em;
+      box-shadow: 0 6px 20px rgba(13, 148, 136, 0.32);
+      transition: all 0.25s ease;
+      align-self: flex-start;
+    }
+    .khtn-active-cta:hover {
+      background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(13, 148, 136, 0.42);
+    }
+    .khtn-features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .khtn-feat-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .khtn-feat-icon {
+      font-size: 1.3em;
+      line-height: 1.2;
+      flex-shrink: 0;
+    }
+    .khtn-feat-item strong {
+      display: block;
+      color: #0f766e;
+      font-size: 0.95em;
+      margin-bottom: 2px;
+    }
+    .khtn-feat-item span {
+      font-size: 0.88em;
+      color: #4b5563;
+      line-height: 1.5;
+    }
+
+    /* ===== CÁC MÔN SẮP RA MẮT (THPT) ===== */
+    .khtn-soon-box {
+      background: #fefce8;
+      border: 1.5px solid #fef08a;
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin: 18px 0 16px;
+    }
+    .khtn-soon-title {
+      font-weight: 800;
+      color: #a16207;
+      font-size: 1.02em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .khtn-soon-box p {
+      margin: 0;
+      color: #713f12;
+      font-size: 0.94em;
+      line-height: 1.65;
+    }
+    .khtn-thpt-list {
+      margin: 12px 0 0;
+      padding-left: 20px;
+      color: #374151;
+      font-size: 0.93em;
+      line-height: 1.7;
+    }
+    .khtn-thpt-list li {
+      margin-bottom: 6px;
+    }
+
+    /* ===== FOOTER HỖ TRỢ ===== */
+    .khtn-p-footer {
+      margin-top: 36px;
+      padding: 22px 24px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      text-align: center;
+      font-size: 0.92em;
+      color: #64748b;
+    }
+    .khtn-p-footer a {
+      color: #0d9488;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .khtn-p-footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+      .khtn-p-hero {
+        padding: 30px 18px 24px;
+      }
+      .khtn-p-summary {
+        padding: 16px 18px;
+        font-size: 1.05em;
+      }
+      .khtn-p-body {
+        padding: 0 18px 20px 18px;
+      }
+      .khtn-active-cta {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+
+  <!-- 1. HERO BANNER TIÊU ĐỀ NỔI BẬT -->
+  <div class="khtn-p-hero">
+    <div class="khtn-p-badge">
+      <span>✨</span> NỀN TẢNG AI HỖ TRỢ GIÁO VIÊN — GDPT 2018
+    </div>
+    <h1>Tạo Đề Kiểm Tra Định Kỳ</h1>
+    <p>
+      Hệ thống thông minh hỗ trợ giáo viên xây dựng <strong>Ma trận chuẩn 7 cột</strong>, 
+      <strong>Bản đặc tả chi tiết</strong>, sinh <strong>Đề kiểm tra</strong> đa dạng dạng thức 
+      và <strong>Hướng dẫn chấm tự động hóa</strong> theo định hướng phát triển phẩm chất, năng lực.
+    </p>
+  </div>
+
+  <!-- 2. CALLOUT GIỚI THIỆU PHONG CÁCH TỔ KHTN -->
+  <div class="khtn-p-callout">
+    <div class="khtn-p-callout-title">
+      <span>🌿</span> Không gian thiết kế đề kiểm tra thông minh dành cho giáo viên
+    </div>
+    <p>
+      Hệ thống phục vụ công tác kiểm tra, đánh giá thường xuyên và định kỳ của các bộ môn Khoa học Tự nhiên và KHTN chuyên sâu cấp THPT. 
+      Hiện tại, <strong>phân hệ môn KHTN khối THCS đã chính thức kích hoạt v1.0.0</strong> với đầy đủ tính năng kết nối Supabase Cloud Multi-Tenant và mô hình AI Gemini 3.5 Flash. 
+      Các phân hệ Hóa học, Sinh học, Vật lí cấp THPT đang trong giai đoạn hoàn thiện dữ liệu ma trận chuyên sâu.
+    </p>
+  </div>
+
+  <!-- 3. GRID 4 THẺ MÔN HỌC TRỰC QUAN -->
+  <div class="khtn-p-grid">
+    
+    <!-- THẺ 1: KHTN THCS (ĐÃ KÍCH HOẠT - CÓ LINK) -->
+    <div class="khtn-p-card active-card">
+      <div>
+        <div class="khtn-p-card-icon">🧪</div>
+        <span class="khtn-p-card-tag khtn-p-tag-live">🟢 Đã kích hoạt v1.0</span>
+        <h3 style="color: #0f766e;">KHTN (THCS)</h3>
+        <p>Lớp 6, 7, 8, 9. Ma trận 7 cột, bản đặc tả chuẩn, 4 dạng thức câu hỏi, xuất Word &amp; PDF.</p>
+      </div>
+      <div>
+        <a href="https://dekiemtradki-khtn-thcs.vercel.app/" target="_blank" rel="noopener noreferrer" class="khtn-p-btn-card">
+          Mở ứng dụng ngay
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- THẺ 2: HÓA HỌC THPT (SẮP RA MẮT - KHÔNG CÓ LINK) -->
+    <div class="khtn-p-card">
+      <div>
+        <div class="khtn-p-card-icon">⚗️</div>
+        <span class="khtn-p-card-tag khtn-p-tag-soon">⏳ Sắp ra mắt</span>
+        <h3 style="color: #ea580c;">Hóa học (THPT)</h3>
+        <p>Khối 10, 11, 12. Cấu trúc định dạng đề thi tốt nghiệp mới, cân bằng hóa học &amp; thực nghiệm.</p>
+      </div>
+      <div>
+        <span class="khtn-p-btn-disabled">Đang hoàn thiện</span>
+      </div>
+    </div>
+
+    <!-- THẺ 3: SINH HỌC THPT (SẮP RA MẮT - KHÔNG CÓ LINK) -->
+    <div class="khtn-p-card">
+      <div>
+        <div class="khtn-p-card-icon">🧬</div>
+        <span class="khtn-p-card-tag khtn-p-tag-soon">⏳ Sắp ra mắt</span>
+        <h3 style="color: #059669;">Sinh học (THPT)</h3>
+        <p>Khối 10, 11, 12. Di truyền học, phả hệ, sinh học phân tử &amp; đề thi trắc nghiệm định dạng mới.</p>
+      </div>
+      <div>
+        <span class="khtn-p-btn-disabled">Đang hoàn thiện</span>
+      </div>
+    </div>
+
+    <!-- THẺ 4: VẬT LÍ THPT (SẮP RA MẮT - KHÔNG CÓ LINK) -->
+    <div class="khtn-p-card">
+      <div>
+        <div class="khtn-p-card-icon">⚡</div>
+        <span class="khtn-p-card-tag khtn-p-tag-soon">⏳ Sắp ra mắt</span>
+        <h3 style="color: #4f46e5;">Vật lí (THPT)</h3>
+        <p>Khối 10, 11, 12. Đồ thị dao động - sóng, công thức KaTeX chuẩn hóa &amp; hiện tượng vật lí thực tế.</p>
+      </div>
+      <div>
+        <span class="khtn-p-btn-disabled">Đang hoàn thiện</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 4. CÁC MỤC NỘI DUNG MỞ RA (ACCORDION DETAILS) -->
+  <div class="khtn-p-accordion">
+
+    <!-- ============================================================= -->
+    <!-- MỤC 1: TẠO ĐỀ KIỂM TRA ĐỊNH KỲ MÔN KHTN (MỞ MẶC ĐỊNH + CÓ LINK) -->
+    <!-- ============================================================= -->
+    <details class="khtn-p-details theme-khtn" open>
+      <summary class="khtn-p-summary" style="color: #0f766e;">
+        <div class="khtn-p-sum-left">
+          <span style="font-size: 1.35em;">📗</span>
+          <span class="khtn-p-sum-title">Tạo đề kiểm tra định kỳ môn KHTN (THCS Lớp 6, 7, 8, 9)</span>
+          <span class="khtn-p-card-tag khtn-p-tag-live">🟢 Đã kích hoạt</span>
+        </div>
+        <div class="khtn-p-sum-right">
+          <span class="khtn-p-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </div>
+      </summary>
+
+      <div class="khtn-p-body">
+        
+        <!-- BANNER HÀNH ĐỘNG CHÍNH VỚI LIÊN KẾT ĐÍCH DUY NHẤT -->
+        <div class="khtn-active-banner">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h4 style="margin: 0 0 6px; font-size: 1.22em; font-weight: 800; color: #0f766e;">
+                🚀 Ứng dụng KHTN Assessment Studio v1.0.0 đã sẵn sàng!
+              </h4>
+              <p style="margin: 0; color: #134e4a; font-size: 0.96em; line-height: 1.6;">
+                Hệ thống đã triển khai chính thức trên nền tảng Cloud, hỗ trợ bảo mật Multi-Tenant theo trường học, tài khoản giáo viên riêng và tích hợp trí tuệ nhân tạo Gemini 3.5 Flash.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <a href="https://dekiemtradki-khtn-thcs.vercel.app/" target="_blank" rel="noopener noreferrer" class="khtn-active-cta">
+              <span>👉 TRUY CẬP ỨNG DỤNG TẠO ĐỀ KHTN THCS</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+            <div style="margin-top: 8px; font-size: 0.84em; color: #0f766e;">
+              🔗 <em>Địa chỉ trực tiếp: <strong>https://dekiemtradki-khtn-thcs.vercel.app/</strong></em>
+            </div>
+          </div>
+        </div>
+
+        <!-- TÍNH NĂNG NỔI BẬT -->
+        <h4 style="margin: 20px 0 10px; font-size: 1.05em; font-weight: 700; color: #1f2937;">
+          🌟 Các tính năng nổi bật của phân hệ KHTN:
+        </h4>
+        <div class="khtn-features-grid">
+          
+          <div class="khtn-feat-item">
+            <span class="khtn-feat-icon">📊</span>
+            <div>
+              <strong>Ma trận &amp; Bản đặc tả 7 cột</strong>
+              <span>Tỷ lệ chuẩn Biết 40% - Hiểu 30% - Vận dụng 30%, tự động tính tổng điểm và số lệnh hỏi.</span>
+            </div>
+          </div>
+
+          <div class="khtn-feat-item">
+            <span class="khtn-feat-icon">🤖</span>
+            <div>
+              <strong>Trí tuệ nhân tạo Gemini 3.5 Flash</strong>
+              <span>Gợi ý câu hỏi tình huống thực tiễn, phân tích ngữ cảnh đời sống, khoa học tự nhiên sinh động.</span>
+            </div>
+          </div>
+
+          <div class="khtn-feat-item">
+            <span class="khtn-feat-icon">📝</span>
+            <div>
+              <strong>Đầy đủ 4 dạng thức câu hỏi</strong>
+              <span>Trắc nghiệm 4 lựa chọn, Trắc nghiệm Đúng/Sai đa ý, Trả lời ngắn và Tự luận theo chuẩn GDPT 2018.</span>
+            </div>
+          </div>
+
+          <div class="khtn-feat-item">
+            <span class="khtn-feat-icon">☁️</span>
+            <div>
+              <strong>Lưu trữ Cloud Supabase</strong>
+              <span>Ngân hàng câu hỏi lưu trữ vĩnh viễn trên Cloud, an toàn dữ liệu, phân quyền theo trường &amp; tổ.</span>
+            </div>
+          </div>
+
+          <div class="khtn-feat-item">
+            <span class="khtn-feat-icon">📄</span>
+            <div>
+              <strong>Xuất bản Word (.docx) &amp; PDF</strong>
+              <span>Tải về trọn bộ đề thi, ma trận, bản đặc tả và thang điểm đáp án chỉ với 1 thao tác bấm.</span>
+            </div>
+          </div>
+
+          <div class="khtn-feat-item">
+            <span class="khtn-feat-icon">🏫</span>
+            <div>
+              <strong>Phân quyền Multi-Tenant</strong>
+              <span>Mỗi trường và mỗi giáo viên có không gian quản lý đề kiểm tra độc lập, bảo mật tuyệt đối.</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- HƯỚNG DẪN 3 BƯỚC THAO TÁC -->
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px 20px; margin-top: 20px;">
+          <h5 style="margin: 0 0 10px; font-size: 0.98em; font-weight: 700; color: #0f766e;">
+            📋 Quy trình 3 bước tạo đề kiểm tra môn KHTN:
+          </h5>
+          <ol style="margin: 0; padding-left: 20px; color: #4b5563; font-size: 0.92em; line-height: 1.8;">
+            <li><strong>Bước 1:</strong> Bấm nút <em>"TRUY CẬP ỨNG DỤNG TẠO ĐỀ KHTN THCS"</em> ở trên để mở màn hình làm việc.</li>
+            <li><strong>Bước 2:</strong> Chọn Khối lớp (6, 7, 8 hoặc 9), Học kỳ, Thời lượng (45 phút, 60 phút, 90 phút) và tích chọn các chủ đề kiểm tra.</li>
+            <li><strong>Bước 3:</strong> Xem trước ma trận và bản đặc tả tự động sinh ra; duyệt câu hỏi từ ngân hàng hoặc AI, sau đó bấm <strong>Xuất Word/PDF</strong>.</li>
+          </ol>
+        </div>
+
+      </div>
+    </details>
+
+    <!-- ============================================================= -->
+    <!-- MỤC 2: TẠO ĐỀ KIỂM TRA ĐỊNH KỲ MÔN HÓA HỌC - THPT (KHÔNG CÓ LINK) -->
+    <!-- ============================================================= -->
+    <details class="khtn-p-details theme-hoa">
+      <summary class="khtn-p-summary" style="color: #c2410c;">
+        <div class="khtn-p-sum-left">
+          <span style="font-size: 1.35em;">📙</span>
+          <span class="khtn-p-sum-title">Tạo đề kiểm tra định kỳ môn Hóa học-THPT (Khối 10, 11, 12)</span>
+          <span class="khtn-p-card-tag khtn-p-tag-soon">⏳ Sắp ra mắt</span>
+        </div>
+        <div class="khtn-p-sum-right">
+          <span class="khtn-p-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </div>
+      </summary>
+
+      <div class="khtn-p-body">
+        
+        <div class="khtn-soon-box">
+          <div class="khtn-soon-title">
+            <span>⚙️</span> Phân hệ môn Hóa học THPT đang trong giai đoạn hoàn thiện dữ liệu
+          </div>
+          <p>
+            Tổ bộ môn đang tiến hành số hóa ngân hàng câu hỏi và thiết lập cấu trúc ma trận theo đúng 
+            <strong>Định dạng cấu trúc đề thi tốt nghiệp THPT mới của Bộ Giáo dục và Đào tạo</strong>.
+          </p>
+        </div>
+
+        <h4 style="margin: 18px 0 10px; font-size: 1.02em; font-weight: 700; color: #1f2937;">
+          📌 Nội dung chuyên sâu đang được xây dựng:
+        </h4>
+        <ul class="khtn-thpt-list">
+          <li><strong>Cấu trúc đề 3 phần:</strong> Trắc nghiệm nhiều phương án lựa chọn, Trắc nghiệm Đúng/Sai đa ý và Câu hỏi trả lời ngắn tính toán hóa học.</li>
+          <li><strong>Hỗ trợ công thức &amp; phản ứng:</strong> Hiển thị công thức phân tử, danh pháp IUPAC hiện đại, phương trình nhiệt hóa học và sơ đồ phản ứng hữu cơ.</li>
+          <li><strong>Khung chương trình GDPT 2018:</strong> Bám sát đầy đủ các chuyên đề học tập và nội dung cốt lõi của Hóa học 10, 11 và 12.</li>
+          <li><strong>Tự động hóa ma trận:</strong> Phân phối tỷ lệ độ khó theo đúng yêu cầu kiểm tra giữa kỳ, cuối kỳ và ôn luyện thi tốt nghiệp.</li>
+        </ul>
+
+      </div>
+    </details>
+
+    <!-- ============================================================= -->
+    <!-- MỤC 3: TẠO ĐỀ KIỂM TRA ĐỊNH KỲ MÔN SINH HỌC - THPT (KHÔNG CÓ LINK) -->
+    <!-- ============================================================= -->
+    <details class="khtn-p-details theme-sinh">
+      <summary class="khtn-p-summary" style="color: #047857;">
+        <div class="khtn-p-sum-left">
+          <span style="font-size: 1.35em;">🌿</span>
+          <span class="khtn-p-sum-title">Tạo đề kiểm tra định kỳ môn Sinh học-THPT (Khối 10, 11, 12)</span>
+          <span class="khtn-p-card-tag khtn-p-tag-soon">⏳ Sắp ra mắt</span>
+        </div>
+        <div class="khtn-p-sum-right">
+          <span class="khtn-p-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </div>
+      </summary>
+
+      <div class="khtn-p-body">
+        
+        <div class="khtn-soon-box" style="background: #f0fdf4; border-color: #bbf7d0;">
+          <div class="khtn-soon-title" style="color: #15803d;">
+            <span>⚙️</span> Phân hệ môn Sinh học THPT đang trong giai đoạn hoàn thiện dữ liệu
+          </div>
+          <p style="color: #14532d;">
+            Hệ thống đang tích hợp bộ ma trận đánh giá năng lực nhận thức sinh học, tìm hiểu thế giới sống và vận dụng kiến thức - kĩ năng vào thực tiễn đời sống nông nghiệp, y học.
+          </p>
+        </div>
+
+        <h4 style="margin: 18px 0 10px; font-size: 1.02em; font-weight: 700; color: #1f2937;">
+          📌 Nội dung chuyên sâu đang được xây dựng:
+        </h4>
+        <ul class="khtn-thpt-list">
+          <li><strong>Mạch kiến thức bao quát:</strong> Sinh học tế bào, Vi sinh vật &amp; virus (Lớp 10); Trao đổi chất &amp; chuyển hóa năng lượng, Cảm ứng, Sinh trưởng &amp; Sinh sản (Lớp 11); Di truyền, Tiến hóa &amp; Sinh thái học (Lớp 12).</li>
+          <li><strong>Dạng bài phân tích thực nghiệm:</strong> Đọc bảng số liệu thí nghiệm sinh học, đồ thị tăng trưởng quần thể và giải bài tập phả hệ di truyền.</li>
+          <li><strong>Ngân hàng câu hỏi định dạng mới:</strong> Câu hỏi trắc nghiệm Đúng/Sai yêu cầu phân tích dữ liệu đa bước và câu trả lời ngắn giải quyết tình huống.</li>
+        </ul>
+
+      </div>
+    </details>
+
+    <!-- ============================================================= -->
+    <!-- MỤC 4: TẠO ĐỀ KIỂM TRA ĐỊNH KỲ MÔN VẬT LÍ - THPT (KHÔNG CÓ LINK) -->
+    <!-- ============================================================= -->
+    <details class="khtn-p-details theme-ly">
+      <summary class="khtn-p-summary" style="color: #4338ca;">
+        <div class="khtn-p-sum-left">
+          <span style="font-size: 1.35em;">⚛️</span>
+          <span class="khtn-p-sum-title">Tạo đề kiểm tra định kỳ môn Vật lí-THPT (Khối 10, 11, 12)</span>
+          <span class="khtn-p-card-tag khtn-p-tag-soon">⏳ Sắp ra mắt</span>
+        </div>
+        <div class="khtn-p-sum-right">
+          <span class="khtn-p-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4338ca" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </div>
+      </summary>
+
+      <div class="khtn-p-body">
+        
+        <div class="khtn-soon-box" style="background: #f5f3ff; border-color: #ddd6fe;">
+          <div class="khtn-soon-title" style="color: #6d28d9;">
+            <span>⚙️</span> Phân hệ môn Vật lí THPT đang trong giai đoạn hoàn thiện dữ liệu
+          </div>
+          <p style="color: #4c1d95;">
+            Đội ngũ chuyên môn đang cấu hình công cụ vẽ đồ thị vật lí tự động và tích hợp thư viện công thức toán học LaTeX chuẩn xác cho các khối lớp 10, 11 và 12.
+          </p>
+        </div>
+
+        <h4 style="margin: 18px 0 10px; font-size: 1.02em; font-weight: 700; color: #1f2937;">
+          📌 Nội dung chuyên sâu đang được xây dựng:
+        </h4>
+        <ul class="khtn-thpt-list">
+          <li><strong>Hệ thống chủ đề hoàn chỉnh:</strong> Cơ học &amp; Động học (Lớp 10); Dao động, Sóng, Điện trường &amp; Dòng điện (Lớp 11); Vật lí nhiệt, Khí lí tưởng, Từ trường &amp; Hạt nhân nguyên tử (Lớp 12).</li>
+          <li><strong>Biểu diễn đồ thị trực quan:</strong> Đồ thị li độ - thời gian, đồ thị chu trình nhiệt động học và đường đặc trưng vôn - ampe.</li>
+          <li><strong>Đáp ứng định dạng mới:</strong> Đầy đủ 3 phần câu hỏi theo cấu trúc Bộ GD&ĐT ban hành với thang điểm chuẩn hóa.</li>
+        </ul>
+
+      </div>
+    </details>
+
+  </div>
+
+  <!-- 5. CHÂN TRANG THÔNG TIN BẢN QUYỀN VÀ HỖ TRỢ -->
+  <div class="khtn-p-footer">
+    <p style="margin: 0 0 6px;">
+      © 2026 <strong>AI Hỗ Trợ Giáo Viên</strong> — Đồng hành cùng thầy cô đổi mới dạy học và kiểm tra đánh giá theo GDPT 2018.
+    </p>
+    <p style="margin: 0; font-size: 0.9em;">
+      Ứng dụng tạo đề KHTN THCS đang hoạt động tại: 
+      <a href="https://dekiemtradki-khtn-thcs.vercel.app/" target="_blank" rel="noopener noreferrer">https://dekiemtradki-khtn-thcs.vercel.app/</a>
+    </p>
+  </div>
+
+</div>
