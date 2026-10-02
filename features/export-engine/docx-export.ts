@@ -17,6 +17,7 @@ import {
 import { AssessmentMatrix } from '@/types/matrix';
 import { TestSpecification } from '@/types/specification';
 import { TestExam } from '@/types/test';
+import { resolveExamPeriod } from '@/lib/exam-period';
 
 export class DocxExportService {
   /**
@@ -110,7 +111,7 @@ export class DocxExportService {
           },
           children: [
             this.createDocumentHeader(
-              'MA TRẬN ĐỀ KIỂM TRA ĐỊNH KÌ',
+              `MA TRẬN ĐỀ KIỂM TRA ${resolveExamPeriod(matrix)}`,
               `Môn: Khoa học tự nhiên — Lớp ${matrix.grade} | Năm học: ${matrix.schoolYear}`
             ),
             new Paragraph({ text: '', spacing: { after: 200 } }),
@@ -190,7 +191,7 @@ export class DocxExportService {
           },
           children: [
             this.createDocumentHeader(
-              'BẢN ĐẶC TẢ ĐỀ KIỂM TRA ĐỊNH KÌ',
+              `BẢN ĐẶC TẢ ĐỀ KIỂM TRA ${resolveExamPeriod(spec)}`,
               `Môn: Khoa học tự nhiên — Lớp ${spec.grade} | Năm học: ${spec.schoolYear}`
             ),
             new Paragraph({ text: '', spacing: { after: 200 } }),
@@ -210,9 +211,15 @@ export class DocxExportService {
    * 03_De_kiem_tra.docx
    */
   public static async exportTestDocx(test: TestExam): Promise<Buffer> {
+    const termPeriod = resolveExamPeriod(test);
+    let docTitle = test.title.toUpperCase();
+    if (docTitle.includes('ĐỀ KIỂM TRA ĐỊNH KÌ')) {
+      docTitle = docTitle.replace('ĐỀ KIỂM TRA ĐỊNH KÌ', `ĐỀ KIỂM TRA ${termPeriod}`);
+    }
+
     const paragraphs: (Paragraph | Table)[] = [
       this.createDocumentHeader(
-        test.title.toUpperCase(),
+        docTitle,
         `Thời gian làm bài: ${test.durationMinutes} phút (Không kể thời gian phát đề) — Mã đề: ${test.testCode}`
       ),
       new Paragraph({ text: '', spacing: { after: 300 } })
@@ -472,7 +479,7 @@ export class DocxExportService {
           },
           children: [
             this.createDocumentHeader(
-              'ĐÁP ÁN ĐỀ KIỂM TRA ĐỊNH KÌ',
+              `ĐÁP ÁN ĐỀ KIỂM TRA ${resolveExamPeriod(test)}`,
               `Môn: Khoa học tự nhiên ${test.grade} — Mã đề: ${test.testCode}`
             ),
             new Paragraph({ text: '', spacing: { after: 200 } }),
@@ -533,7 +540,7 @@ export class DocxExportService {
           },
           children: [
             this.createDocumentHeader(
-              'HƯỚNG DẪN CHẤM VÀ BIỂU ĐIỂM CHI TIẾT',
+              `HƯỚNG DẪN CHẤM VÀ BIỂU ĐIỂM CHI TIẾT - ${resolveExamPeriod(test)}`,
               `Môn: Khoa học tự nhiên ${test.grade} — Mã đề: ${test.testCode}`
             ),
             new Paragraph({ text: '', spacing: { after: 200 } }),

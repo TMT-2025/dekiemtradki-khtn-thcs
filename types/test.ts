@@ -58,6 +58,7 @@ export interface TestExam {
   schoolYear: string;
   durationMinutes: number;
   totalScore: number;
+  assessmentType?: string;
   parts: TestPart[];
   answerKeys: AnswerKeyItem[];
   scoringGuide: ScoringGuide;

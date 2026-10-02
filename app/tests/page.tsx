@@ -26,6 +26,7 @@ import {
   Info
 } from 'lucide-react';
 import { ClientStorage } from '@/lib/storage/client-storage';
+import { resolveExamPeriod } from '@/lib/exam-period';
 
 export default function TestsPage() {
   return (
@@ -230,35 +231,53 @@ function TestsContent() {
             <FileText className="h-4 w-4" />
             <span>Mô-đun 4 • Lắp ráp đề kiểm tra & Hướng dẫn chấm</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-800 tracking-tight">ĐỀ KIỂM TRA ĐỊNH KÌ KHOA HỌC TỰ NHIÊN</h1>
+          <h1 className="text-2xl font-black text-slate-800 tracking-tight">
+            {activeTest
+              ? (activeTest.title.includes('ĐỀ KIỂM TRA ĐỊNH KÌ')
+                  ? activeTest.title.replace('ĐỀ KIỂM TRA ĐỊNH KÌ', `ĐỀ KIỂM TRA ${resolveExamPeriod(activeTest)}`)
+                  : activeTest.title)
+              : currentMatrix
+              ? `ĐỀ KIỂM TRA ${resolveExamPeriod(currentMatrix)} - KHTN ${currentMatrix.grade}`
+              : 'ĐỀ KIỂM TRA KHOA HỌC TỰ NHIÊN'}
+          </h1>
           <p className="text-xs text-slate-500 mt-0.5">
             Cấu trúc 4 phần chuẩn • Tự động sinh Đáp án & Biểu điểm chi tiết (Rubric) • Quality Gate 100%
           </p>
         </div>
 
         {/* Generate Trigger */}
-        <div className="flex items-center space-x-3 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm">
-          <select
-            value={selectedMatrixId}
-            onChange={e => setSelectedMatrixId(e.target.value)}
-            className="text-xs font-bold border border-slate-200 bg-slate-50 rounded-xl px-3 py-2 text-slate-700 max-w-xs"
-          >
-            {matrices.length === 0 && <option value="">Chưa có ma trận nào</option>}
-            {matrices.map(m => (
-              <option key={m.id} value={m.id}>
-                {m.title}
-              </option>
-            ))}
-          </select>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Ma trận cơ sở:</span>
+            <select
+              value={selectedMatrixId}
+              onChange={e => setSelectedMatrixId(e.target.value)}
+              className="text-xs font-bold border border-slate-200 bg-slate-50 rounded-xl px-3 py-2 text-slate-700 max-w-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {matrices.length === 0 && <option value="">Chưa có ma trận nào</option>}
+              {matrices.map(m => (
+                <option key={m.id} value={m.id}>
+                  {m.title}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <button
-            onClick={() => handleGenerateTest()}
-            disabled={!selectedMatrixId || isGenerating}
-            className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-blue-500/20 transition disabled:opacity-50"
-          >
-            <Sparkles className="h-4 w-4 text-amber-300" />
-            <span>{isGenerating ? 'ĐANG TẠO ĐỀ...' : 'TỰ ĐỘNG TẠO ĐỀ THI'}</span>
-          </button>
+          <div className="flex flex-col">
+            <button
+              onClick={() => handleGenerateTest()}
+              disabled={!selectedMatrixId || isGenerating}
+              title="Lắp ráp đề thi bám sát 100% Ma trận & Bản đặc tả đang chọn"
+              className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-blue-500/20 transition disabled:opacity-50"
+            >
+              <Sparkles className="h-4 w-4 text-amber-300" />
+              <span>{isGenerating ? 'ĐANG LẮP RÁP ĐỀ THEO MA TRẬN...' : 'TẠO ĐỀ THEO MA TRẬN NÀY'}</span>
+            </button>
+            <span className="text-[10px] text-slate-500 mt-1 flex items-center gap-1 font-medium">
+              <CheckCircle2 className="h-3 w-3 text-emerald-500 inline shrink-0" />
+              Khớp 100% Ma trận đã chọn (không tạo ngẫu nhiên)
+            </span>
+          </div>
         </div>
       </div>
 
@@ -443,7 +462,11 @@ function TestsContent() {
                 <p className="font-bold text-xs uppercase text-slate-500 tracking-wider">
                   {activeTest.schoolName} — {activeTest.departmentName}
                 </p>
-                <h2 className="text-xl font-black text-slate-900 tracking-tight">{activeTest.title}</h2>
+                <h2 className="text-xl font-black text-slate-900 tracking-tight">
+                  {activeTest.title.includes('ĐỀ KIỂM TRA ĐỊNH KÌ')
+                    ? activeTest.title.replace('ĐỀ KIỂM TRA ĐỊNH KÌ', `ĐỀ KIỂM TRA ${resolveExamPeriod(activeTest)}`)
+                    : activeTest.title}
+                </h2>
                 <p className="text-xs text-slate-600 font-medium">
                   Thời gian làm bài: {activeTest.durationMinutes} phút • Mã đề: <span className="font-bold text-blue-700">{activeTest.testCode}</span>
                 </p>
@@ -669,8 +692,11 @@ function TestsContent() {
                 className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs px-6 py-3.5 rounded-2xl shadow-lg shadow-blue-500/25 transition disabled:opacity-50"
               >
                 <Sparkles className="h-4 w-4 text-amber-300" />
-                <span>{isGenerating ? 'ĐANG TẠO ĐỀ...' : 'TỰ ĐỘNG TẠO ĐỀ THI CHO MA TRẬN NÀY'}</span>
+                <span>{isGenerating ? 'ĐANG LẮP RÁP ĐỀ THEO MA TRẬN...' : 'TẠO ĐỀ THEO MA TRẬN NÀY'}</span>
               </button>
+              <p className="text-[11px] text-slate-500 mt-2 font-medium">
+                Đề thi sẽ được lắp ráp chính xác theo cấu trúc điểm, YCCĐ và 4 phần chuẩn của Ma trận đã chọn.
+              </p>
             </div>
           )}
         </div>

@@ -18,6 +18,9 @@ export interface GenerateTestInput {
   manualQuestionSelections?: Record<string, string[]>; // specItemId -> questionIds
 }
 
+import { resolveExamPeriod } from '@/lib/exam-period';
+export { resolveExamPeriod };
+
 export class TestService {
   /**
    * Generates a complete test exam with Answer Key and Scoring Guide
@@ -191,13 +194,18 @@ export class TestService {
       });
     });
 
+    const termPeriod = resolveExamPeriod(input.matrix);
+    const resolvedTitle = input.title && !input.title.includes('ĐỀ KIỂM TRA ĐỊNH KÌ')
+      ? input.title
+      : `ĐỀ KIỂM TRA ${termPeriod} - KHOA HỌC TỰ NHIÊN ${input.matrix.grade}`;
+
     const testId = `test-${input.matrix.grade}-${Date.now()}`;
     const testExam: TestExam = {
       id: testId,
       matrixId: input.matrix.id,
       specificationId: input.specification.id,
       testCode: input.testCode || '101',
-      title: input.title || `ĐỀ KIỂM TRA ĐỊNH KÌ - KHOA HỌC TỰ NHIÊN ${input.matrix.grade}`,
+      title: resolvedTitle,
       schoolName: input.schoolName || 'TRƯỜNG THCS & THPT PHAN VĂN TRỊ',
       departmentName: input.departmentName || 'TỔ KHOA HỌC TỰ NHIÊN',
       grade: input.matrix.grade,
@@ -206,6 +214,7 @@ export class TestService {
       schoolYear: input.matrix.schoolYear,
       durationMinutes: input.matrix.durationMinutes,
       totalScore: 10.0,
+      assessmentType: input.matrix.assessmentType,
       parts,
       answerKeys,
       scoringGuide: {

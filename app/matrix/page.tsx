@@ -240,7 +240,9 @@ function MatrixContent() {
             <Grid3X3 className="h-4 w-4" />
             <span>Mô-đun 1 • Thiết kế Ma trận đề kiểm tra</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-800 tracking-tight">MA TRẬN ĐỀ KIỂM TRA ĐỊNH KÌ</h1>
+          <h1 className="text-2xl font-black text-slate-800 tracking-tight">
+            MA TRẬN ĐỀ KIỂM TRA {assessmentType === 'MID_TERM_1' ? 'GIỮA HK1' : assessmentType === 'FINAL_TERM_1' ? 'CUỐI HK1' : assessmentType === 'MID_TERM_2' ? 'GIỮA HK2' : 'CUỐI HK2'} — KHOA HỌC TỰ NHIÊN {grade}
+          </h1>
           <p className="text-xs text-slate-500 mt-0.5">
             Thuật toán phân bổ tự động 16 bước • Cân đối số tiết và 3 mạch kiến thức • Giải trình Explain Why
           </p>
