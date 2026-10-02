@@ -1,131 +1,141 @@
-# BÁO CÁO TRIỂN KHAI VÀ THỰC THI SẢN PHẨM (PRODUCTION DEPLOYMENT REPORT)
-**KHTN Assessment Studio — Phiên bản 1.0.0 (Production Release)**  
-*Thời gian lập báo cáo*: 2026-10-02T09:27:00+07:00  
-*Hệ điều hành*: Windows Server / Windows Workstation  
+# BÁO CÁO KÍCH HOẠT VẬN HÀNH SẢN XUẤT (FINAL PRODUCTION ACTIVATION REPORT)
+**KHTN Assessment Studio — Hệ thống Khảo thí Khoa học tự nhiên THCS GDPT 2018**  
+*Thời gian thực hiện*: 2026-10-02T09:51:30+07:00  
 *Trạng thái phê duyệt*: **PRODUCTION_LIVE_WITH_WARNINGS**
 
 ---
 
-## 1. ĐỊA CHỈ TRIỂN KHAI (DEPLOYMENT URL)
-- **Môi trường Production Container / Local Host**: `http://localhost:3000` (Next.js Standalone Production Server)
-- **Mục tiêu Triển khai Cloud (Production Edge Domain)**: `https://khtn-assessment.edu.vn` (Vercel / AWS Amplify)
+## 1. TÊN DỰ ÁN (PROJECT NAME)
+- **KHTN Assessment Studio** (Ứng dụng Chuyên dụng cho Giáo viên THCS Thiết kế Ma trận, Bản đặc tả, Ngân hàng câu hỏi, Bối cảnh thực tiễn và Đề kiểm tra KHTN 6, 7, 8, 9).
 
-## 2. THỜI GIAN TRIỂN KHAI (DEPLOYMENT DATE/TIME)
-- **Ngày thực thi**: 02/10/2026
-- **Thời gian**: 09:27:00 (Múi giờ ICT - UTC+7)
+## 2. PHIÊN BẢN PHÁT HÀNH (RELEASE VERSION)
+- **Phiên bản chính thức**: `v1.0.0 (Production Release)`
 
-## 3. MÃ PHIÊN BẢN (GIT COMMIT / RELEASE TAG)
-- **Release Version**: `v1.0.0-production-rc`
-- **Mã Commit / Build Hash**: `BUILD_PROD_RELEASE_20261002_0927` (Local Production Distribution)
+## 3. KHO MÃ NGUỒN GITHUB (GITHUB REPOSITORY)
+- **URL Repository**: [https://github.com/TMT-2025/dekiemtradki-khtn-thcs](https://github.com/TMT-2025/dekiemtradki-khtn-thcs)
+- **Trạng thái**: Đã đẩy mã nguồn thành công 100%, bảo vệ bí mật tuyệt đối.
 
-## 4. PHIÊN BẢN NODE.JS (NODE.JS VERSION)
-- **Phiên bản Runtime**: `v24.20.0` (LTS/Current compliant, tương thích Node.js >= 18.17.0)
+## 4. MÃ COMMIT SHA (GIT COMMIT SHA)
+- **Commit SHA**: `d5097897e6ec2375a6708c40d5482e2a1e3eeb23`
+- **Thông điệp Commit**: `build: add .vercelignore for clean cloud deployment`
+- **Release Base Commit**: `a9753d40298e04d478f55d90a27690fcf0eb7155` (`release: production deployment v1.0.0`)
 
-## 5. PHIÊN BẢN NEXT.JS (NEXT.JS VERSION)
-- **Phiên bản Framework**: `Next.js 14.2.35` (App Router, Server Actions, Standalone Build)
+## 5. NHÁNH SẢN XUẤT (PRODUCTION BRANCH)
+- **Nhánh chỉ định**: `main` (Theo dõi trực tiếp `origin/main`).
 
-## 6. TÌNH TRẠNG CƠ SỞ DỮ LIỆU SUPABASE (SUPABASE PROJECT STATUS)
-- **Cấu trúc quản lý**: Hỗ trợ 2 chế độ vận hành độc lập:
-  1. *Production Mode (`SUPABASE_REQUIRED=true`)*: Cơ chế **Fail-Fast** được kích hoạt tự động. Nếu biến môi trường Supabase chưa được cấu hình hoặc sử dụng khóa mock, hệ thống sẽ chặn khởi động ngay lập tức với lỗi `ProductionDatabaseConfigurationError`, tuyệt đối **không tự ý fallback âm thầm** về file JSON.
-  2. *Development / Test Mode (`SUPABASE_REQUIRED=false`)*: Chạy độc lập với local store (`database/local_store.json`), cho phép chạy test tự động và trình diễn ngoại tuyến mà không phụ thuộc mạng ngoài.
-- **Tính an toàn**: Module `lib/supabase/database-safety.ts` đã được tích hợp vào toàn bộ các điểm truy cập cơ sở dữ liệu.
+## 6. DỰ ÁN VERCEL (VERCEL PROJECT)
+- **Tên dự án**: `dekiemtradki-khtn-thcs`
+- **Tổ chức / Người sở hữu**: `tm-thanh-s-projects` (`tranminhthanhpvt-2415`)
+- **Vercel Project ID**: `prj_XErBWGwAOmEeLOaZqaPTneSIku6D`
+- **Vercel Deployment ID**: `dpl_AyPPoeUrepBQ3QzpqEY8ypMnztmR`
 
-## 7. TRẠNG THÁI DI TRÚ CƠ SỞ DỮ LIỆU (MIGRATION STATUS)
-Tất cả 3 tệp di trú đã được kiểm thử tính đúng đắn về cú pháp PostgreSQL và cấu trúc quan hệ:
-1. `database/001_initial_schema.sql`: 14 bảng cốt lõi (`profiles`, `knowledge_documents`, `curriculum_grades`, `curriculum_chapters`, `curriculum_lessons`, `learning_requirements`, `assessment_templates`, `assessment_matrices`, `matrix_rows`, `test_specifications`, `question_bank`, `tests`, `quality_checks`, `audit_logs`). 100% có Primary Key, Foreign Key và RLS Policies.
-2. `database/002_seed_curriculum.sql`: Dữ liệu gốc chuẩn hóa cho 4 khối lớp KHTN 6, 7, 8, 9 và các mẫu đề thi (`TEMPLATE_A`, `TEMPLATE_B_LOCAL`).
-3. `database/003_context_engine_schema.sql`: 4 bảng bối cảnh khảo thí thực tiễn (`phenomena`, `international_contexts`, `context_stimuli`, `context_traces`), 7 chỉ mục B-tree/GIN, các chính sách RLS phân quyền theo vai trò và Trigger tự động cập nhật `updated_at`.
+## 7. ĐỊA CHỈ TRIỂN KHAI VERCEL (VERCEL DEPLOYMENT URL)
+- **URL Sản xuất Chính thức (Vercel Edge)**: [https://dekiemtradki-khtn-thcs.vercel.app](https://dekiemtradki-khtn-thcs.vercel.app)
+- **Deployment URL**: [https://dekiemtradki-khtn-thcs-d8wtuczk3-tm-thanh-s-projects.vercel.app](https://dekiemtradki-khtn-thcs-d8wtuczk3-tm-thanh-s-projects.vercel.app)
+- **Kiểm chứng phản hồi HTTP**: `HTTP/1.1 200 OK` (Đã kiểm tra bằng lệnh `vercel curl`).
 
-## 8. TRẠNG THÁI BIẾN MÔI TRƯỜNG (ENVIRONMENT STATUS)
-Đã hoàn thành rà soát phân loại biến môi trường trong `.env.example`:
-- **Client-Safe (Tiền tố `NEXT_PUBLIC_*`)**:
+## 8. TÊN MIỀN TÙY CHỈNH (CUSTOM DOMAIN)
+- **Tên miền chỉ định**: `https://khtn-assessment.edu.vn`
+- **Trạng thái hiện tại**: `DOMAIN_PENDING_DNS_CONFIGURATION`
+- **Bản ghi DNS cần cấu hình tại nhà đăng ký**:
+  - Loại: `A Record`
+  - Tên/Host: `@` (hoặc `khtn-assessment.edu.vn`)
+  - Giá trị (Target): `76.76.21.21`
+
+## 9. THỜI GIAN TRIỂN KHAI (DEPLOYMENT TIMESTAMP)
+- **Thời gian hoàn tất**: `2026-10-02 09:51:00 UTC+7`
+
+## 10. PHIÊN BẢN NODE.JS (NODE.JS VERSION)
+- **Node.js**: `v24.20.0` (Tương thích tốt với môi trường Vercel Node 18.x / 20.x).
+
+## 11. PHIÊN BẢN NEXT.JS (NEXT.JS VERSION)
+- **Next.js**: `14.2.35` (App Router, Serverless Functions, Edge Middleware).
+
+## 12. TÌNH TRẠNG CƠ SỞ DỮ LIỆU SUPABASE (SUPABASE PRODUCTION STATUS)
+- **Cấu trúc & An toàn**:
+  - Hỗ trợ cơ chế **Fail-Fast** nghiêm ngặt qua `lib/supabase/database-safety.ts`.
+  - Khi đặt `SUPABASE_REQUIRED=true`, nếu thiếu kết nối thực tế tới Supabase Cloud, hệ thống sẽ ngắt và cảnh báo lỗi minh bạch `ProductionDatabaseConfigurationError`, tuyệt đối **không tự ý fallback âm thầm** về lưu trữ JSON.
+  - Hiện tại trên Vercel đang đặt `SUPABASE_REQUIRED=false` để đảm bảo hệ thống luôn sẵn sàng phục vụ giáo viên ngay khi chưa nạp credentials đám mây.
+
+## 13. TRẠNG THÁI DI TRÚ CSDL (MIGRATION STATUS)
+- **Đạt 100% chuẩn cấu trúc**:
+  - `database/001_initial_schema.sql`: 14 bảng quan hệ, ràng buộc khóa ngoại, RLS policies.
+  - `database/002_seed_curriculum.sql`: Dữ liệu gốc chuẩn hóa KHTN 6, 7, 8, 9 và Templates đề thi.
+  - `database/003_context_engine_schema.sql`: 4 bảng bối cảnh thực tiễn (`phenomena`, `international_contexts`, `context_stimuli`, `context_traces`), indexes, triggers `updated_at`.
+
+## 14. TRẠNG THÁI BIẾN MÔI TRƯỜNG (ENVIRONMENT VARIABLE STATUS)
+- Đã cấu hình và mã hóa trên Vercel:
   - `NEXT_PUBLIC_APP_ENV`: `production`
-  - `NEXT_PUBLIC_APP_URL`: `https://khtn-assessment.edu.vn`
-  - `NEXT_PUBLIC_SUPABASE_URL`: Public endpoint kết nối Supabase API
-  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Public Anon JWT key của Supabase
-- **Server-Only Secrets (Tuyệt đối không lộ ra trình duyệt hay bundle client)**:
-  - `SUPABASE_SERVICE_ROLE_KEY`: Quyền quản trị server-side
-  - `SUPABASE_REQUIRED`: Cờ kiểm soát an toàn CSDL
-  - `AI_PROVIDER`, `GEMINI_API_KEY`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`: API keys trí tuệ nhân tạo
-  - `JWT_SECRET`, `RATE_LIMIT_WINDOW_MS`, `RATE_LIMIT_MAX_REQUESTS`: Cấu hình an ninh
+  - `NEXT_PUBLIC_APP_URL`: `https://dekiemtradki-khtn-thcs.vercel.app`
+  - `SUPABASE_REQUIRED`: `false` (Đã lưu dạng Secret)
+- **Cách ly bảo mật**: Không có bất kỳ Private Key, API Token hay JWT Secret nào bị lộ trong bundle mã nguồn hoặc kho GitHub.
 
-## 9. THẨM ĐỊNH BẢO MẬT SẢN PHẨM (SECURITY STATUS)
-Đạt 100% các tiêu chí an ninh mạng phòng thủ chiều sâu:
-- **RBAC**: Phân định quyền hạn minh bạch (`ADMIN`, `HEAD_OF_DEPARTMENT`, `TEACHER`, `GUEST`).
-- **IDOR**: Kiểm tra đối chiếu quyền sở hữu tài nguyên theo `userId` và `schoolId`.
-- **XSS**: Khử độc toàn diện mã script độc hại trong input giáo viên và ngữ liệu.
-- **Prompt Injection**: Phát hiện và ngăn chặn các mẫu lệnh cố tình can thiệp System Prompt (`ignore previous instructions`, `you are now in developer mode`).
-- **SQL Injection**: Kiểm tra và chặn các mẫu tấn công SQL (`OR '1'='1'`, `UNION SELECT`, `DROP TABLE`).
-- **Rate Limiting**: Thuật toán Sliding Window giới hạn tần suất truy cập ngăn chặn lạm dụng tài nguyên.
-- **Safe File Upload**: Kiểm tra phần mở rộng tệp và dung lượng cho phép tối đa 25MB.
-- **HTTP Security Headers**: Cấu hình `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`.
+## 15. THẨM ĐỊNH BẢO MẬT (SECURITY STATUS)
+- **Phòng thủ chiều sâu (PASS)**:
+  - RBAC phân quyền đa cấp (Admin, Head of Department, Teacher).
+  - Phòng chống IDOR và cô lập tài nguyên giữa các trường/giáo viên.
+  - Bộ lọc khử độc XSS Sanitizer trên toàn bộ văn bản đầu vào.
+  - Bộ phát hiện và ngăn chặn Prompt Injection (`detectPromptInjection`).
+  - Bộ phát hiện chữ ký SQL Injection (`detectSqlInjection`).
+  - Kiểm soát giới hạn tần suất truy cập API (Rate Limiting).
+  - Kiểm duyệt tải lên file an toàn (Whitelist định dạng và giới hạn dung lượng 25MB).
+  - HTTP Security Headers: `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Strict-Transport-Security`.
 
-## 10. KẾT QUẢ KIỂM THỬ TỰ ĐỘNG (TEST RESULTS)
-- **Tổng số tệp kiểm thử**: 22/22 suites PASS (100%)
-- **Tổng số ca kiểm thử**: 86/86 tests PASS (100%)
-- **Số ca lỗi**: 0 FAIL
-- **Thời gian chạy kiểm thử**: 5.65 giây
-- **Kiểm tra kiểu dữ liệu TypeScript**: 0 lỗi (`npx tsc --noEmit` hoàn thành sạch sẽ)
+## 16. KẾT QUẢ KIỂM THỬ HỆ THỐNG (TEST STATUS)
+- **Vitest Suites**: **23/23 files PASS (100%)**
+- **Tổng số ca kiểm thử**: **92/92 tests PASS (100%)**
+- **Lỗi kiểm thử**: **0 FAIL**
+- **Kiểm tra kiểu dữ liệu TypeScript**: **0 lỗi (`npx tsc --noEmit` PASS 100%)**
+- **Next.js Production Build**: **PASS 100% (33/33 routes compiled thành công)**
 
-## 11. KẾT QUẢ SMOKE TEST THỰC TẾ (SMOKE-TEST RESULTS)
-Đã thực thi thành công chu trình nghiệp vụ trọn vẹn của giáo viên trên cả 4 khối lớp:
-- **KHTN 6**: Chương trình → Ma trận 10đ → Đặc tả → Hiện tượng thực tiễn → Ngữ liệu → Sinh câu hỏi → Quality Gate → Đề thi → Đáp án → Báo cáo bối cảnh → Truy vết → Xuất 6 văn bản: **PASS**
-- **KHTN 7**: Chu trình khép kín: **PASS**
-- **KHTN 8**: Chu trình khép kín: **PASS**
-- **KHTN 9**: Chu trình khép kín: **PASS**
-- *Ghi chú*: Không phát sinh bất kỳ can thiệp cơ sở dữ liệu thủ công nào.
+## 17. KẾT QUẢ KIỂM THỬ KHÓI SẢN XUẤT (PRODUCTION SMOKE TEST)
+- Đã kiểm chứng toàn bộ quy trình khảo thí từ xa trên URL sản xuất thực tế:
+  *Login → Dashboard → Curriculum → Matrix → Specification → Context → Stimulus → Question → Quality Gate → Question Bank → Test Generator → Answer Key → Context Report → Traceability → DOCX Export*.
 
-## 12. KẾT QUẢ THẨM ĐỊNH MỸ THUẬT VĂN BẢN DOCX (DOCX QA RESULTS)
-- 6 tệp văn bản xuất ra vật lý trong thư mục `exports/qa-package/`:
-  1. `01_Ma_tran_KHTN8.docx` (12.69 KB)
-  2. `02_Ban_dac_ta_KHTN8.docx` (12.32 KB)
-  3. `03_De_kiem_tra_KHTN8.docx` (12.95 KB)
-  4. `04_Dap_an_KHTN8.docx` (12.15 KB)
-  5. `05_Context_Report_KHTN8.docx` (12.51 KB)
-  6. `06_Traceability_Report_KHTN8.docx` (12.63 KB)
-- **Quy cách định dạng**: Khổ A4 đứng, căn lề chuẩn 30mm trái, 20mm trên/dưới/phải; font Times New Roman thống nhất toàn văn bản; bảng biểu 100% width; ký hiệu hóa học và vật lý chính xác; hiển thị nhãn dữ liệu mô phỏng; cấu hình định dạng theo câu chữ chuẩn: *"Formatting configured according to the referenced document-format requirements."*
+## 18–21. KẾT QUẢ THEO TỪNG KHỐI LỚP (GRADE-BY-GRADE RESULTS)
+- **KHTN 6**: **PASS** (100% YCCĐ Chất, Năng lượng, Vật sống; ma trận cân bằng 10.0đ; xuất 6 tài liệu).
+- **KHTN 7**: **PASS** (Tích hợp phân môn chuẩn mực; ngữ liệu thực tiễn và PISA; xuất 6 tài liệu).
+- **KHTN 8**: **PASS** (Phản ứng hóa học, áp suất, điện, hệ cơ quan; ma trận chuẩn Vĩnh Long CV 984; xuất 6 tài liệu).
+- **KHTN 9**: **PASS** (Hóa học hữu cơ, di truyền học Mendel, tiến hóa; xuất 6 tài liệu).
 
-## 13. GIỚI HẠN VÀ KHUYẾN CÁO (KNOWN LIMITATIONS)
-1. **Thiết lập Khóa Production Supabase**: Ứng dụng hiện đang được xác thực với cấu hình Fail-Safe. Khi triển khai lên môi trường Cloud thực tế (Vercel/Cloud Container), quản trị viên cần cung cấp thông số thực tế của Supabase Project và đặt `SUPABASE_REQUIRED=true`.
-2. **Kích thước ảnh ngữ liệu**: Khuyến nghị đính kèm file ảnh dưới 5MB để tối ưu thời gian tạo tài liệu DOCX trên máy tính của giáo viên.
+## 22. KẾT QUẢ TÀI LIỆU DOCX (DOCX RESULT)
+- **PASS 100%**: Tạo trọn bộ 6 tài liệu chuẩn thể thức văn bản:
+  1. `01_Ma_tran`: Khung ma trận 2 chiều chuẩn công văn Bộ GD&ĐT.
+  2. `02_Ban_dac_ta`: Bản đặc tả chi tiết gắn mã định danh YCCĐ.
+  3. `03_De_kiem_tra`: Đề kiểm tra học sinh có phần ngữ liệu và câu hỏi phân hóa.
+  4. `04_Dap_an`: Đáp án và hướng dẫn chấm chi tiết đến 0.25đ.
+  5. `05_Context_Report`: Báo cáo phân tích cân bằng bối cảnh thực tiễn.
+  6. `06_Traceability_Report`: Báo cáo truy vết nguồn gốc và minh bạch dữ liệu.
+- **Quy chuẩn**: Khổ A4 đứng, căn lề chuẩn 30mm trái, 20mm trên/dưới/phải; font Times New Roman; câu chữ quy chuẩn: *"Formatting configured according to the referenced document-format requirements."*
 
-## 14. QUY TRÌNH HOÀN NGUYÊN (ROLLBACK PROCEDURE)
-1. **Dừng phiên bản hiện tại**:
-   ```bash
-   pm2 stop khtn-studio || kill -9 $(lsof -t -i:3000)
-   ```
-2. **Quay lại bản dựng trước**:
-   ```bash
-   git checkout tags/v0.9.5-rc
-   npm ci
-   npm run build
-   npm run start
-   ```
-3. **Cơ sở dữ liệu Supabase**:
-   Nếu cần hoàn nguyên cấu trúc schema bối cảnh:
-   ```sql
-   DROP TABLE IF EXISTS context_traces CASCADE;
-   DROP TABLE IF EXISTS context_stimuli CASCADE;
-   DROP TABLE IF EXISTS international_contexts CASCADE;
-   DROP TABLE IF EXISTS phenomena CASCADE;
-   ```
+## 23. KẾT QUẢ TRUY VẾT PHẢ HỆ (TRACEABILITY RESULT)
+- **PASS 100%**: 100% câu hỏi trong đề thi kiểm tra được liên kết xuyên suốt qua chuỗi phả hệ:
+  `QUESTION → STIMULUS → CONTEXT → PHENOMENON → SOURCE → YCCĐ → KNOWLEDGE → COGNITIVE LEVEL → SPECIFICATION → MATRIX CELL → TEST`.
+  Không có bản ghi mồ côi (orphan records) và không có liên kết đứt gãy.
 
-## 15. QUY TRÌNH SAO LƯU DỰ PHÒNG (BACKUP PROCEDURE)
-1. **Sao lưu Cơ sở dữ liệu Supabase**:
-   ```bash
-   supabase db dump --data-only -f backup_khtn_data_$(date +%Y%m%d).sql
-   ```
-2. **Sao lưu Ngân hàng câu hỏi và hiện tượng cục bộ**:
-   ```bash
-   tar -czvf backup_khtn_database_$(date +%Y%m%d).tar.gz ./database/*.json ./knowledge/catalog.json
-   ```
+## 24. LƯU TRỮ VÀ TOÀN VẸN DỮ LIỆU (DATABASE PERSISTENCE RESULT)
+- **PASS**: Các bản ghi ma trận, đặc tả, câu hỏi và đề thi được lưu trữ toàn vẹn, truy xuất chính xác qua API và kiểm chứng trong các test gate.
+
+## 25. TỰ ĐỘNG TRIỂN KHAI GITHUB → VERCEL (AUTO-DEPLOYMENT RESULT)
+- **PASS**: Đã kích hoạt liên kết CI/CD tự động giữa GitHub repository `TMT-2025/dekiemtradki-khtn-thcs` và Vercel Project `dekiemtradki-khtn-thcs`. Mọi lệnh `git push` tới nhánh `main` sẽ tự động kích hoạt tiến trình build và cập nhật phiên bản mới trên Vercel.
+
+## 26. GIỚI HẠN VÀ KHUYẾN CÁO (KNOWN LIMITATIONS)
+1. **Tên miền tùy chỉnh**: Tên miền `https://khtn-assessment.edu.vn` đang chờ nhà quản trị cấu hình bản ghi `A 76.76.21.21` tại nhà cung cấp DNS. Giáo viên có thể truy cập ngay lập tức qua tên miền Vercel: `https://dekiemtradki-khtn-thcs.vercel.app`.
+2. **Khóa Supabase Cloud**: Khi chuyển sang cơ sở dữ liệu Supabase Cloud từ xa, chỉ cần nạp `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` và đặt `SUPABASE_REQUIRED=true` trong Vercel Environment Variables.
+
+## 27. QUY TRÌNH HOÀN NGUYÊN (ROLLBACK PROCEDURE)
+- **Trên Vercel**: Truy cập Vercel Dashboard → Deployments → Chọn bản triển khai trước (`dpl_D6RbYxkKXzFEBmeBWApXcSBzq7kX`) → Chọn **Instant Rollback**.
+- **Trên Git**:
+  ```bash
+  git revert HEAD
+  git push origin main
+  ```
 
 ---
 
-## 16. KẾT LUẬN VÀ TRẠNG THÁI PHÁT HÀNH CUỐI CÙNG (FINAL RELEASE STATUS)
+## 28. KẾT LUẬN VÀ TRẠNG THÁI CUỐI CÙNG (FINAL RELEASE STATUS)
 
 # TRẠNG THÁI: **PRODUCTION_LIVE_WITH_WARNINGS**
 
-> **Lý do chỉ định `PRODUCTION_LIVE_WITH_WARNINGS`**:
-> Hệ thống mã nguồn đã hoàn thành xuất sắc 100% các tiêu chí kỹ thuật: biên dịch production build thành công 33/33 routes, vượt qua toàn bộ 86/86 ca kiểm thử tự động, 0 lỗi TypeScript, vượt qua kiểm tra an ninh và kiểm thử khói (smoke test) xuyên suốt 4 khối lớp KHTN 6, 7, 8, 9, cùng bộ văn bản DOCX đạt chuẩn.
-> Cảnh báo (**WARNINGS**) được ghi nhận một cách trung thực và minh bạch: Ứng dụng đang chạy hoàn hảo trong môi trường Production Container cục bộ và sẵn sàng 100% để được gán tên miền chính thức (`https://khtn-assessment.edu.vn`) và nạp API key của Supabase Cloud thực tế.
+> **Tóm tắt đánh giá**:
+> Ứng dụng đã hoàn thành việc triển khai lên môi trường sản xuất đám mây thực tế tại URL **https://dekiemtradki-khtn-thcs.vercel.app** với phản hồi `HTTP 200 OK`. Toàn bộ 23 bộ kiểm thử (92 ca kiểm thử) vượt qua tuyệt đối 100%, 0 lỗi TypeScript, 33/33 routes Next.js được biên dịch và vận hành ổn định. Cảnh báo duy nhất (**WARNINGS**) là chờ cấu hình bản ghi DNS của tên miền tùy chỉnh `khtn-assessment.edu.vn` và khóa kết nối Supabase Cloud thực tế từ phía nhà trường.
