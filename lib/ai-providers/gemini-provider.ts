@@ -7,7 +7,7 @@ export class GeminiProvider implements IAIProvider {
 
   constructor(apiKey?: string, model?: string) {
     this.apiKey = apiKey || process.env.GEMINI_API_KEY || '';
-    this.model = model || process.env.GEMINI_MODEL || 'gemini-1.5-pro';
+    this.model = model || process.env.GEMINI_MODEL || 'gemini-3.5-flash';
   }
 
   public async generateText(request: AICompletionRequest): Promise<AICompletionResponse> {
@@ -36,6 +36,7 @@ export class GeminiProvider implements IAIProvider {
 
       const data = await response.json();
       const content = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      console.log(`[GEMINI_LIVE_API_SUCCESS] provider=${this.name} model=${this.model} status=200`);
       return {
         content,
         model: this.model

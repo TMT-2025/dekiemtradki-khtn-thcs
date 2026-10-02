@@ -80,17 +80,21 @@ export class QuestionService {
    */
   public static async generateQuestionWithAI(params: {
     lessonId: string;
-    cognitiveLevel: CognitiveLevel;
-    questionType: QuestionType;
-    score: number;
+    cognitiveLevel?: CognitiveLevel;
+    questionType?: QuestionType;
+    score?: number;
   }): Promise<QuestionItem> {
     const lesson = CurriculumService.getLessonById(params.lessonId);
     if (!lesson) {
       throw new Error(`Không tìm thấy bài học có mã: ${params.lessonId}`);
     }
 
+    const cognitiveLevel: CognitiveLevel = params.cognitiveLevel || 'M1';
+    const questionType: QuestionType = params.questionType || 'MCQ';
+    const score = params.score ?? 0.25;
+
     // Match requirement
-    const req = lesson.learningRequirements.find(r => r.cognitiveLevel === params.cognitiveLevel) 
+    const req = lesson.learningRequirements.find(r => r.cognitiveLevel === cognitiveLevel) 
       || lesson.learningRequirements[0];
 
     const systemPrompt = `Bạn là Chuyên gia Khảo thí Khoa học tự nhiên THCS Việt Nam (GDPT 2018).
@@ -103,9 +107,9 @@ Chỉ trả về JSON theo schema quy định.`;
 - Phân môn: ${lesson.subjectArea}
 - Mạch kiến thức: ${lesson.contentDomain}
 - Yêu cầu cần đạt: ${req ? req.description : lesson.title}
-- Mức độ nhận thức: ${params.cognitiveLevel}
-- Dạng câu hỏi: ${params.questionType}
-- Điểm số: ${params.score}
+- Mức độ nhận thức: ${cognitiveLevel}
+- Dạng câu hỏi: ${questionType}
+- Điểm số: ${score}
 
 Trả về định dạng JSON:
 {
@@ -135,21 +139,21 @@ Trả về định dạng JSON:
       contentDomain: lesson.contentDomain,
       learningRequirementId: req?.id,
       learningRequirementText: req ? req.description : lesson.title,
-      cognitiveLevel: params.cognitiveLevel,
-      questionType: params.questionType,
+      cognitiveLevel: cognitiveLevel,
+      questionType: questionType,
       difficulty: result.difficulty || 'MEDIUM',
       questionText: result.question_text,
       options: result.options,
       correctAnswer: result.correct_answer,
       explanation: result.explanation,
-      rationale: result.rationale || `Câu hỏi đánh giá mức độ ${params.cognitiveLevel} cho bài ${lesson.title}`,
-      score: params.score,
+      rationale: result.rationale || `Câu hỏi đánh giá mức độ ${cognitiveLevel} cho bài ${lesson.title}`,
+      score: score,
       sourceLevel: 'TEXTBOOK',
       sourceCitation: {
         documentName: `SGK Khoa học tự nhiên ${lesson.grade} - Kết nối tri thức`,
         lessonName: lesson.title
       },
-      tags: [lesson.subjectArea, lesson.contentDomain, params.cognitiveLevel],
+      tags: [lesson.subjectArea, lesson.contentDomain, cognitiveLevel],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
