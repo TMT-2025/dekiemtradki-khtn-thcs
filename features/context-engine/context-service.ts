@@ -468,10 +468,53 @@ export class ContextService {
    * matching the question's specific topic, subject area, and grade.
    */
   public static generateRichContextForQuestion(q: QuestionItem): ContextMetadata {
+    const raw = this.buildContextMetadata(q);
+    if (q.questionType === 'MCQ' && raw.stimulus) {
+      raw.stimulus.type = 'TEXT';
+      delete raw.stimulus.dataHeaders;
+      delete raw.stimulus.dataRows;
+    }
+    return raw;
+  }
+
+  private static buildContextMetadata(q: QuestionItem): ContextMetadata {
     const topicLow = (q.topic || '').toLowerCase();
     const reqLow = (q.learningRequirementText || '').toLowerCase();
     const textLow = (q.questionText || '').toLowerCase();
     const combined = `${topicLow} ${reqLow} ${textLow}`;
+
+    // Grade 6 Priority: Đo lường (thước, cân, nhiệt kế, thể tích)
+    if (q.grade === 6 && (combined.includes('đo') || combined.includes('thước') || combined.includes('cân') || combined.includes('nhiệt kế') || combined.includes('kính lúp'))) {
+      const res: ContextMetadata = {
+        hasContext: true,
+        contextId: `CTX_MEASURE_6_${q.id}`,
+        contextType: 'FAMILY_SCHOOL',
+        contextLevel: 'C1',
+        applicationArea: 'DAILY_LIFE',
+        phenomenon: 'Kĩ năng đo lường các đại lượng vật lí trong đời sống hàng ngày và thực hành thí nghiệm',
+        realWorldRelevance: true,
+        scientificPractice: 'Apply science knowledge',
+        sourceType: 'ADAPTED_FROM',
+        sourceTitle: 'Sách giáo khoa KHTN 6 Kết nối tri thức — Chương I: Mở đầu & Đo lường',
+        sourceCountry: 'Việt Nam',
+        adaptationNote: 'Tình huống thực tế lựa chọn dụng cụ đo có GHĐ và ĐCNN thích hợp.',
+        stimulus: {
+          type: q.questionType === 'TRUE_FALSE' ? 'TABLE' : 'TEXT',
+          title: 'Khảo sát kĩ năng lựa chọn dụng cụ đo lường trong phòng thực hành',
+          leadParagraph: 'Để đo lường chính xác các đại lượng như độ dài, khối lượng, thể tích và nhiệt độ, người làm thí nghiệm phải luôn chọn dụng cụ đo có giới hạn đo (GHĐ) lớn hơn giá trị cần đo và có độ chia nhỏ nhất (ĐCNN) phù hợp với độ chính xác yêu cầu.',
+          ...(q.questionType === 'TRUE_FALSE' ? {
+            dataHeaders: ['Đại lượng cần đo', 'Dụng cụ khuyến nghị', 'GHĐ phù hợp', 'ĐCNN tối ưu'],
+            dataRows: [
+              ['Chiều dài lớp học', 'Thước cuộn', '10 m', '1 cm'],
+              ['Đường kính miệng cốc', 'Thước kẹp', '150 mm', '0,1 mm'],
+              ['Khối lượng hộp sữa', 'Cân điện tử', '500 g', '0,1 g'],
+              ['Nhiệt độ nước đá đang tan', 'Nhiệt kế rượu', '100°C', '1°C']
+            ]
+          } : {})
+        }
+      };
+      return res;
+    }
 
     // 1. Kim loại, dãy hoạt động, tính chất vật lí, hóa học của kim loại
     if (combined.includes('kim loại') || combined.includes('tính chất vật lí chung') || combined.includes('dãy hoạt động')) {

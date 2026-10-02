@@ -515,7 +515,7 @@ function TestsContent() {
                                   {tq.question.contextMetadata.stimulus.leadParagraph}
                                 </p>
                               )}
-                              {tq.question.contextMetadata.stimulus.dataHeaders && tq.question.contextMetadata.stimulus.dataRows && (
+                              {tq.question.contextMetadata.stimulus.type === 'TABLE' && (tq.question.questionType === 'TRUE_FALSE' || tq.question.questionType === 'ESSAY') && tq.question.contextMetadata.stimulus.dataHeaders && tq.question.contextMetadata.stimulus.dataRows && (
                                 <div className="overflow-x-auto my-1.5">
                                   <table className="border-collapse border border-slate-300 text-[10px] w-full text-center bg-white shadow-sm rounded-lg overflow-hidden">
                                     <thead className="bg-sky-100/80 font-bold text-sky-950">

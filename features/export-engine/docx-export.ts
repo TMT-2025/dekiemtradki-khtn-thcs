@@ -291,8 +291,8 @@ export class DocxExportService {
             );
           }
 
-          // 3. Bảng số liệu thực nghiệm đầy đủ (nếu có)
-          if (stim?.dataHeaders && stim?.dataRows && stim.dataHeaders.length > 0 && stim.dataRows.length > 0) {
+          // 3. Bảng số liệu thực nghiệm đầy đủ (chỉ hiển thị khi dạng câu hỏi yêu cầu phân tích bảng số liệu như Đúng/Sai hoặc Tự luận)
+          if (stim?.type === 'TABLE' && stim?.dataHeaders && stim?.dataRows && stim.dataHeaders.length > 0 && stim.dataRows.length > 0 && (q.questionType === 'TRUE_FALSE' || q.questionType === 'ESSAY')) {
             const colWidth = Math.floor(9000 / stim.dataHeaders.length);
             const tableRows: TableRow[] = [
               new TableRow({

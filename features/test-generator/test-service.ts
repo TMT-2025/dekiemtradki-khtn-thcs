@@ -95,37 +95,35 @@ export class TestService {
     const saQuestions: TestPartQuestion[] = [];
     const esQuestions: TestPartQuestion[] = [];
 
-    let globalOrder = 1;
-
-    // Collect all matched questions
+    // Collect all matched questions into separate parts first
     matching.results.forEach(res => {
       res.matchedQuestions.forEach(q => {
         const itemScore = res.specItem.score / res.specItem.questionCount;
         if (q.questionType === 'MCQ') {
           mcqQuestions.push({
-            orderInPart: mcqQuestions.length + 1,
-            globalOrderIndex: globalOrder++,
+            orderInPart: 0,
+            globalOrderIndex: 0,
             question: q,
             assignedScore: itemScore
           });
         } else if (q.questionType === 'TRUE_FALSE') {
           tfQuestions.push({
-            orderInPart: tfQuestions.length + 1,
-            globalOrderIndex: globalOrder++,
+            orderInPart: 0,
+            globalOrderIndex: 0,
             question: q,
             assignedScore: itemScore
           });
         } else if (q.questionType === 'SHORT_ANSWER') {
           saQuestions.push({
-            orderInPart: saQuestions.length + 1,
-            globalOrderIndex: globalOrder++,
+            orderInPart: 0,
+            globalOrderIndex: 0,
             question: q,
             assignedScore: itemScore
           });
         } else {
           esQuestions.push({
-            orderInPart: esQuestions.length + 1,
-            globalOrderIndex: globalOrder++,
+            orderInPart: 0,
+            globalOrderIndex: 0,
             question: q,
             assignedScore: itemScore
           });
@@ -133,12 +131,43 @@ export class TestService {
       });
     });
 
+    // Strictly assign sequential continuous numbering: Part I -> Part II -> Part III -> Part IV
+    let runningOrder = 1;
+    mcqQuestions.forEach((q, idx) => {
+      q.orderInPart = idx + 1;
+      q.globalOrderIndex = runningOrder++;
+    });
+    tfQuestions.forEach((q, idx) => {
+      q.orderInPart = idx + 1;
+      q.globalOrderIndex = runningOrder++;
+    });
+    saQuestions.forEach((q, idx) => {
+      q.orderInPart = idx + 1;
+      q.globalOrderIndex = runningOrder++;
+    });
+    esQuestions.forEach((q, idx) => {
+      q.orderInPart = idx + 1;
+      q.globalOrderIndex = runningOrder++;
+    });
+
+    const mcqStart = mcqQuestions[0]?.globalOrderIndex || 1;
+    const mcqEnd = mcqQuestions[mcqQuestions.length - 1]?.globalOrderIndex || mcqQuestions.length;
+
+    const tfStart = tfQuestions[0]?.globalOrderIndex || (mcqEnd + 1);
+    const tfEnd = tfQuestions[tfQuestions.length - 1]?.globalOrderIndex || (tfStart + tfQuestions.length - 1);
+
+    const saStart = saQuestions[0]?.globalOrderIndex || (tfEnd + 1);
+    const saEnd = saQuestions[saQuestions.length - 1]?.globalOrderIndex || (saStart + saQuestions.length - 1);
+
+    const esStart = esQuestions[0]?.globalOrderIndex || (saEnd + 1);
+    const esEnd = esQuestions[esQuestions.length - 1]?.globalOrderIndex || (esStart + esQuestions.length - 1);
+
     const parts: TestPart[] = [
       {
         partNumber: 1,
         partName: 'PHẦN I. Câu trắc nghiệm nhiều lựa chọn',
         questionType: 'MCQ' as const,
-        instructions: 'Thí sinh trả lời từ câu 1 đến câu 14. Mỗi câu hỏi thí sinh chỉ chọn một phương án.',
+        instructions: `Thí sinh trả lời từ câu ${mcqStart} đến câu ${mcqEnd}. Mỗi câu hỏi thí sinh chỉ chọn một phương án.`,
         totalScore: Math.round(mcqQuestions.reduce((s, q) => s + q.assignedScore, 0) * 100) / 100,
         questions: mcqQuestions
       },
@@ -146,7 +175,7 @@ export class TestService {
         partNumber: 2,
         partName: 'PHẦN II. Câu trắc nghiệm Đúng/Sai',
         questionType: 'TRUE_FALSE' as const,
-        instructions: 'Thí sinh trả lời các câu hỏi. Trong mỗi ý a), b), c), d) ở mỗi câu, thí sinh chọn Đúng hoặc Sai.',
+        instructions: `Thí sinh trả lời từ câu ${tfStart} đến câu ${tfEnd}. Trong mỗi ý a), b), c), d) ở mỗi câu, thí sinh chọn Đúng hoặc Sai.`,
         totalScore: Math.round(tfQuestions.reduce((s, q) => s + q.assignedScore, 0) * 100) / 100,
         questions: tfQuestions
       },
@@ -154,7 +183,7 @@ export class TestService {
         partNumber: 3,
         partName: 'PHẦN III. Câu trắc nghiệm trả lời ngắn',
         questionType: 'SHORT_ANSWER' as const,
-        instructions: 'Thí sinh điền kết quả vào ô trả lời ngắn. Mỗi câu trả lời đúng được 0.5 điểm.',
+        instructions: `Thí sinh trả lời từ câu ${saStart} đến câu ${saEnd}. Điền câu trả lời ngắn gọn (thuật ngữ, tên chất hoặc kết quả tính toán). Mỗi câu trả lời đúng được 0.5 điểm.`,
         totalScore: Math.round(saQuestions.reduce((s, q) => s + q.assignedScore, 0) * 100) / 100,
         questions: saQuestions
       },
@@ -162,7 +191,7 @@ export class TestService {
         partNumber: 4,
         partName: 'PHẦN IV. Tự luận',
         questionType: 'ESSAY' as const,
-        instructions: 'Thí sinh trình bày chi tiết lời giải, bài tập hoặc lập luận khoa học vào giấy làm bài.',
+        instructions: `Thí sinh trả lời từ câu ${esStart} đến câu ${esEnd}. Trình bày chi tiết lời giải, bài tập hoặc lập luận khoa học vào giấy làm bài.`,
         totalScore: Math.round(esQuestions.reduce((s, q) => s + q.assignedScore, 0) * 100) / 100,
         questions: esQuestions
       }
