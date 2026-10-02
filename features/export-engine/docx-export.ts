@@ -210,7 +210,7 @@ export class DocxExportService {
    * 03_De_kiem_tra.docx
    */
   public static async exportTestDocx(test: TestExam): Promise<Buffer> {
-    const paragraphs: Paragraph[] = [
+    const paragraphs: (Paragraph | Table)[] = [
       this.createDocumentHeader(
         test.title.toUpperCase(),
         `Thời gian làm bài: ${test.durationMinutes} phút (Không kể thời gian phát đề) — Mã đề: ${test.testCode}`
@@ -246,21 +246,86 @@ export class DocxExportService {
 
       part.questions.forEach(tq => {
         const q = tq.question;
-        if (q.contextMetadata?.stimulus) {
+        if (q.contextMetadata?.stimulus || q.contextMetadata?.hasContext) {
+          const stim = q.contextMetadata?.stimulus;
+          const contextTitle = stim?.title || q.contextMetadata?.phenomenon || 'Khảo sát tình huống khoa học thực tiễn';
+
+          // 1. Tiêu đề bối cảnh nổi bật
           paragraphs.push(
             new Paragraph({
               children: [
                 new TextRun({
-                  text: `[Bối cảnh & Dữ liệu: ${q.contextMetadata.stimulus.title}]`,
-                  italics: true,
+                  text: `[Tình huống thực tiễn & Bối cảnh khoa học: ${contextTitle}]`,
                   bold: true,
                   font: 'Times New Roman',
-                  size: 20
+                  size: 21,
+                  color: '003366'
                 })
               ],
-              spacing: { before: 100, after: 40 }
+              spacing: { before: 140, after: 40 }
             })
           );
+
+          // 2. Toàn bộ đoạn văn bản bối cảnh (leadParagraph)
+          const leadText = stim?.leadParagraph || q.contextMetadata?.adaptationNote || '';
+          if (leadText) {
+            paragraphs.push(
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: leadText,
+                    italics: true,
+                    font: 'Times New Roman',
+                    size: 21
+                  })
+                ],
+                spacing: { before: 20, after: 60 }
+              })
+            );
+          }
+
+          // 3. Bảng số liệu thực nghiệm đầy đủ (nếu có)
+          if (stim?.dataHeaders && stim?.dataRows && stim.dataHeaders.length > 0 && stim.dataRows.length > 0) {
+            const colWidth = Math.floor(9000 / stim.dataHeaders.length);
+            const tableRows: TableRow[] = [
+              new TableRow({
+                children: stim.dataHeaders.map(h =>
+                  this.createHeaderCell(h, colWidth)
+                )
+              }),
+              ...stim.dataRows.map(row =>
+                new TableRow({
+                  children: row.map(c =>
+                    this.createDataCell(String(c), colWidth, AlignmentType.CENTER)
+                  )
+                })
+              )
+            ];
+            paragraphs.push(
+              new Table({
+                rows: tableRows,
+                width: { size: 9000, type: WidthType.DXA }
+              }),
+              new Paragraph({ text: '', spacing: { after: 60 } })
+            );
+          }
+
+          // 4. Các bước tiến hành thí nghiệm (nếu có)
+          if (stim?.experimentSetup?.procedureSteps && stim.experimentSetup.procedureSteps.length > 0) {
+            paragraphs.push(
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: `Các bước thực nghiệm: ${stim.experimentSetup.procedureSteps.join(' → ')}`,
+                    italics: true,
+                    font: 'Times New Roman',
+                    size: 20
+                  })
+                ],
+                spacing: { before: 20, after: 60 }
+              })
+            );
+          }
         }
 
         paragraphs.push(

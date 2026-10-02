@@ -72,65 +72,18 @@ export class TestService {
     });
 
     const targetContextCount = Math.round(allQuestions.length * targetRatio);
-    let currentContextCount = allQuestions.filter(q => q.contextMetadata?.hasContext).length;
+    let currentContextCount = 0;
 
-    if (currentContextCount < targetContextCount) {
-      const gradePhenomena = ContextService.filterPhenomena({ grade: input.matrix.grade });
-      let phenomIdx = 0;
-      for (const q of allQuestions) {
-        if (!q.contextMetadata?.hasContext && currentContextCount < targetContextCount && gradePhenomena.length > 0) {
-          const phenom = gradePhenomena[phenomIdx % gradePhenomena.length];
-          phenomIdx++;
-          q.contextMetadata = {
-            hasContext: true,
-            contextId: `${phenom.phenomenon_id}_${q.id}`,
-            contextType: phenom.context_type,
-            contextLevel: phenom.context_level,
-            applicationArea: phenom.application_area,
-            phenomenon: `${phenom.title} (Khía cạnh: ${q.topic})`,
-            stimulus: phenom.stimulus,
-            realWorldRelevance: true,
-            scientificPractice: 'Apply science knowledge',
-            sourceType: 'ADAPTED_FROM',
-            sourceTitle: `${phenom.source} [Chủ đề: ${q.topic}]`,
-            sourceUrl: phenom.source_url,
-            sourceCountry: phenom.source_country,
-            adaptationNote: `Tích hợp bối cảnh hiện tượng thực tế chuẩn GDPT 2018 gắn với bài học ${q.topic}.`
-          };
-          currentContextCount++;
+    for (const q of allQuestions) {
+      if (currentContextCount < targetContextCount) {
+        if (!q.contextMetadata?.hasContext || !q.contextMetadata?.stimulus?.leadParagraph) {
+          q.contextMetadata = ContextService.generateRichContextForQuestion(q);
         }
+        currentContextCount++;
+      } else if (!q.contextMetadata?.stimulus?.leadParagraph) {
+        q.contextMetadata = undefined;
       }
     }
-    // Section 31: Diversity Filter across the selected questions in the test
-    const phenomUsage: Record<string, number> = {};
-    const gradePhenomena = ContextService.filterPhenomena({ grade: input.matrix.grade });
-    let pIdx = 0;
-
-    allQuestions.forEach(q => {
-      if (q.contextMetadata?.hasContext) {
-        const pName = q.contextMetadata.phenomenon || '';
-        phenomUsage[pName] = (phenomUsage[pName] || 0) + 1;
-
-        // If a phenomenon is used more than 2 times, diversify it to keep test rich and varied
-        if (phenomUsage[pName] > 2 && gradePhenomena.length > 0) {
-          const altPhenom = gradePhenomena[pIdx % gradePhenomena.length];
-          pIdx++;
-          q.contextMetadata = {
-            ...q.contextMetadata,
-            contextId: `${altPhenom.phenomenon_id}_${q.id}`,
-            contextType: altPhenom.context_type,
-            contextLevel: altPhenom.context_level,
-            applicationArea: altPhenom.application_area,
-            phenomenon: `${altPhenom.title} (Khía cạnh: ${q.topic})`,
-            stimulus: altPhenom.stimulus,
-            sourceTitle: `${altPhenom.source} [Chủ đề: ${q.topic}]`,
-            sourceUrl: altPhenom.source_url,
-            sourceCountry: altPhenom.source_country,
-            adaptationNote: `Tích hợp bối cảnh hiện tượng thực tế chuẩn GDPT 2018 gắn với bài học ${q.topic}.`
-          };
-        }
-      }
-    });
 
     const contextReport = ContextService.generateContextReport(allQuestions, targetRatio);
 

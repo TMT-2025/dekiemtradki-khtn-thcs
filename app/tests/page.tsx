@@ -480,34 +480,45 @@ function TestsContent() {
                             </div>
                           )}
 
-                          {/* Stimulus Box if present */}
+                          {/* Rich Context & Stimulus Box */}
                           {tq.question.contextMetadata?.stimulus && (
-                            <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-xs space-y-1.5">
-                              <p className="font-bold text-slate-800 text-[11px] flex items-center space-x-1">
-                                <TableIcon className="h-3.5 w-3.5 text-cyan-700" />
-                                <span>{tq.question.contextMetadata.stimulus.title}</span>
+                            <div className="bg-gradient-to-r from-sky-50/80 to-slate-50 p-3 rounded-xl border border-sky-200/80 text-xs space-y-2">
+                              <p className="font-bold text-sky-900 text-xs flex items-center space-x-1.5 border-b border-sky-200/60 pb-1.5">
+                                <TableIcon className="h-3.5 w-3.5 text-sky-700 flex-shrink-0" />
+                                <span>[Tình huống thực tiễn & Bối cảnh khoa học: {tq.question.contextMetadata.stimulus.title}]</span>
                               </p>
-                              {tq.question.contextMetadata.stimulus.dataHeaders && (
-                                <div className="overflow-x-auto my-1">
-                                  <table className="border-collapse border border-slate-300 text-[10px] w-full text-center">
-                                    <thead className="bg-slate-200/80 font-bold">
+                              {tq.question.contextMetadata.stimulus.leadParagraph && (
+                                <p className="text-slate-700 italic leading-relaxed text-[11px] bg-white/70 p-2 rounded-lg border border-sky-100">
+                                  {tq.question.contextMetadata.stimulus.leadParagraph}
+                                </p>
+                              )}
+                              {tq.question.contextMetadata.stimulus.dataHeaders && tq.question.contextMetadata.stimulus.dataRows && (
+                                <div className="overflow-x-auto my-1.5">
+                                  <table className="border-collapse border border-slate-300 text-[10px] w-full text-center bg-white shadow-sm rounded-lg overflow-hidden">
+                                    <thead className="bg-sky-100/80 font-bold text-sky-950">
                                       <tr>
                                         {tq.question.contextMetadata.stimulus.dataHeaders.map((h, idx) => (
-                                          <th key={idx} className="border border-slate-300 p-1">{h}</th>
+                                          <th key={idx} className="border border-slate-300 p-1.5">{h}</th>
                                         ))}
                                       </tr>
                                     </thead>
-                                    <tbody>
-                                      {tq.question.contextMetadata.stimulus.dataRows?.map((row, rIdx) => (
-                                        <tr key={rIdx} className="hover:bg-slate-100">
+                                    <tbody className="divide-y divide-slate-200">
+                                      {tq.question.contextMetadata.stimulus.dataRows.map((row, rIdx) => (
+                                        <tr key={rIdx} className="hover:bg-slate-50">
                                           {row.map((c, cIdx) => (
-                                            <td key={cIdx} className="border border-slate-300 p-1">{c}</td>
+                                            <td key={cIdx} className="border border-slate-300 p-1.5">{c}</td>
                                           ))}
                                         </tr>
                                       ))}
                                     </tbody>
                                   </table>
                                 </div>
+                              )}
+                              {tq.question.contextMetadata.stimulus.experimentSetup?.procedureSteps && (
+                                <p className="text-[11px] text-slate-600 italic">
+                                  <strong>Các bước thực nghiệm: </strong>
+                                  {tq.question.contextMetadata.stimulus.experimentSetup.procedureSteps.join(' → ')}
+                                </p>
                               )}
                             </div>
                           )}
