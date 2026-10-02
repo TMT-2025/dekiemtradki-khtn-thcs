@@ -1,0 +1,90 @@
+[
+  {
+    "id": "STIM_6_WATER_FREEZE",
+    "contextId": "PHENOM_6_01",
+    "type": "TABLE",
+    "title": "Bảng thí nghiệm đo nhiệt độ đông đặc của nước muối ở các nồng độ khác nhau",
+    "content": "Một nhóm học sinh lớp 6 tiến hành hòa tan muối ăn (NaCl) vào 100 mL nước cất với khối lượng khác nhau rồi đưa vào tủ đông đo nhiệt độ bắt đầu xuất hiện tinh thể đá.",
+    "readingLoad": "LOW",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "OECD PISA",
+        "title": "PISA Science Framework & THCS KHTN 6 Kết nối tri thức",
+        "url": "https://www.oecd.org/pisa/",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_7_PHOTOSYNTHESIS",
+    "contextId": "PHENOM_7_01",
+    "type": "EXPERIMENT",
+    "title": "Thực nghiệm đo số bọt khí oxygen giải phóng từ cành rong đuôi chó theo khoảng cách nguồn sáng",
+    "content": "Học sinh lớp 7 bố trí cành rong đuôi chó trong ống nghiệm chứa nước có hòa ít NaHCO3 (nguồn cung cấp CO2), chiếu sáng bằng bóng đèn ở các khoảng cách khác nhau và đếm số bọt khí nổi lên trong 1 phút.",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "NGSS Middle School",
+        "title": "Next Generation Science Standards & KHTN 7",
+        "url": "https://www.nextgenscience.org/",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_8_SALINITY_HAMLUONG",
+    "contextId": "PHENOM_8_01",
+    "type": "CHART",
+    "title": "Diễn biến độ mặn (gam muối / lít nước) tại trạm đo sông Hàm Luông theo các tháng mùa khô",
+    "content": "Biểu đồ ghi nhận nồng độ muối hòa tan (g/L) đo được tại trạm Hàm Luông (Bến Tre) trong mùa khô năm 2024.",
+    "readingLoad": "LOW",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Trung tâm Dự báo Khí tượng Thủy văn Quốc gia",
+        "title": "Bản tin xâm nhập mặn Đồng bằng sông Cửu Long",
+        "url": "https://nchmf.gov.vn/",
+        "sourceMode": "DIRECT_SOURCE",
+        "licenseStatus": "PUBLIC_DOMAIN",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "ORIGINAL_VIETNAM",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_9_ACID_RAIN_EROSION",
+    "contextId": "PHENOM_9_02",
+    "type": "EXPERIMENT",
+    "title": "Mô phỏng tác động ăn mòn của mưa acid lên mẩu đá vôi tự nhiên",
+    "content": "Học sinh ngâm 3 mẩu đá vôi CaCO3 có khối lượng ban đầu chính xác 10.00 gam vào 3 cốc nước có độ acid khác nhau trong 48 giờ để đo mức độ hao hụt khối lượng.",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "USGS (United States Geological Survey)",
+        "title": "Acid Rain and Water Science School",
+        "url": "https://www.usgs.gov/special-topics/water-science-school/science/acid-rain-and-water",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "PUBLIC_DOMAIN",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  }
+]

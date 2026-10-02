@@ -1,0 +1,372 @@
+[
+  {
+    "phenomenon_id": "PHENOM_6_01",
+    "title": "Vì sao nước biển không dễ đóng băng như nước ngọt?",
+    "description": "Ở các vùng xứ lạnh vào mùa đông, các hồ nước ngọt đóng băng hoàn toàn ở nhiệt độ 0°C nhưng nước biển xung quanh vẫn ở thể lỏng và chỉ đóng băng khi nhiệt độ hạ xuống dưới -1,9°C. Hiện tượng này gắn liền với nồng độ muối hòa tan và nhiệt độ đông đặc của dung dịch.",
+    "grade": 6,
+    "topic": "Hỗn hợp và chất tinh khiết - Dung dịch",
+    "subject_area": "CHEMISTRY",
+    "content_domain": "SUBSTANCES",
+    "context_type": "GLOBAL",
+    "application_area": "WATER",
+    "context_level": "C2",
+    "difficulty": "MEDIUM",
+    "stimulus": {
+      "type": "TABLE",
+      "title": "Bảng thí nghiệm đo nhiệt độ đông đặc của nước muối ở các nồng độ khác nhau",
+      "leadParagraph": "Một nhóm học sinh lớp 6 tiến hành hòa tan muối ăn (NaCl) vào 100 mL nước cất với khối lượng khác nhau rồi đưa vào tủ đông đo nhiệt độ bắt đầu xuất hiện tinh thể đá:",
+      "dataHeaders": ["Mẫu thí nghiệm", "Khối lượng muối (g)", "Thể tích nước (mL)", "Nhiệt độ bắt đầu đông đặc (°C)"],
+      "dataRows": [
+        ["Mẫu 1 (Nước cất)", "0", "100", "0.0"],
+        ["Mẫu 2 (Nước muối loãng)", "2", "100", "-1.1"],
+        ["Mẫu 3 (Nước muối vừa)", "3.5", "100", "-1.9"],
+        ["Mẫu 4 (Nước muối đặc)", "7", "100", "-3.8"]
+      ]
+    },
+    "source": "PISA Science Framework & THCS KHTN 6 Kết nối tri thức",
+    "source_url": "https://www.oecd.org/pisa/",
+    "source_country": "OECD / Việt Nam",
+    "source_language": "vi",
+    "age_range": "11-12 tuổi",
+    "curriculum_alignment": "Nêu được khái niệm dung dịch, dung môi, chất tan; nhận biết ảnh hưởng của chất tan đến tính chất vật lí của dung môi."
+  },
+  {
+    "phenomenon_id": "PHENOM_6_02",
+    "title": "Hiện tượng thối rữa và bảo quản thực phẩm bằng nhiệt độ thấp trong gia đình",
+    "description": "Thực phẩm tươi sống (thịt, cá) để ở nhiệt độ phòng (28°C - 32°C) bị ôi thiu rất nhanh sau 6 - 8 giờ, trong khi bảo quản ở ngăn mát tủ lạnh (4°C) có thể giữ tươi trong 2 - 3 ngày. Hiện tượng này liên quan mật thiết đến tốc độ sinh trưởng của vi khuẩn và nấm mốc.",
+    "grade": 6,
+    "topic": "Virus và vi khuẩn - Đa dạng thế giới sống",
+    "subject_area": "BIOLOGY",
+    "content_domain": "LIVING_THINGS",
+    "context_type": "FAMILY_SCHOOL",
+    "application_area": "FOOD",
+    "context_level": "C3",
+    "difficulty": "MEDIUM",
+    "stimulus": {
+      "type": "EXPERIMENT",
+      "title": "Thí nghiệm theo dõi sự hư hỏng của canh rau ở các điều kiện nhiệt độ",
+      "leadParagraph": "Học sinh chia đều bát canh rau muống vào 3 hộp thủy tinh vô trùng giống hệt nhau và để ở các môi trường khác nhau trong 24 giờ:",
+      "experimentSetup": {
+        "hypothesis": "Nhiệt độ càng thấp thì tốc độ sinh sản của vi khuẩn làm thối rữa thực phẩm càng chậm.",
+        "independentVariable": "Nhiệt độ bảo quản (Ngăn đông -18°C, Ngăn mát 4°C, Nhiệt độ phòng 30°C)",
+        "dependentVariable": "Độ đục của nước canh và mùi hôi (chỉ thị mật độ vi khuẩn)",
+        "controlVariables": ["Thể tích nước canh (150 mL)", "Loại rau", "Loại hộp chứa vô trùng kín"],
+        "procedureSteps": [
+          "Bước 1: Nấu canh rau muống để nguội về 30°C.",
+          "Bước 2: Rót đều 150 mL canh vào 3 hộp A, B, C.",
+          "Bước 3: Đặt hộp A vào ngăn đá (-18°C), hộp B vào ngăn mát (4°C), hộp C trên bàn bếp (30°C).",
+          "Bước 4: Quan sát độ đục và ngửi mùi sau 24 giờ."
+        ]
+      }
+    },
+    "source": "Viện Dinh dưỡng Quốc gia & WHO Food Safety Guide",
+    "source_url": "https://www.who.int/news-room/fact-sheets/detail/food-safety",
+    "source_country": "Việt Nam",
+    "source_language": "vi",
+    "age_range": "11-12 tuổi",
+    "curriculum_alignment": "Nêu được một số vai trò của vi khuẩn trong tự nhiên và thực tiễn; các biện pháp phòng chống vi khuẩn có hại gây hỏng thức ăn."
+  },
+  {
+    "phenomenon_id": "PHENOM_6_03",
+    "title": "Ứng dụng thanh lưỡng kim trong rơ-le tự ngắt của ấm đun nước siêu tốc",
+    "description": "Khi nước trong ấm siêu tốc sôi (100°C), ấm tự động phát ra tiếng 'tách' và ngắt nguồn điện, tránh gây cháy nổ. Cơ chế này hoạt động dựa trên sự nở vì nhiệt khác nhau của hai thanh kim loại (đồng và sắt) ép chặt vào nhau.",
+    "grade": 6,
+    "topic": "Sự nở vì nhiệt của chất rắn - Năng lượng nhiệt",
+    "subject_area": "PHYSICS",
+    "content_domain": "ENERGY",
+    "context_type": "FAMILY_SCHOOL",
+    "application_area": "SAFETY",
+    "context_level": "C1",
+    "difficulty": "EASY",
+    "stimulus": {
+      "type": "DIAGRAM",
+      "title": "Sơ đồ nguyên lý hoạt động của rơ-le lưỡng kim trong ấm đun nước",
+      "leadParagraph": "Thanh lưỡng kim gồm một bản đồng ép chặt vào một bản sắt. Khi đun sôi nước, hơi nước bốc lên làm nóng thanh lưỡng kim. Do đồng nở vì nhiệt nhiều hơn sắt, thanh bị uốn cong về phía bản sắt, đẩy lẫy ngắt mạch điện.",
+      "diagramDescription": "Thanh lưỡng kim thẳng khi ở nhiệt độ phòng. Khi nhiệt độ tăng lên 100°C, lớp đồng dãn dài hơn lớp sắt làm cả thanh cong vòng sang phía thanh sắt, tách hai tiếp điểm điện rời nhau ra."
+    },
+    "source": "Vật lí ứng dụng trong đời sống & KHTN 6 Kết nối tri thức",
+    "source_country": "Việt Nam",
+    "source_language": "vi",
+    "age_range": "11-12 tuổi",
+    "curriculum_alignment": "Mô tả được sự nở vì nhiệt của các chất; giải thích được ứng dụng của sự nở vì nhiệt trong thiết bị gia đình."
+  },
+  {
+    "phenomenon_id": "PHENOM_7_01",
+    "title": "Quang hợp của rong đuôi chó dưới các cường độ ánh sáng khác nhau",
+    "description": "Trong hồ thủy sinh gia đình, vào ban ngày khi bật đèn LED chuyên dụng, ta thấy những bọt khí nhỏ li ti liên tục nổi lên từ bề mặt lá cây rong đuôi chó. Khi tắt đèn, hiện tượng sủi bọt khí dừng lại. Đây là bằng chứng trực quan của quá trình quang hợp giải phóng khí oxygen.",
+    "grade": 7,
+    "topic": "Quang hợp ở thực vật - Trao đổi chất và chuyển hóa năng lượng",
+    "subject_area": "BIOLOGY",
+    "content_domain": "LIVING_THINGS",
+    "context_type": "FAMILY_SCHOOL",
+    "application_area": "SCIENTIFIC_RESEARCH",
+    "context_level": "C3",
+    "difficulty": "MEDIUM",
+    "stimulus": {
+      "type": "EXPERIMENT",
+      "title": "Thực nghiệm đo số bọt khí oxygen giải phóng từ cành rong đuôi chó theo khoảng cách nguồn sáng",
+      "leadParagraph": "Học sinh lớp 7 bố trí cành rong đuôi chó trong ống nghiệm chứa nước có hòa ít NaHCO3 (nguồn cung cấp CO2), chiếu sáng bằng bóng đèn ở các khoảng cách khác nhau và đếm số bọt khí nổi lên trong 1 phút:",
+      "dataHeaders": ["Khoảng cách từ đèn đến cành rong (cm)", "Cường độ ánh sáng tương đối (lux)", "Số bọt khí oxygen thoát ra trong 1 phút (bọt/phút)"],
+      "dataRows": [
+        ["10", "5000", "42"],
+        ["20", "2500", "28"],
+        ["30", "1100", "15"],
+        ["40", "600", "7"],
+        ["50", "300", "2"]
+      ],
+      "experimentSetup": {
+        "independentVariable": "Khoảng cách nguồn sáng (cường độ ánh sáng)",
+        "dependentVariable": "Số bọt khí thoát ra trong 1 phút (tốc độ quang hợp)",
+        "controlVariables": ["Nhiệt độ nước (25°C)", "Nồng độ NaHCO3 (0.2%)", "Cành rong cùng kích thước (8 cm)"]
+      }
+    },
+    "source": "NGSS (Next Generation Science Standards) Middle School & KHTN 7",
+    "source_url": "https://www.nextgenscience.org/",
+    "source_country": "Hoa Kỳ / Việt Nam",
+    "source_language": "vi",
+    "age_range": "12-13 tuổi",
+    "curriculum_alignment": "Nêu được các yếu tố ảnh hưởng đến quang hợp (ánh sáng, nước, CO2, nhiệt độ); phân tích được số liệu thí nghiệm quang hợp."
+  },
+  {
+    "phenomenon_id": "PHENOM_7_02",
+    "title": "Sử dụng vôi bột (CaO) để khử chua đất nông nghiệp phèn tại Đồng bằng sông Cửu Long",
+    "description": "Đất phèn ở nhiều vùng đất Nam Bộ có độ pH rất thấp (pH = 3.5 - 4.5) làm rễ cây lúa bị ngộ độc sắt, nhôm và còi cọc không phát triển được. Người nông dân rải vôi bột (vôi sống CaO hoặc vôi tôi Ca(OH)2) trước khi gieo sạ để tăng pH đất lên mức 6.0 - 6.5.",
+    "grade": 7,
+    "topic": "Phân tử - Đơn chất - Hợp chất - Oxide và Base",
+    "subject_area": "CHEMISTRY",
+    "content_domain": "SUBSTANCES",
+    "context_type": "LOCAL",
+    "application_area": "AGRICULTURE",
+    "context_level": "C2",
+    "difficulty": "MEDIUM",
+    "stimulus": {
+      "type": "TABLE",
+      "title": "Bảng đo pH đất tại ruộng lúa Huyện Tam Nông (Đồng Tháp) trước và sau khi bón vôi",
+      "leadParagraph": "Viện Lúa Đồng bằng sông Cửu Long khảo nghiệm bón vôi bột CaO với các liều lượng khác nhau trên đất phèn nặng:",
+      "dataHeaders": ["Lượng vôi bón (kg / 1000 m2)", "pH đất ban đầu", "pH đất sau 7 ngày", "Tình trạng rễ mạ non"],
+      "dataRows": [
+        ["0 (Đối chứng)", "3.8", "3.9", "Rễ đen, ngắn, thui đầu rễ"],
+        ["30", "3.8", "4.8", "Rễ ra chậm, chóp rễ vàng nhẹ"],
+        ["60", "3.8", "5.8", "Rễ trắng, dài, mạ phát triển tốt"],
+        ["90", "3.8", "6.5", "Rễ phân nhánh mạnh, cây đẻ nhánh sớm"]
+      ]
+    },
+    "source": "Viện Khoa học Kỹ thuật Nông nghiệp Miền Nam & KHTN 7-8",
+    "source_country": "Việt Nam",
+    "source_language": "vi",
+    "age_range": "12-13 tuổi",
+    "curriculum_alignment": "Giải thích được tác dụng của oxide bazơ (CaO) phản ứng với nước tạo bazơ làm trung hòa acid trong đất phèn."
+  },
+  {
+    "phenomenon_id": "PHENOM_7_03",
+    "title": "Tiếng vang và ô nhiễm tiếng ồn tại khu dân cư ven đường cao tốc",
+    "description": "Tại các khu đô thị ven đường cao tốc hoặc chân cầu vượt, người dân thường chịu tiếng ồn xe cộ từ 75 - 85 dB. Việc lắp đặt các tấm chắn tiếng ồn bằng vật liệu xốp bề mặt gồ ghề giúp giảm mức ồn trong nhà xuống dưới 55 dB.",
+    "grade": 7,
+    "topic": "Sóng âm - Phản xạ âm - Chống ô nhiễm tiếng ồn",
+    "subject_area": "PHYSICS",
+    "content_domain": "ENERGY",
+    "context_type": "LOCAL",
+    "application_area": "ENVIRONMENT",
+    "context_level": "C2",
+    "difficulty": "EASY",
+    "stimulus": {
+      "type": "TABLE",
+      "title": "Mức độ hấp thụ âm của các loại vật liệu xây dựng phổ biến",
+      "leadParagraph": "Một đội thanh tra môi trường đô thị đo mức cường độ âm truyền qua các bức vách vật liệu khác nhau khi nguồn phát âm có mức 80 dB:",
+      "dataHeaders": ["Vật liệu làm vách ngăn", "Bề mặt vật liệu", "Mức âm sau khi qua vách (dB)", "Đánh giá mức độ phản xạ/hấp thụ âm"],
+      "dataRows": [
+        ["Kính cường lực nhẵn bóng", "Cứng, phẳng, nhẵn", "68", "Phản xạ âm rất mạnh, hấp thụ kém"],
+        ["Gạch men ốp tường", "Cứng, bóng", "70", "Phản xạ âm mạnh"],
+        ["Vách thạch cao có đệm mút xốp", "Mềm, xốp, gồ ghề", "48", "Hấp thụ âm tốt, phản xạ âm rất kém"],
+        ["Rèm nhung dày", "Mềm, nhiều sợi xốp", "52", "Hấp thụ âm tốt"]
+      ]
+    },
+    "source": "QCVN 26:2010/BTNMT Quy chuẩn kỹ thuật quốc gia về tiếng ồn & KHTN 7",
+    "source_country": "Việt Nam",
+    "source_language": "vi",
+    "age_range": "12-13 tuổi",
+    "curriculum_alignment": "Nêu được vật phản xạ âm tốt (cứng, nhẵn) và vật phản xạ âm kém (mềm, xốp); đề xuất biện pháp chống ô nhiễm tiếng ồn."
+  },
+  {
+    "phenomenon_id": "PHENOM_8_01",
+    "title": "Xâm nhập mặn tại các cửa sông ven biển Bến Tre và Trà Vinh vào mùa khô",
+    "description": "Vào các tháng 2 đến tháng 4 hàng năm, lưu lượng nước ngọt từ thượng nguồn sông Mê Kông đổ về suy giảm kết hợp với triều cường đẩy nước mặn sâu vào đất liền tới 50 - 70 km, làm nồng độ muối trong nước sông tăng lên trên 4‰, đe dọa sinh hoạt và hàng vạn hécta sầu riêng, chôm chôm.",
+    "grade": 8,
+    "topic": "Nồng độ dung dịch - Độ tan của chất - Nước và biến đổi khí hậu",
+    "subject_area": "CHEMISTRY",
+    "content_domain": "SUBSTANCES",
+    "context_type": "LOCAL",
+    "application_area": "CLIMATE",
+    "context_level": "C3",
+    "difficulty": "HARD",
+    "stimulus": {
+      "type": "CHART",
+      "title": "Diễn biến độ mặn (gam muối / lít nước) tại trạm đo sông Hàm Luông theo các tháng mùa khô",
+      "leadParagraph": "Biểu đồ ghi nhận nồng độ muối hòa tan (g/L) đo được tại trạm Hàm Luông (Bến Tre) trong mùa khô năm 2024:",
+      "chartLabels": ["Tháng 11", "Tháng 12", "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5"],
+      "chartValues": [0.3, 0.8, 1.8, 4.2, 6.5, 5.1, 1.2],
+      "chartType": "line"
+    },
+    "source": "Trung tâm Dự báo Khí tượng Thủy văn Quốc gia & KHTN 8",
+    "source_url": "https://nchmf.gov.vn/",
+    "source_country": "Việt Nam",
+    "source_language": "vi",
+    "age_range": "13-14 tuổi",
+    "curriculum_alignment": "Tính toán nồng độ phần trăm, nồng độ mol của dung dịch; phân tích ảnh hưởng của biến đổi khí hậu đến độ mặn nguồn nước."
+  },
+  {
+    "phenomenon_id": "PHENOM_8_02",
+    "title": "Đo huyết áp và nhịp tim của học sinh trước và sau khi chạy cự ly 100m",
+    "description": "Khi nghỉ ngơi, nhịp tim học sinh trung bình khoảng 70 - 80 lần/phút. Tuy nhiên ngay sau khi chạy nước rút 100m, nhịp tim tăng vọt lên 130 - 150 lần/phút, hơi thở dồn dập và mồ hôi toát ra nhiều. Đây là cơ chế điều hòa thích nghi của hệ tuần hoàn và hô hấp nhằm cung cấp đủ khí oxygen và dưỡng chất cho cơ bắp hoạt động.",
+    "grade": 8,
+    "topic": "Hệ tuần hoàn và hệ hô hấp ở người - Cơ thể người",
+    "subject_area": "BIOLOGY",
+    "content_domain": "LIVING_THINGS",
+    "context_type": "PERSONAL",
+    "application_area": "HEALTH",
+    "context_level": "C2",
+    "difficulty": "MEDIUM",
+    "stimulus": {
+      "type": "TABLE",
+      "title": "Bảng theo dõi các chỉ số sinh lí của học sinh Nam (14 tuổi) trong tiết Thể dục",
+      "leadParagraph": "Nhân viên y tế học đường đo chỉ số của một nhóm nam sinh trước khi chạy, ngay sau khi kết thúc cự ly 100m và sau khi nghỉ ngơi 10 phút:",
+      "dataHeaders": ["Thời điểm đo", "Nhịp tim (lần/phút)", "Huyết áp tâm thu/tâm trương (mmHg)", "Nhịp thở (lần/phút)"],
+      "dataRows": [
+        ["Trước khi chạy (Nghỉ ngơi)", "75", "110/70", "16"],
+        ["Ngay sau khi chạy 100m", "142", "135/85", "36"],
+        ["Sau nghỉ ngơi 10 phút", "82", "115/72", "19"]
+      ]
+    },
+    "source": "Viện Y học Thể thao Việt Nam & KHTN 8 Kết nối tri thức",
+    "source_country": "Việt Nam",
+    "source_language": "vi",
+    "age_range": "13-14 tuổi",
+    "curriculum_alignment": "Trình bày được cấu tạo và chức năng của hệ tuần hoàn; giải thích được sự thay đổi nhịp tim và huyết áp khi vận động mạnh."
+  },
+  {
+    "phenomenon_id": "PHENOM_8_03",
+    "title": "Áp suất chất lỏng và sự an toàn khi lặn sâu dưới biển",
+    "description": "Thợ lặn khi lặn xuống độ sâu 20m dưới biển chịu một áp suất gấp khoảng 3 lần áp suất khí quyển trên mặt đất. Khi nổi lên mặt nước quá nhanh, khí nitrogen hòa tan trong máu tạo thành các bọt khí gây tắc mạch (hội chứng giảm áp decompression sickness).",
+    "grade": 8,
+    "topic": "Áp suất chất lỏng - Khối lượng riêng và Áp suất",
+    "subject_area": "PHYSICS",
+    "content_domain": "ENERGY",
+    "context_type": "GLOBAL",
+    "application_area": "SAFETY",
+    "context_level": "C2",
+    "difficulty": "MEDIUM",
+    "stimulus": {
+      "type": "TABLE",
+      "title": "Áp suất tác dụng lên thợ lặn ở các độ sâu khác nhau (Khối lượng riêng nước biển d = 10300 N/m3)",
+      "leadParagraph": "Biết áp suất khí quyển p0 = 101300 Pa, công thức tính áp suất tổng cộng ở độ sâu h là p = p0 + d.h:",
+      "dataHeaders": ["Độ sâu lặn h (m)", "Áp suất do cột nước gây ra (Pa)", "Áp suất tổng cộng (Pa)", "Tương đương (lần áp suất khí quyển)"],
+      "dataRows": [
+        ["0 (Mặt nước)", "0", "101 300", "1.0"],
+        ["10", "103 000", "204 300", "2.02"],
+        ["20", "206 000", "307 300", "3.03"],
+        ["30", "309 000", "410 300", "4.05"]
+      ]
+    },
+    "source": "NOAA Diving Manual & KHTN 8",
+    "source_url": "https://www.noaa.gov/",
+    "source_country": "Hoa Kỳ / Việt Nam",
+    "source_language": "vi",
+    "age_range": "13-14 tuổi",
+    "curriculum_alignment": "Vận dụng được công thức p = d.h để tính áp suất chất lỏng; giải thích được các quy tắc an toàn khi lặn biển."
+  },
+  {
+    "phenomenon_id": "PHENOM_9_01",
+    "title": "Hiệu suất chuyển hóa năng lượng mặt trời của tấm pin quang điện (Solar PV)",
+    "description": "Các mái nhà trường học lắp đặt hệ thống pin năng lượng mặt trời công suất 10 kWp để tiết kiệm điện. Tuy nhiên, hiệu suất chuyển đổi quang năng thành điện năng của pin silicon thương mại hiện nay chỉ đạt khoảng 18% - 22%, phần lớn năng lượng ánh sáng bị biến thành nhiệt làm nóng tấm pin.",
+    "grade": 9,
+    "topic": "Năng lượng tái tạo - Bảo toàn và chuyển hóa năng lượng - Điện năng",
+    "subject_area": "PHYSICS",
+    "content_domain": "ENERGY",
+    "context_type": "FAMILY_SCHOOL",
+    "application_area": "ENERGY",
+    "context_level": "C3",
+    "difficulty": "HARD",
+    "stimulus": {
+      "type": "TABLE",
+      "title": "Sản lượng điện phát ra của giàn pin mặt trời 10 kWp theo nhiệt độ bề mặt tấm pin",
+      "leadParagraph": "Kỹ sư đo kiểm công suất phát điện của giàn pin khi cường độ bức xạ mặt trời không đổi (1000 W/m2) nhưng nhiệt độ bề mặt tấm pin tăng lên trong ngày hè nắng gắt:",
+      "dataHeaders": ["Nhiệt độ bề mặt pin (°C)", "Công suất điện phát ra (kW)", "Hiệu suất chuyển đổi (%)", "Hao phí dưới dạng nhiệt (%)"],
+      "dataRows": [
+        ["25 (Nhiệt độ phòng thí nghiệm)", "10.0", "20.0", "80.0"],
+        ["40 (Sáng sớm nắng nhẹ)", "9.4", "18.8", "81.2"],
+        ["55 (Buổi trưa nắng gắt)", "8.8", "17.6", "82.4"],
+        ["70 (Mặt mái tôn hấp nhiệt)", "8.2", "16.4", "83.6"]
+      ]
+    },
+    "source": "Bộ Công Thương - EVN & KHTN 9 Kết nối tri thức",
+    "source_country": "Việt Nam",
+    "source_language": "vi",
+    "age_range": "14-15 tuổi",
+    "curriculum_alignment": "Nêu được khái niệm hiệu suất năng lượng; giải thích được sự hao phí năng lượng và đề xuất giải pháp tản nhiệt nâng cao hiệu suất pin mặt trời."
+  },
+  {
+    "phenomenon_id": "PHENOM_9_02",
+    "title": "Sự hình thành mưa acid do khí thải công nghiệp và tác động ăn mòn công trình đá vôi",
+    "description": "Tại các khu công nghiệp luyện kim và nhiệt điện than đốt nhiên liệu hóa thạch chứa lưu huỳnh, khí SO2 và NOx thoát ra phản ứng với hơi nước và oxygen trong khí quyển tạo thành dung dịch acid sunfuric và nitric, rơi xuống theo nước mưa (nước mưa có pH < 5.6 gọi là mưa acid). Mưa acid làm hòa tan các tượng đài đá vôi (CaCO3) và phá hủy rừng cây.",
+    "grade": 9,
+    "topic": "Acid - Oxide acid - Kim loại và phi kim - Vấn đề môi trường",
+    "subject_area": "CHEMISTRY",
+    "content_domain": "SUBSTANCES",
+    "context_type": "GLOBAL",
+    "application_area": "ENVIRONMENT",
+    "context_level": "C3",
+    "difficulty": "HARD",
+    "stimulus": {
+      "type": "EXPERIMENT",
+      "title": "Mô phỏng tác động ăn mòn của mưa acid lên mẩu đá vôi tự nhiên",
+      "leadParagraph": "Học sinh ngâm 3 mẩu đá vôi CaCO3 có khối lượng ban đầu chính xác 10.00 gam vào 3 cốc nước có độ acid khác nhau trong 48 giờ:",
+      "dataHeaders": ["Mẫu thí nghiệm", "Độ pH của dung dịch", "Khối lượng đá vôi sau 48h (gam)", "Hiện tượng quan sát được"],
+      "dataRows": [
+        ["Cốc 1 (Nước cất)", "7.0", "10.00", "Đá vôi không đổi, dung dịch trong suốt"],
+        ["Cốc 2 (Nước mưa bình thường)", "6.0", "9.94", "Bề mặt đá vôi hơi nhám, ít bọt khí nhỏ"],
+        ["Cốc 3 (Mưa acid mô phỏng)", "3.5", "8.25", "Sủi bọt khí liên tục, mẩu đá vôi bị rỗ sâu và hao hụt 17.5%"]
+      ],
+      "experimentSetup": {
+        "independentVariable": "Độ pH của dung dịch ngâm",
+        "dependentVariable": "Độ hao hụt khối lượng đá vôi CaCO3",
+        "controlVariables": ["Khối lượng đá ban đầu (10.00 g)", "Thể tích dung dịch (200 mL)", "Nhiệt độ (25°C)"]
+      }
+    },
+    "source": "USGS (United States Geological Survey) Acid Rain Educational Materials & KHTN 9",
+    "source_url": "https://www.usgs.gov/special-topics/water-science-school/science/acid-rain-and-water",
+    "source_country": "Hoa Kỳ / Việt Nam",
+    "source_language": "vi",
+    "age_range": "14-15 tuổi",
+    "curriculum_alignment": "Viết được PTHH giữa acid và đá vôi; phân tích được tác hại của mưa acid đối với môi trường và công trình kiến trúc."
+  },
+  {
+    "phenomenon_id": "PHENOM_9_03",
+    "title": "Di truyền nhóm máu hệ ABO ở người và ứng dụng trong truyền máu khẩn cấp",
+    "description": "Nhóm máu ABO ở người do 3 allele IA, IB, IO quy định (trong đó IA và IB đồng trội so với IO). Khi truyền máu không tương thích, kháng thể trong huyết tương người nhận sẽ gây ngưng kết hồng cầu người cho, dẫn đến tắc mạch và tử vong nhanh chóng.",
+    "grade": 9,
+    "topic": "Di truyền học Mendel - Di truyền ở người - Sinh học phân tử",
+    "subject_area": "BIOLOGY",
+    "content_domain": "LIVING_THINGS",
+    "context_type": "PERSONAL",
+    "application_area": "HEALTH",
+    "context_level": "C2",
+    "difficulty": "MEDIUM",
+    "stimulus": {
+      "type": "TABLE",
+      "title": "Bảng kháng nguyên trên hồng cầu và kháng thể trong huyết tương của 4 nhóm máu hệ ABO",
+      "leadParagraph": "Bác sĩ tại bệnh viện huyện thực hiện xét nghiệm định nhóm máu trước khi tiến hành truyền máu cấp cứu cho bệnh nhân gặp tai nạn giao thông:",
+      "dataHeaders": ["Nhóm máu", "Kháng nguyên trên màng hồng cầu", "Kháng thể trong huyết tương", "Có thể nhận hồng cầu từ nhóm máu nào?"],
+      "dataRows": [
+        ["Nhóm O", "Không có", "Có cả kháng thể Anti-A và Anti-B", "Chỉ nhận được từ nhóm O"],
+        ["Nhóm A", "Kháng nguyên A", "Kháng thể Anti-B", "Nhận được từ nhóm A và nhóm O"],
+        ["Nhóm B", "Kháng nguyên B", "Kháng thể Anti-A", "Nhận được từ nhóm B và nhóm O"],
+        ["Nhóm AB", "Có cả kháng nguyên A và B", "Không có kháng thể", "Nhận được từ O, A, B, AB (Người nhận phổ thông)"]
+      ]
+    },
+    "source": "Hội Huyết học - Truyền máu Việt Nam & KHTN 9",
+    "source_country": "Việt Nam",
+    "source_language": "vi",
+    "age_range": "14-15 tuổi",
+    "curriculum_alignment": "Hiểu được nguyên lí di truyền nhóm máu hệ ABO; giải thích được cơ sở khoa học của quy tắc truyền máu an toàn."
+  }
+]
