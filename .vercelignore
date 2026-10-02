@@ -1,0 +1,19 @@
+# Ignore large binary scans
+*.pdf
+*.doc
+*.docx
+!exports/qa-package/*.docx
+
+# Ignore extraction dumps
+extracted_*.txt
+*.tmp.*
+*.tmp
+dump_docx.ps1
+inspect_docx.ps1
+extract_*.ps1
+test_pdf.js
+
+# Ignore local envs
+.env.local
+.env*.local
+.git
