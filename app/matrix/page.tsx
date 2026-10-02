@@ -18,8 +18,14 @@ import {
   Copy,
   ChevronRight,
   ShieldAlert,
-  ArrowRight
+  ArrowRight,
+  FolderOpen,
+  FolderArchive,
+  Clock,
+  Eye,
+  X
 } from 'lucide-react';
+import { ClientStorage } from '@/lib/storage/client-storage';
 
 export default function MatrixPage() {
   return (
@@ -33,6 +39,7 @@ function MatrixContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialGrade = (Number(searchParams.get('grade')) || 6) as GradeLevel;
+  const initialMatrixId = searchParams.get('matrixId');
   const initialLessons = searchParams.get('lessons')
     ? decodeURIComponent(searchParams.get('lessons')!).split(',')
     : [];
@@ -51,6 +58,8 @@ function MatrixContent() {
   const [selectedLessonIds, setSelectedLessonIds] = useState<string[]>(initialLessons);
 
   const [matrix, setMatrix] = useState<AssessmentMatrix | null>(null);
+  const [savedMatrices, setSavedMatrices] = useState<AssessmentMatrix[]>([]);
+  const [showSavedModal, setShowSavedModal] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [saveSuccessMessage, setSaveSuccessMessage] = useState(false);
   const [explainModal, setExplainModal] = useState<MatrixCellExplain | null>(null);
@@ -60,6 +69,21 @@ function MatrixContent() {
   const [currentStep, setCurrentStep] = useState<number>(initialLessons.length > 0 ? 3 : 1);
 
   useEffect(() => {
+    // Load saved matrices from client storage
+    const localSaved = ClientStorage.getSavedMatrices();
+    setSavedMatrices(localSaved);
+
+    // If a specific matrixId was requested, load it
+    if (initialMatrixId) {
+      const found = localSaved.find(m => m.id === initialMatrixId);
+      if (found) {
+        setMatrix(found);
+        setGrade(found.grade);
+        setSemester(found.semester);
+        setCurrentStep(3);
+      }
+    }
+
     // Fetch initial templates & lessons
     fetch('/api/matrix/setup')
       .then(res => res.json())
@@ -69,6 +93,20 @@ function MatrixContent() {
           setSelectedTemplateId(data.templates[0].id);
         }
         setAllLessons(data.lessons || []);
+
+        // Also merge any server matrices if available
+        fetch('/api/matrix/list')
+          .then(r => r.json())
+          .then(serverData => {
+            if (serverData.matrices && serverData.matrices.length > 0) {
+              const merged = [...localSaved];
+              serverData.matrices.forEach((sm: AssessmentMatrix) => {
+                if (!merged.some(m => m.id === sm.id)) merged.push(sm);
+              });
+              setSavedMatrices(merged);
+            }
+          })
+          .catch(() => {});
 
         // If lessons were passed in URL, auto-generate initial matrix
         if (initialLessons.length > 0) {
@@ -142,22 +180,48 @@ function MatrixContent() {
   const handleSaveMatrix = async () => {
     if (!matrix) return;
     try {
-      const res = await fetch('/api/matrix/save', {
+      // 1. Save to ClientStorage immediately
+      ClientStorage.saveMatrix(matrix);
+      setSavedMatrices(ClientStorage.getSavedMatrices());
+      setSaveSuccessMessage(true);
+      setTimeout(() => setSaveSuccessMessage(false), 3000);
+
+      // 2. Also persist to server database if available
+      await fetch('/api/matrix/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ matrix })
-      });
-      if (res.ok) {
-        setSaveSuccessMessage(true);
-        setTimeout(() => setSaveSuccessMessage(false), 3000);
-      }
+      }).catch(err => console.warn('Server save warning (using client fallback):', err));
     } catch (e) {
       console.error('Error saving matrix', e);
     }
   };
 
+  const handleOpenSavedMatrix = (m: AssessmentMatrix) => {
+    setMatrix(m);
+    setGrade(m.grade);
+    setSemester(m.semester);
+    setCurrentStep(3);
+    setShowSavedModal(false);
+  };
+
+  const handleDeleteSavedMatrix = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (confirm('Bạn có chắc chắn muốn xóa ma trận này khỏi bộ nhớ?')) {
+      ClientStorage.deleteMatrix(id);
+      const updated = ClientStorage.getSavedMatrices();
+      setSavedMatrices(updated);
+      if (matrix && matrix.id === id) {
+        setMatrix(null);
+        setCurrentStep(1);
+      }
+    }
+  };
+
   const handleCreateSpecification = () => {
     if (!matrix) return;
+    // Ensure saved to client storage before navigating
+    ClientStorage.saveMatrix(matrix);
     router.push(`/specification?matrixId=${matrix.id}`);
   };
 
@@ -176,39 +240,49 @@ function MatrixContent() {
           </p>
         </div>
 
-        {/* Step Indicator */}
-        <div className="flex items-center space-x-2 bg-white px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold">
+        {/* Step Indicator & Saved Matrices Button */}
+        <div className="flex flex-wrap items-center gap-2.5">
           <button
-            onClick={() => setCurrentStep(1)}
-            className={`px-3 py-1 rounded-lg transition ${
-              currentStep === 1 ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-800'
-            }`}
+            onClick={() => setShowSavedModal(true)}
+            className="inline-flex items-center space-x-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-sm"
           >
-            1. Cấu hình đề
+            <FolderOpen className="h-4 w-4 text-amber-600" />
+            <span>Kho Ma trận đã lưu ({savedMatrices.length})</span>
           </button>
-          <ChevronRight className="h-3 w-3 text-slate-400" />
-          <button
-            onClick={() => setCurrentStep(2)}
-            className={`px-3 py-1 rounded-lg transition ${
-              currentStep === 2 ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            2. Phạm vi bài học ({selectedLessonIds.length})
-          </button>
-          <ChevronRight className="h-3 w-3 text-slate-400" />
-          <button
-            onClick={() => matrix && setCurrentStep(3)}
-            disabled={!matrix}
-            className={`px-3 py-1 rounded-lg transition ${
-              currentStep === 3
-                ? 'bg-blue-600 text-white'
-                : matrix
-                ? 'text-slate-500 hover:text-slate-800'
-                : 'text-slate-300 cursor-not-allowed'
-            }`}
-          >
-            3. Bảng ma trận
-          </button>
+
+          <div className="flex items-center space-x-1 bg-white px-2 py-1 rounded-xl border border-slate-200 text-xs font-bold">
+            <button
+              onClick={() => setCurrentStep(1)}
+              className={`px-3 py-1 rounded-lg transition ${
+                currentStep === 1 ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              1. Cấu hình
+            </button>
+            <ChevronRight className="h-3 w-3 text-slate-400" />
+            <button
+              onClick={() => setCurrentStep(2)}
+              className={`px-3 py-1 rounded-lg transition ${
+                currentStep === 2 ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              2. Phạm vi bài ({selectedLessonIds.length})
+            </button>
+            <ChevronRight className="h-3 w-3 text-slate-400" />
+            <button
+              onClick={() => matrix && setCurrentStep(3)}
+              disabled={!matrix}
+              className={`px-3 py-1 rounded-lg transition ${
+                currentStep === 3
+                  ? 'bg-blue-600 text-white'
+                  : matrix
+                  ? 'text-slate-500 hover:text-slate-800'
+                  : 'text-slate-300 cursor-not-allowed'
+              }`}
+            >
+              3. Bảng ma trận
+            </button>
+          </div>
         </div>
       </div>
 
@@ -218,6 +292,36 @@ function MatrixContent() {
           <h2 className="text-base font-bold text-slate-800 border-b border-slate-100 pb-3">
             Bước 1: Thiết lập Thông tin và Cấu trúc Đề kiểm tra
           </h2>
+
+          {savedMatrices.length > 0 && (
+            <div className="bg-amber-50/80 border border-amber-200 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="flex items-center space-x-2.5">
+                <FolderArchive className="h-5 w-5 text-amber-600 flex-shrink-0" />
+                <div>
+                  <p className="font-bold text-amber-900">
+                    Bạn có {savedMatrices.length} Ma trận đã lưu trong hệ thống
+                  </p>
+                  <p className="text-amber-700 text-[11px]">
+                    Ma trận gần nhất: <span className="font-bold">{savedMatrices[0].title}</span>
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2 flex-shrink-0">
+                <button
+                  onClick={() => handleOpenSavedMatrix(savedMatrices[0])}
+                  className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded-lg shadow-sm transition"
+                >
+                  Mở lại gần nhất
+                </button>
+                <button
+                  onClick={() => setShowSavedModal(true)}
+                  className="bg-white hover:bg-amber-100 text-amber-800 border border-amber-300 font-bold px-3 py-1.5 rounded-lg transition"
+                >
+                  Xem tất cả
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs font-medium">
             <div>
@@ -745,6 +849,111 @@ function MatrixContent() {
                 className="px-4 py-2 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl hover:bg-slate-200 transition"
               >
                 Đã hiểu
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SAVED MATRICES MODAL */}
+      {showSavedModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <div className="flex items-center space-x-2">
+                <FolderOpen className="h-5 w-5 text-amber-600" />
+                <h3 className="font-bold text-base text-slate-800">Kho Ma trận đã lưu ({savedMatrices.length})</h3>
+              </div>
+              <button
+                onClick={() => setShowSavedModal(false)}
+                className="text-slate-400 hover:text-slate-600 font-bold p-1 rounded-lg hover:bg-slate-100"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+              {savedMatrices.length === 0 ? (
+                <div className="text-center py-10 space-y-2">
+                  <FolderArchive className="h-10 w-10 text-slate-300 mx-auto" />
+                  <p className="text-xs font-bold text-slate-500">Chưa có ma trận nào được lưu.</p>
+                  <p className="text-[11px] text-slate-400">
+                    Hãy hoàn thành bước 1, 2 và bấm nút "Lưu Ma trận" ở bước 3 để lưu trữ.
+                  </p>
+                </div>
+              ) : (
+                savedMatrices.map((m, idx) => (
+                  <div
+                    key={m.id || idx}
+                    className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-blue-50/40 hover:border-blue-300 transition space-y-2"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h4 className="font-bold text-sm text-slate-800 line-clamp-1">{m.title}</h4>
+                        <div className="flex flex-wrap items-center gap-2 mt-1 text-[11px] text-slate-500 font-medium">
+                          <span className="bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded">
+                            KHTN {m.grade}
+                          </span>
+                          <span className="bg-slate-200 text-slate-700 px-2 py-0.5 rounded">
+                            {m.semester === 'HK1' ? 'Học kì I' : 'Học kì II'}
+                          </span>
+                          <span>• {m.totalQuestions} câu</span>
+                          <span>• {m.totalScore.toFixed(2)} điểm</span>
+                          <span>• {m.durationMinutes} phút</span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={(e) => handleDeleteSavedMatrix(m.id, e)}
+                        title="Xóa ma trận này"
+                        className="text-slate-400 hover:text-rose-600 p-1 rounded hover:bg-rose-50 transition flex-shrink-0"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    <div className="flex items-center justify-end space-x-2 pt-2 border-t border-slate-200/60">
+                      <button
+                        onClick={() => {
+                          ClientStorage.saveMatrix(m);
+                          router.push(`/export?matrixId=${m.id}`);
+                        }}
+                        className="inline-flex items-center space-x-1 text-slate-600 hover:text-slate-900 bg-white border border-slate-200 hover:bg-slate-100 text-xs font-bold px-3 py-1.5 rounded-lg transition"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                        <span>Xuất Word/Excel</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          ClientStorage.saveMatrix(m);
+                          router.push(`/specification?matrixId=${m.id}`);
+                        }}
+                        className="inline-flex items-center space-x-1 text-blue-700 hover:text-blue-900 bg-blue-50 border border-blue-200 hover:bg-blue-100 text-xs font-bold px-3 py-1.5 rounded-lg transition"
+                      >
+                        <FileSpreadsheet className="h-3.5 w-3.5" />
+                        <span>Sinh Bản đặc tả</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleOpenSavedMatrix(m)}
+                        className="inline-flex items-center space-x-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg shadow-sm transition"
+                      >
+                        <Eye className="h-3.5 w-3.5" />
+                        <span>Mở xem & Sửa</span>
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="pt-3 border-t border-slate-100 flex justify-end">
+              <button
+                onClick={() => setShowSavedModal(false)}
+                className="px-4 py-2 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl hover:bg-slate-200 transition"
+              >
+                Đóng
               </button>
             </div>
           </div>

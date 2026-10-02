@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { AssessmentMatrix } from '@/types/matrix';
 import { TestExam } from '@/types/test';
+import { ClientStorage } from '@/lib/storage/client-storage';
 import {
   Download,
   FileText,
@@ -11,37 +13,153 @@ import {
   Printer,
   Sparkles,
   ArrowDownToLine,
-  ShieldCheck
+  ShieldCheck,
+  AlertCircle
 } from 'lucide-react';
 
 export default function ExportPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-xs text-slate-500 font-bold">Đang tải Trung tâm Xuất bản...</div>}>
+      <ExportContent />
+    </Suspense>
+  );
+}
+
+function ExportContent() {
+  const searchParams = useSearchParams();
+  const initialMatrixId = searchParams.get('matrixId');
+
   const [matrices, setMatrices] = useState<AssessmentMatrix[]>([]);
   const [tests, setTests] = useState<TestExam[]>([]);
-  const [selectedMatrixId, setSelectedMatrixId] = useState<string>('');
+  const [selectedMatrixId, setSelectedMatrixId] = useState<string>(initialMatrixId || '');
   const [selectedTestId, setSelectedTestId] = useState<string>('');
+  const [downloadingType, setDownloadingType] = useState<string | null>(null);
 
   useEffect(() => {
+    // 1. Load from ClientStorage first
+    const clientMatrices = ClientStorage.getSavedMatrices();
+    const clientTests = ClientStorage.getSavedTests();
+
+    setMatrices(clientMatrices);
+    setTests(clientTests);
+
+    if (initialMatrixId && clientMatrices.some(m => m.id === initialMatrixId)) {
+      setSelectedMatrixId(initialMatrixId);
+    } else if (clientMatrices.length > 0) {
+      setSelectedMatrixId(clientMatrices[0].id);
+    }
+
+    if (clientTests.length > 0) {
+      setSelectedTestId(clientTests[0].id);
+    }
+
+    // 2. Fetch server matrices & tests and merge
     fetch('/api/matrix/list')
       .then(res => res.json())
       .then(data => {
-        setMatrices(data.matrices || []);
-        if (data.matrices && data.matrices.length > 0) {
-          setSelectedMatrixId(data.matrices[0].id);
+        if (data.matrices && Array.isArray(data.matrices)) {
+          const merged = [...clientMatrices];
+          data.matrices.forEach((sm: AssessmentMatrix) => {
+            if (!merged.some(m => m.id === sm.id)) merged.push(sm);
+          });
+          setMatrices(merged);
+          if (!selectedMatrixId && merged.length > 0) {
+            setSelectedMatrixId(merged[0].id);
+          }
         }
-      });
+      })
+      .catch(() => {});
 
     fetch('/api/tests')
       .then(res => res.json())
       .then(data => {
-        setTests(data.tests || []);
-        if (data.tests && data.tests.length > 0) {
-          setSelectedTestId(data.tests[0].id);
+        if (data.tests && Array.isArray(data.tests)) {
+          const merged = [...clientTests];
+          data.tests.forEach((st: TestExam) => {
+            if (!merged.some(t => t.id === st.id)) merged.push(st);
+          });
+          setTests(merged);
+          if (!selectedTestId && merged.length > 0) {
+            setSelectedTestId(merged[0].id);
+          }
         }
-      });
-  }, []);
+      })
+      .catch(() => {});
+  }, [initialMatrixId]);
 
-  const downloadFile = (url: string) => {
-    window.location.href = url;
+  const handleDownloadDocx = async (type: string, fallbackFileName: string) => {
+    setDownloadingType(type);
+    try {
+      const currentMatrix = matrices.find(m => m.id === selectedMatrixId) || ClientStorage.getMatrixById(selectedMatrixId);
+      const currentTest = tests.find(t => t.id === selectedTestId) || ClientStorage.getTestById(selectedTestId);
+
+      const res = await fetch('/api/export/docx', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type,
+          matrixId: selectedMatrixId,
+          testId: selectedTestId,
+          matrix: currentMatrix,
+          test: currentTest
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error(await res.text());
+      }
+
+      const blob = await res.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = fallbackFileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (e: any) {
+      console.error('Error downloading DOCX:', e);
+      alert('Lỗi tải file DOCX: ' + (e.message || 'Không thể tạo file'));
+    } finally {
+      setDownloadingType(null);
+    }
+  };
+
+  const handleDownloadXlsx = async (type: string, fallbackFileName: string) => {
+    setDownloadingType(type);
+    try {
+      const currentMatrix = matrices.find(m => m.id === selectedMatrixId) || ClientStorage.getMatrixById(selectedMatrixId);
+
+      const res = await fetch('/api/export/xlsx', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type,
+          matrixId: selectedMatrixId,
+          matrix: currentMatrix
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error(await res.text());
+      }
+
+      const blob = await res.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = fallbackFileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (e: any) {
+      console.error('Error downloading XLSX:', e);
+      alert('Lỗi tải file XLSX: ' + (e.message || 'Không thể tạo file'));
+    } finally {
+      setDownloadingType(null);
+    }
   };
 
   return (
@@ -61,7 +179,12 @@ export default function ExportPage() {
       {/* Selectors */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm text-xs font-medium">
         <div>
-          <label className="block text-slate-700 font-bold mb-1.5">Chọn Ma trận cần xuất file:</label>
+          <label className="block text-slate-700 font-bold mb-1.5 flex items-center justify-between">
+            <span>Chọn Ma trận cần xuất file:</span>
+            {matrices.length > 0 && (
+              <span className="text-[11px] font-normal text-emerald-600">Đã nạp {matrices.length} ma trận</span>
+            )}
+          </label>
           <select
             value={selectedMatrixId}
             onChange={e => setSelectedMatrixId(e.target.value)}
@@ -77,7 +200,12 @@ export default function ExportPage() {
         </div>
 
         <div>
-          <label className="block text-slate-700 font-bold mb-1.5">Chọn Đề thi cần xuất file:</label>
+          <label className="block text-slate-700 font-bold mb-1.5 flex items-center justify-between">
+            <span>Chọn Đề thi cần xuất file:</span>
+            {tests.length > 0 && (
+              <span className="text-[11px] font-normal text-blue-600">Đã nạp {tests.length} đề thi</span>
+            )}
+          </label>
           <select
             value={selectedTestId}
             onChange={e => setSelectedTestId(e.target.value)}
@@ -113,12 +241,12 @@ export default function ExportPage() {
               </p>
             </div>
             <button
-              onClick={() => downloadFile(`/api/export/docx?type=matrix&id=${selectedMatrixId}`)}
-              disabled={!selectedMatrixId}
+              onClick={() => handleDownloadDocx('matrix', '01_Ma_tran.docx')}
+              disabled={!selectedMatrixId || downloadingType === 'matrix'}
               className="inline-flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-2 rounded-xl shadow transition disabled:opacity-50"
             >
               <ArrowDownToLine className="h-4 w-4" />
-              <span>Tải file DOCX</span>
+              <span>{downloadingType === 'matrix' ? 'Đang xuất file...' : 'Tải file DOCX'}</span>
             </button>
           </div>
 
@@ -134,12 +262,12 @@ export default function ExportPage() {
               </p>
             </div>
             <button
-              onClick={() => downloadFile(`/api/export/docx?type=spec&id=${selectedMatrixId}`)}
-              disabled={!selectedMatrixId}
+              onClick={() => handleDownloadDocx('spec', '02_Ban_dac_ta.docx')}
+              disabled={!selectedMatrixId || downloadingType === 'spec'}
               className="inline-flex items-center justify-center space-x-2 bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs py-2 rounded-xl shadow transition disabled:opacity-50"
             >
               <ArrowDownToLine className="h-4 w-4" />
-              <span>Tải file DOCX</span>
+              <span>{downloadingType === 'spec' ? 'Đang xuất file...' : 'Tải file DOCX'}</span>
             </button>
           </div>
 
@@ -155,12 +283,12 @@ export default function ExportPage() {
               </p>
             </div>
             <button
-              onClick={() => downloadFile(`/api/export/docx?type=test&testId=${selectedTestId}`)}
-              disabled={!selectedTestId}
+              onClick={() => handleDownloadDocx('test', '03_De_kiem_tra.docx')}
+              disabled={!selectedTestId || downloadingType === 'test'}
               className="inline-flex items-center justify-center space-x-2 bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs py-2 rounded-xl shadow transition disabled:opacity-50"
             >
               <ArrowDownToLine className="h-4 w-4" />
-              <span>Tải file DOCX</span>
+              <span>{downloadingType === 'test' ? 'Đang xuất file...' : 'Tải file DOCX'}</span>
             </button>
           </div>
 
@@ -176,12 +304,12 @@ export default function ExportPage() {
               </p>
             </div>
             <button
-              onClick={() => downloadFile(`/api/export/docx?type=answer&testId=${selectedTestId}`)}
-              disabled={!selectedTestId}
+              onClick={() => handleDownloadDocx('answer', '04_Dap_an.docx')}
+              disabled={!selectedTestId || downloadingType === 'answer'}
               className="inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2 rounded-xl shadow transition disabled:opacity-50"
             >
               <ArrowDownToLine className="h-4 w-4" />
-              <span>Tải file DOCX</span>
+              <span>{downloadingType === 'answer' ? 'Đang xuất file...' : 'Tải file DOCX'}</span>
             </button>
           </div>
 
@@ -197,12 +325,12 @@ export default function ExportPage() {
               </p>
             </div>
             <button
-              onClick={() => downloadFile(`/api/export/docx?type=guide&testId=${selectedTestId}`)}
-              disabled={!selectedTestId}
+              onClick={() => handleDownloadDocx('guide', '05_Huong_dan_cham.docx')}
+              disabled={!selectedTestId || downloadingType === 'guide'}
               className="inline-flex items-center justify-center space-x-2 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs py-2 rounded-xl shadow transition disabled:opacity-50"
             >
               <ArrowDownToLine className="h-4 w-4" />
-              <span>Tải file DOCX</span>
+              <span>{downloadingType === 'guide' ? 'Đang xuất file...' : 'Tải file DOCX'}</span>
             </button>
           </div>
         </div>
@@ -225,8 +353,8 @@ export default function ExportPage() {
               <p className="text-xs text-slate-500">Đầy đủ công thức tính điểm và tỷ lệ tự động.</p>
             </div>
             <button
-              onClick={() => downloadFile(`/api/export/xlsx?type=matrix&id=${selectedMatrixId}`)}
-              disabled={!selectedMatrixId}
+              onClick={() => handleDownloadXlsx('matrix', 'Ma_tran.xlsx')}
+              disabled={!selectedMatrixId || downloadingType === 'matrix-xlsx'}
               className="border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold px-4 py-2 rounded-xl shadow-sm transition disabled:opacity-50"
             >
               Tải Excel
@@ -242,7 +370,7 @@ export default function ExportPage() {
               <p className="text-xs text-slate-500">Dữ liệu câu hỏi, đáp án, mức độ nhận thức và rationale.</p>
             </div>
             <button
-              onClick={() => downloadFile('/api/export/xlsx?type=questions')}
+              onClick={() => handleDownloadXlsx('questions', 'Ngan_hang_cau_hoi.xlsx')}
               className="border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold px-4 py-2 rounded-xl shadow-sm transition"
             >
               Tải Excel

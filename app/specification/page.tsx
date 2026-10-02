@@ -14,6 +14,7 @@ import {
   Sparkles,
   Info
 } from 'lucide-react';
+import { ClientStorage } from '@/lib/storage/client-storage';
 
 export default function SpecificationPage() {
   return (
@@ -34,11 +35,28 @@ function SpecificationContent() {
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   useEffect(() => {
-    fetch(`/api/specification?matrixId=${matrixId || ''}`)
+    const localMatrix = matrixId
+      ? ClientStorage.getMatrixById(matrixId)
+      : (ClientStorage.getSavedMatrices()[0] || null);
+
+    const fetchPromise = localMatrix
+      ? fetch('/api/specification', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ matrix: localMatrix, matrixId })
+        })
+      : fetch(`/api/specification?matrixId=${matrixId || ''}`);
+
+    fetchPromise
       .then(res => res.json())
       .then(data => {
-        setSpecification(data.specification || null);
-        setMatrix(data.matrix || null);
+        if (data.specification) {
+          setSpecification(data.specification);
+          setMatrix(data.matrix || localMatrix);
+          ClientStorage.saveSpecification(data.specification);
+        } else if (localMatrix) {
+          setMatrix(localMatrix);
+        }
       })
       .catch(err => console.error('Error fetching specification', err))
       .finally(() => setLoading(false));
@@ -51,23 +69,24 @@ function SpecificationContent() {
       ...updatedItems[index],
       description: newDesc
     };
-    setSpecification({ ...specification, items: updatedItems });
+    const updated = { ...specification, items: updatedItems };
+    setSpecification(updated);
+    ClientStorage.saveSpecification(updated);
   };
 
   const handleSave = async () => {
     if (!specification) return;
+    ClientStorage.saveSpecification(specification);
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 3000);
     try {
-      const res = await fetch('/api/specification/save', {
+      await fetch('/api/specification/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ specification })
       });
-      if (res.ok) {
-        setSaveSuccess(true);
-        setTimeout(() => setSaveSuccess(false), 3000);
-      }
     } catch (e) {
-      console.error('Error saving specification', e);
+      console.warn('Server save warning (using client fallback):', e);
     }
   };
 

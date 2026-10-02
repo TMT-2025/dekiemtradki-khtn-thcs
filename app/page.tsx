@@ -1,7 +1,8 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { localDb } from '@/database/local-db';
-import { CurriculumService } from '@/features/curriculum/curriculum-service';
+import { ClientStorage } from '@/lib/storage/client-storage';
 import {
   Grid3X3,
   FileText,
@@ -14,17 +15,58 @@ import {
 } from 'lucide-react';
 
 export default function DashboardPage() {
-  const grades = CurriculumService.getGrades();
-  const matrices = localDb.getMatrices();
-  const tests = localDb.getTests();
-  const questions = localDb.getQuestions();
+  const [matrixCount, setMatrixCount] = useState(0);
+  const [testCount, setTestCount] = useState(0);
+  const [questions, setQuestions] = useState<any[]>([]);
 
-  // Statistics by grade
+  useEffect(() => {
+    // 1. Read from ClientStorage
+    const clientMatrices = ClientStorage.getSavedMatrices();
+    const clientTests = ClientStorage.getSavedTests();
+    setMatrixCount(clientMatrices.length);
+    setTestCount(clientTests.length);
+
+    // 2. Fetch server counts & merge
+    fetch('/api/matrix/list')
+      .then(res => res.json())
+      .then(data => {
+        if (data.matrices && Array.isArray(data.matrices)) {
+          const merged = [...clientMatrices];
+          data.matrices.forEach((sm: any) => {
+            if (!merged.some(m => m.id === sm.id)) merged.push(sm);
+          });
+          setMatrixCount(merged.length);
+        }
+      })
+      .catch(() => {});
+
+    fetch('/api/tests')
+      .then(res => res.json())
+      .then(data => {
+        if (data.tests && Array.isArray(data.tests)) {
+          const merged = [...clientTests];
+          data.tests.forEach((st: any) => {
+            if (!merged.some(t => t.id === st.id)) merged.push(st);
+          });
+          setTestCount(merged.length);
+        }
+      })
+      .catch(() => {});
+
+    fetch('/api/questions')
+      .then(res => res.json())
+      .then(data => {
+        if (data.questions) setQuestions(data.questions);
+      })
+      .catch(() => {});
+  }, []);
+
+  // Statistics by grade (total 195 lessons KHTN 6-9)
   const gradeCounts = {
-    6: CurriculumService.getLessons(6).length,
-    7: CurriculumService.getLessons(7).length,
-    8: CurriculumService.getLessons(8).length,
-    9: CurriculumService.getLessons(9).length
+    6: 42,
+    7: 45,
+    8: 51,
+    9: 57
   };
 
   // Questions breakdown by subject area
@@ -79,7 +121,7 @@ export default function DashboardPage() {
           </div>
           <div>
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Ma trận đề</p>
-            <p className="text-2xl font-black text-slate-800">{matrices.length}</p>
+            <p className="text-2xl font-black text-slate-800">{matrixCount}</p>
             <p className="text-[11px] text-emerald-600 font-medium">Bảo đảm tổng 10.0đ</p>
           </div>
         </div>
@@ -90,7 +132,7 @@ export default function DashboardPage() {
           </div>
           <div>
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Đề kiểm tra</p>
-            <p className="text-2xl font-black text-slate-800">{tests.length}</p>
+            <p className="text-2xl font-black text-slate-800">{testCount}</p>
             <p className="text-[11px] text-blue-600 font-medium">Kèm đáp án & rubric</p>
           </div>
         </div>

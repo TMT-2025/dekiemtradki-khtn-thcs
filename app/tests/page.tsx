@@ -25,6 +25,7 @@ import {
   FlaskConical,
   Info
 } from 'lucide-react';
+import { ClientStorage } from '@/lib/storage/client-storage';
 
 export default function TestsPage() {
   return (
@@ -51,30 +52,54 @@ function TestsContent() {
   const [sourceModalQuestion, setSourceModalQuestion] = useState<QuestionItem | null>(null);
 
   useEffect(() => {
-    // Fetch existing tests
+    // 1. Load from ClientStorage
+    const clientMatrices = ClientStorage.getSavedMatrices();
+    const clientTests = ClientStorage.getSavedTests();
+
+    setMatrices(clientMatrices);
+    setTests(clientTests);
+    if (clientTests.length > 0) {
+      setActiveTest(clientTests[0]);
+    }
+
+    if (matrixId && clientMatrices.some(m => m.id === matrixId)) {
+      setSelectedMatrixId(matrixId);
+    } else if (clientMatrices.length > 0 && !selectedMatrixId) {
+      setSelectedMatrixId(clientMatrices[0].id);
+    }
+
+    // 2. Fetch server tests & matrices and merge
     fetch('/api/tests')
       .then(res => res.json())
       .then(data => {
-        setTests(data.tests || []);
-        if (data.tests && data.tests.length > 0) {
-          setActiveTest(data.tests[0]);
-        }
-      });
-
-    // Fetch matrices for test generation dropdown
-    fetch('/api/matrix/setup')
-      .then(res => res.json())
-      .then(data => {
-        // fetch existing matrices
-        fetch('/api/matrix/list')
-          .then(r => r.json())
-          .then(mData => {
-            setMatrices(mData.matrices || []);
-            if (mData.matrices && mData.matrices.length > 0 && !selectedMatrixId) {
-              setSelectedMatrixId(mData.matrices[0].id);
-            }
+        if (data.tests && Array.isArray(data.tests)) {
+          const merged = [...clientTests];
+          data.tests.forEach((st: TestExam) => {
+            if (!merged.some(t => t.id === st.id)) merged.push(st);
           });
-      });
+          setTests(merged);
+          if (!activeTest && merged.length > 0) {
+            setActiveTest(merged[0]);
+          }
+        }
+      })
+      .catch(() => {});
+
+    fetch('/api/matrix/list')
+      .then(r => r.json())
+      .then(mData => {
+        if (mData.matrices && Array.isArray(mData.matrices)) {
+          const merged = [...clientMatrices];
+          mData.matrices.forEach((sm: AssessmentMatrix) => {
+            if (!merged.some(m => m.id === sm.id)) merged.push(sm);
+          });
+          setMatrices(merged);
+          if (merged.length > 0 && !selectedMatrixId) {
+            setSelectedMatrixId(merged[0].id);
+          }
+        }
+      })
+      .catch(() => {});
   }, [matrixId]);
 
   const handleGenerateTest = async () => {
@@ -83,6 +108,9 @@ function TestsContent() {
       return;
     }
 
+    const currentMatrix = matrices.find(m => m.id === selectedMatrixId) || ClientStorage.getMatrixById(selectedMatrixId);
+    const currentSpec = ClientStorage.getSpecificationByMatrixId(selectedMatrixId);
+
     setIsGenerating(true);
     try {
       const res = await fetch('/api/tests/generate', {
@@ -90,12 +118,15 @@ function TestsContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           matrixId: selectedMatrixId,
+          matrix: currentMatrix,
+          specification: currentSpec,
           mode: generationMode,
           testCode: '101'
         })
       });
       const data = await res.json();
       if (data.test) {
+        ClientStorage.saveTest(data.test);
         setTests([data.test, ...tests]);
         setActiveTest(data.test);
       }
@@ -106,9 +137,38 @@ function TestsContent() {
     }
   };
 
-  const handleDownloadDocx = (type: 'test' | 'answer' | 'guide') => {
+  const handleDownloadDocx = async (type: 'test' | 'answer' | 'guide') => {
     if (!activeTest) return;
-    window.location.href = `/api/export/docx?type=${type}&testId=${activeTest.id}`;
+    try {
+      const res = await fetch('/api/export/docx', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type,
+          testId: activeTest.id,
+          test: activeTest
+        })
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const blob = await res.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      const fileNames = {
+        test: `03_De_kiem_tra_${activeTest.testCode || '101'}.docx`,
+        answer: `04_Dap_an_${activeTest.testCode || '101'}.docx`,
+        guide: `05_Huong_dan_cham_${activeTest.testCode || '101'}.docx`
+      };
+      a.download = fileNames[type];
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (e) {
+      console.error('Error downloading test docx', e);
+      // Fallback to GET
+      window.location.href = `/api/export/docx?type=${type}&testId=${activeTest.id}`;
+    }
   };
 
   return (

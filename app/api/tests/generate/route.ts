@@ -6,12 +6,12 @@ import { TestService } from '@/features/test-generator/test-service';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const matrix = localDb.getMatrixById(body.matrixId);
+    const matrix = body.matrix || (body.matrixId ? localDb.getMatrixById(body.matrixId) : undefined) || localDb.getMatrices()[0];
     if (!matrix) {
       return NextResponse.json({ error: 'Không tìm thấy ma trận' }, { status: 404 });
     }
 
-    let spec = localDb.getSpecificationByMatrixId(matrix.id);
+    let spec = body.specification || localDb.getSpecificationByMatrixId(matrix.id);
     if (!spec) {
       spec = SpecEngine.generateFromMatrix(matrix);
       localDb.saveSpecification(spec);
