@@ -7,7 +7,7 @@ export class GeminiProvider implements IAIProvider {
 
   constructor(apiKey?: string, model?: string) {
     this.apiKey = apiKey || process.env.GEMINI_API_KEY || '';
-    this.model = model || process.env.GEMINI_MODEL || 'gemini-3.5-flash';
+    this.model = model || process.env.GEMINI_MODEL || 'gemini-1.5-flash';
   }
 
   public async generateText(request: AICompletionRequest): Promise<AICompletionResponse> {
@@ -20,6 +20,7 @@ export class GeminiProvider implements IAIProvider {
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(3000),
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: request.systemPrompt }] },
           contents: [{ parts: [{ text: request.userPrompt }] }],

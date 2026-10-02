@@ -48,8 +48,19 @@ function TestsContent() {
   const [matrices, setMatrices] = useState<AssessmentMatrix[]>([]);
   const [selectedMatrixId, setSelectedMatrixId] = useState<string>(matrixId || '');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationStep, setGenerationStep] = useState<string>('');
   const [generationMode, setGenerationMode] = useState<'AUTO' | 'MANUAL'>('AUTO');
   const [sourceModalQuestion, setSourceModalQuestion] = useState<QuestionItem | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Current active matrix
+  const currentMatrix = matrices.find(m => m.id === selectedMatrixId) || (selectedMatrixId ? ClientStorage.getMatrixById(selectedMatrixId) : undefined);
+
+  // All tests that belong to the current active matrix
+  const matrixTests = tests.filter(t =>
+    t.matrixId === selectedMatrixId ||
+    (currentMatrix && t.grade === currentMatrix.grade && t.semester === currentMatrix.semester)
+  );
 
   useEffect(() => {
     // 1. Load from ClientStorage
@@ -58,9 +69,6 @@ function TestsContent() {
 
     setMatrices(clientMatrices);
     setTests(clientTests);
-    if (clientTests.length > 0) {
-      setActiveTest(clientTests[0]);
-    }
 
     if (matrixId && clientMatrices.some(m => m.id === matrixId)) {
       setSelectedMatrixId(matrixId);
@@ -78,9 +86,6 @@ function TestsContent() {
             if (!merged.some(t => t.id === st.id)) merged.push(st);
           });
           setTests(merged);
-          if (!activeTest && merged.length > 0) {
-            setActiveTest(merged[0]);
-          }
         }
       })
       .catch(() => {});
@@ -102,38 +107,83 @@ function TestsContent() {
       .catch(() => {});
   }, [matrixId]);
 
-  const handleGenerateTest = async () => {
+  // Synchronize activeTest with the selected matrix
+  useEffect(() => {
+    if (!selectedMatrixId) {
+      setActiveTest(tests.length > 0 ? tests[0] : null);
+      return;
+    }
+
+    if (matrixTests.length > 0) {
+      // If current activeTest does not belong to this matrix, switch to the first matching test
+      if (!activeTest || !matrixTests.some(t => t.id === activeTest.id)) {
+        setActiveTest(matrixTests[0]);
+      }
+    } else {
+      // No tests generated yet for this matrix
+      setActiveTest(null);
+    }
+  }, [selectedMatrixId, tests.length]);
+
+  const handleGenerateTest = async (overrideCode?: string) => {
     if (!selectedMatrixId) {
       alert('Vui lòng chọn một Ma trận đã duyệt để tạo đề.');
       return;
     }
 
-    const currentMatrix = matrices.find(m => m.id === selectedMatrixId) || ClientStorage.getMatrixById(selectedMatrixId);
+    const curMat = matrices.find(m => m.id === selectedMatrixId) || ClientStorage.getMatrixById(selectedMatrixId);
     const currentSpec = ClientStorage.getSpecificationByMatrixId(selectedMatrixId);
 
+    // Compute next test code if not overridden
+    let targetCode = overrideCode;
+    if (!targetCode) {
+      if (matrixTests.length === 0) {
+        targetCode = '101';
+      } else {
+        const codes = matrixTests
+          .map(t => parseInt(t.testCode || '100', 10))
+          .filter(n => !isNaN(n));
+        const maxCode = codes.length > 0 ? Math.max(...codes) : 100;
+        targetCode = String(maxCode + 1);
+      }
+    }
+
     setIsGenerating(true);
+    setGenerationStep('Đang trích xuất câu hỏi chuẩn YCCĐ & lắp ráp đề thi...');
     try {
       const res = await fetch('/api/tests/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           matrixId: selectedMatrixId,
-          matrix: currentMatrix,
+          matrix: curMat,
           specification: currentSpec,
           mode: generationMode,
-          testCode: '101'
+          testCode: targetCode
         })
       });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Lỗi máy chủ (${res.status})`);
+      }
+
       const data = await res.json();
       if (data.test) {
         ClientStorage.saveTest(data.test);
-        setTests([data.test, ...tests]);
+        setTests(prev => [data.test, ...prev.filter(t => t.id !== data.test.id)]);
         setActiveTest(data.test);
+        setToastMessage(`Đã tạo thành công Đề kiểm tra KHTN ${data.test.grade} — Mã đề: ${data.test.testCode}!`);
+        setTimeout(() => setToastMessage(null), 4000);
+      } else {
+        throw new Error('Dữ liệu trả về không hợp lệ');
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error('Error generating test', e);
+      alert(`Không thể tạo đề: ${e.message}`);
     } finally {
       setIsGenerating(false);
+      setGenerationStep('');
     }
   };
 
@@ -202,7 +252,7 @@ function TestsContent() {
           </select>
 
           <button
-            onClick={handleGenerateTest}
+            onClick={() => handleGenerateTest()}
             disabled={!selectedMatrixId || isGenerating}
             className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-blue-500/20 transition disabled:opacity-50"
           >
@@ -211,6 +261,59 @@ function TestsContent() {
           </button>
         </div>
       </div>
+
+      {/* Toast Alert */}
+      {toastMessage && (
+        <div className="p-3.5 bg-emerald-50 border border-emerald-300 text-emerald-800 rounded-xl text-xs font-bold flex items-center space-x-2 shadow-sm">
+          <CheckCircle2 className="h-4 w-4 text-emerald-600 flex-shrink-0" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
+      {/* Generating Progress State */}
+      {isGenerating && (
+        <div className="p-4 bg-blue-50 border border-blue-200 text-blue-900 rounded-2xl text-xs font-semibold flex items-center space-x-3 shadow-sm">
+          <div className="h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+          <div>
+            <p className="font-bold text-blue-800">Đang tiến hành tạo đề kiểm tra...</p>
+            <p className="text-[11px] text-blue-600">{generationStep || 'Hệ thống đang trích xuất câu hỏi chuẩn YCCĐ và phân bổ 4 phần chuẩn theo ma trận.'}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Test Codes Bar for current Matrix */}
+      {matrixTests.length > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="flex items-center space-x-2">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider pl-1">
+              Mã đề của ma trận này:
+            </span>
+            <div className="flex flex-wrap items-center gap-1.5">
+              {matrixTests.map(t => (
+                <button
+                  key={t.id}
+                  onClick={() => setActiveTest(t)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
+                    activeTest?.id === t.id
+                      ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-400'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  Mã đề: {t.testCode || '101'}
+                </button>
+              ))}
+            </div>
+          </div>
+          <button
+            onClick={() => handleGenerateTest()}
+            disabled={isGenerating}
+            className="inline-flex items-center space-x-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-xl border border-blue-200 transition disabled:opacity-50"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>+ Tạo thêm mã đề mới</span>
+          </button>
+        </div>
+      )}
 
       {activeTest ? (
         <div className="space-y-4">
@@ -533,8 +636,32 @@ function TestsContent() {
           )}
         </div>
       ) : (
-        <div className="p-12 text-center text-xs text-slate-500">
-          Chưa có đề kiểm tra nào. Chọn một Ma trận ở trên và bấm "TỰ ĐỘNG TẠO ĐỀ THI".
+        <div className="p-12 max-w-2xl mx-auto text-center space-y-5 bg-white rounded-3xl border border-slate-200 shadow-sm">
+          <div className="h-16 w-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto">
+            <FileText className="h-8 w-8" />
+          </div>
+          <div>
+            <h2 className="text-lg font-black text-slate-800">
+              {currentMatrix ? `Chưa có đề kiểm tra cho: ${currentMatrix.title}` : 'Chưa có đề kiểm tra'}
+            </h2>
+            <p className="text-xs text-slate-500 mt-1 max-w-lg mx-auto leading-relaxed">
+              {currentMatrix
+                ? `Ma trận đã được cấu hình chuẩn GDPT 2018 với ${currentMatrix.durationMinutes} phút làm bài (${currentMatrix.rows.reduce((s, r) => s + (r.periods || 0), 0)} tiết). Nhấn nút dưới đây để hệ thống tự động trích xuất các câu hỏi chuẩn YCCĐ, phân bổ 4 phần (MCQ, Đúng/Sai, Trả lời ngắn, Tự luận) và tự động sinh Đáp án & Biểu điểm chi tiết.`
+                : 'Vui lòng chọn một Ma trận từ danh sách trên để xem hoặc tạo đề thi.'}
+            </p>
+          </div>
+          {currentMatrix && (
+            <div>
+              <button
+                onClick={() => handleGenerateTest()}
+                disabled={isGenerating}
+                className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs px-6 py-3.5 rounded-2xl shadow-lg shadow-blue-500/25 transition disabled:opacity-50"
+              >
+                <Sparkles className="h-4 w-4 text-amber-300" />
+                <span>{isGenerating ? 'ĐANG TẠO ĐỀ...' : 'TỰ ĐỘNG TẠO ĐỀ THI CHO MA TRẬN NÀY'}</span>
+              </button>
+            </div>
+          )}
         </div>
       )}
 

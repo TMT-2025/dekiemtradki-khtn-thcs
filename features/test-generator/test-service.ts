@@ -29,25 +29,32 @@ export class TestService {
   }> {
     const matching = QuestionMatchingEngine.matchAll(input.specification.items);
     
-    // Auto-generate missing questions if in AUTO mode
+    // Auto-generate missing questions concurrently if in AUTO mode
     if (input.mode === 'AUTO' && !matching.isComplete) {
+      const generationTasks: Promise<void>[] = [];
       for (const res of matching.results) {
         const countToGenerate = res.missingCount;
         for (let i = 0; i < countToGenerate; i++) {
-          try {
-            const generated = await QuestionService.generateQuestionWithAI({
-              lessonId: res.specItem.lessonId,
-              cognitiveLevel: res.specItem.cognitiveLevel,
-              questionType: res.specItem.questionType,
-              score: res.specItem.score / res.specItem.questionCount
-            });
-            res.matchedQuestions.push(generated);
-            res.missingCount--;
-          } catch (e) {
-            console.warn('Could not auto-generate missing question:', e);
-          }
+          generationTasks.push((async () => {
+            try {
+              const generated = await QuestionService.generateQuestionWithAI({
+                lessonId: res.specItem.lessonId,
+                cognitiveLevel: res.specItem.cognitiveLevel,
+                questionType: res.specItem.questionType,
+                score: res.specItem.score / res.specItem.questionCount
+              });
+              res.matchedQuestions.push(generated);
+              res.missingCount--;
+            } catch (e) {
+              console.warn('Could not auto-generate missing question:', e);
+            }
+          })());
         }
+      }
+      await Promise.all(generationTasks);
+      for (const res of matching.results) {
         if (res.missingCount === 0) res.status = 'FULL';
+        else if (res.matchedQuestions.length > 0) res.status = 'PARTIAL';
       }
     }
 
