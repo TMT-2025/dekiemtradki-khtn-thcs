@@ -22,7 +22,8 @@ export async function POST(req: Request) {
       specification: spec,
       testCode: body.testCode || '101',
       mode: body.mode || 'AUTO',
-      generationSource: body.generationSource
+      generationSource: body.generationSource || 'HYBRID',
+      aiRatio: body.aiRatio !== undefined ? body.aiRatio : (body.generationSource === 'BANK' ? 0.0 : (body.generationSource === 'AI' ? 1.0 : 0.5))
     });
 
     return NextResponse.json({

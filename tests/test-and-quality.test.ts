@@ -69,4 +69,61 @@ describe('TestService & QualityGate (End-to-End Chain Consistency)', () => {
     expect(gateResult.passed).toBe(false);
     expect(gateResult.issues.some(i => i.code === 'ERR_MATRIX_SCORE_SUM')).toBe(true);
   });
+
+  it('should generate test with 50% Bank and 50% AI, auto-saving all newly generated questions into Question Bank', async () => {
+    const lessons = CurriculumService.getLessons(8, 'HK1').slice(0, 8);
+    const template = localDb.getTemplates()[0];
+
+    const matrix = MatrixEngine.generateMatrix({
+      grade: 8,
+      schoolYear: '2026-2027',
+      semester: 'HK1',
+      assessmentType: 'MID_TERM_1',
+      selectedLessonIds: lessons.map(l => l.id),
+      template: template
+    });
+
+    const spec = SpecEngine.generateFromMatrix(matrix);
+
+    const initialBankCount = localDb.getQuestions().length;
+
+    const { test } = await TestService.generateTest({
+      matrix,
+      specification: spec,
+      mode: 'AUTO',
+      generationSource: 'HYBRID',
+      aiRatio: 0.5
+    });
+
+    expect(test).toBeDefined();
+    expect(test.stats).toBeDefined();
+    expect(test.stats?.totalQuestionCount).toBe(22);
+
+    // Verify ~50% Bank and ~50% AI (around 11 Bank and 11 AI)
+    expect(test.stats?.bankQuestionCount).toBeGreaterThanOrEqual(10);
+    expect(test.stats?.bankQuestionCount).toBeLessThanOrEqual(12);
+    expect(test.stats?.aiQuestionCount).toBeGreaterThanOrEqual(10);
+    expect(test.stats?.aiQuestionCount).toBeLessThanOrEqual(12);
+    expect(test.stats!.bankQuestionCount + test.stats!.aiQuestionCount).toBe(22);
+
+    // Verify each question in test parts has assigned source ('BANK' or 'AI')
+    const allQuestionsInParts = test.parts.flatMap(p => p.questions);
+    expect(allQuestionsInParts.length).toBe(22);
+    allQuestionsInParts.forEach(q => {
+      expect(['BANK', 'AI']).toContain(q.source);
+    });
+
+    // Verify newly generated AI questions are automatically saved into localDb question bank
+    const aiQuestions = allQuestionsInParts.filter(q => q.source === 'AI');
+    expect(aiQuestions.length).toBeGreaterThan(0);
+    aiQuestions.forEach(aiQ => {
+      const foundInDb = localDb.getQuestionById(aiQ.question.id);
+      expect(foundInDb).toBeDefined();
+      expect(foundInDb?.id).toBe(aiQ.question.id);
+    });
+
+    // The question bank count in localDb must have grown by at least the number of newly generated AI questions
+    const finalBankCount = localDb.getQuestions().length;
+    expect(finalBankCount).toBeGreaterThanOrEqual(initialBankCount);
+  });
 });

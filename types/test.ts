@@ -6,6 +6,7 @@ export interface TestPartQuestion {
   globalOrderIndex: number;
   question: QuestionItem;
   assignedScore: number;
+  source?: 'BANK' | 'AI';
 }
 
 export interface TestPart {
@@ -63,6 +64,12 @@ export interface TestExam {
   answerKeys: AnswerKeyItem[];
   scoringGuide: ScoringGuide;
   contextReport?: ContextReport;
+  stats?: {
+    bankQuestionCount: number;
+    aiQuestionCount: number;
+    totalQuestionCount: number;
+    aiRatio: number;
+  };
   createdAt: string;
   updatedAt: string;
 }

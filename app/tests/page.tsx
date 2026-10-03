@@ -51,7 +51,7 @@ function TestsContent() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationStep, setGenerationStep] = useState<string>('');
   const [generationMode, setGenerationMode] = useState<'AUTO' | 'MANUAL'>('AUTO');
-  const [generationSource, setGenerationSource] = useState<'BANK' | 'AI'>('AI');
+  const [generationSource, setGenerationSource] = useState<'BANK' | 'AI' | 'HYBRID'>('HYBRID');
   const [regeneratingQuestionOrder, setRegeneratingQuestionOrder] = useState<number | null>(null);
   const [sourceModalQuestion, setSourceModalQuestion] = useState<QuestionItem | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -128,7 +128,7 @@ function TestsContent() {
     }
   }, [selectedMatrixId, tests.length]);
 
-  const handleGenerateTest = async (overrideCode?: string, sourceMode: 'BANK' | 'AI' = generationSource) => {
+  const handleGenerateTest = async (overrideCode?: string, sourceMode: 'BANK' | 'AI' | 'HYBRID' = generationSource) => {
     if (!selectedMatrixId) {
       alert('Vui lòng chọn một Ma trận đã duyệt để tạo đề.');
       return;
@@ -152,9 +152,14 @@ function TestsContent() {
     }
 
     setIsGenerating(true);
-    setGenerationStep(sourceMode === 'AI' 
-      ? 'Mô hình AI đang tạo mới 22 câu hỏi bám sát ma trận và chuẩn chương trình...' 
-      : 'Đang trích xuất câu hỏi chuẩn YCCĐ từ ngân hàng & lắp ráp đề thi...');
+    let stepMsg = 'Hệ thống đang trích xuất 50% câu hỏi từ Ngân hàng & AI đang tạo mới 50% câu hỏi bám sát ma trận (Tự động lưu vào Ngân hàng)...';
+    if (sourceMode === 'AI') {
+      stepMsg = 'Mô hình AI đang tạo mới 100% câu hỏi bám sát ma trận và chuẩn chương trình khối lớp (Tự động lưu vào Ngân hàng)...';
+    } else if (sourceMode === 'BANK') {
+      stepMsg = 'Đang trích xuất câu hỏi chuẩn YCCĐ từ ngân hàng & lắp ráp đề thi...';
+    }
+    setGenerationStep(stepMsg);
+
     try {
       const res = await fetch('/api/tests/generate', {
         method: 'POST',
@@ -165,6 +170,7 @@ function TestsContent() {
           specification: currentSpec,
           mode: sourceMode === 'AI' ? 'AI' : generationMode,
           generationSource: sourceMode,
+          aiRatio: sourceMode === 'HYBRID' ? 0.5 : (sourceMode === 'AI' ? 1.0 : 0.0),
           testCode: targetCode
         })
       });
@@ -179,8 +185,13 @@ function TestsContent() {
         ClientStorage.saveTest(data.test);
         setTests(prev => [data.test, ...prev.filter(t => t.id !== data.test.id)]);
         setActiveTest(data.test);
-        setToastMessage(`Đã tạo thành công Đề kiểm tra KHTN ${data.test.grade} — Mã đề: ${data.test.testCode} (${sourceMode === 'AI' ? 'AI Sinh mới 100%' : 'Ngân hàng'})!`);
-        setTimeout(() => setToastMessage(null), 4000);
+        const sourceLabel = sourceMode === 'HYBRID'
+          ? '⚡ Chuẩn 50% Ngân hàng + 50% AI — Đã tự động lưu câu hỏi mới vào Ngân hàng'
+          : sourceMode === 'AI'
+          ? '🤖 100% AI Sinh mới — Đã lưu vào Ngân hàng'
+          : '📚 100% Ngân hàng';
+        setToastMessage(`Đã tạo thành công Đề kiểm tra KHTN ${data.test.grade} — Mã đề: ${data.test.testCode} (${sourceLabel})!`);
+        setTimeout(() => setToastMessage(null), 5000);
       } else {
         throw new Error('Dữ liệu trả về không hợp lệ');
       }
@@ -296,28 +307,38 @@ function TestsContent() {
           <div className="flex flex-col">
             <div className="flex flex-wrap items-center gap-2">
               <button
+                onClick={() => handleGenerateTest(undefined, 'HYBRID')}
+                disabled={!selectedMatrixId || isGenerating}
+                title="Tạo đề chuẩn tỉ lệ 50% Ngân hàng + 50% AI sinh mới. Tự động lưu tất cả câu hỏi AI mới vào Ngân hàng câu hỏi"
+                className="inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-black text-xs px-4 py-2.5 rounded-xl shadow-lg shadow-teal-500/25 transition disabled:opacity-50 ring-2 ring-emerald-400/50"
+              >
+                <Sparkles className="h-4 w-4 text-amber-300 animate-pulse" />
+                <span>{isGenerating ? 'ĐANG TẠO ĐỀ...' : '⚡ TẠO ĐỀ CHUẨN (50% NGÂN HÀNG + 50% AI)'}</span>
+              </button>
+
+              <button
                 onClick={() => handleGenerateTest(undefined, 'BANK')}
                 disabled={!selectedMatrixId || isGenerating}
-                title="Lắp ráp đề thi từ Ngân hàng câu hỏi (ngẫu nhiên hóa)"
+                title="Lắp ráp đề thi 100% từ Ngân hàng câu hỏi hiện có"
                 className="inline-flex items-center justify-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 transition disabled:opacity-50"
               >
                 <FileText className="h-4 w-4 text-slate-500" />
-                <span>Lấy từ Ngân hàng</span>
+                <span>100% Ngân hàng</span>
               </button>
 
               <button
                 onClick={() => handleGenerateTest(undefined, 'AI')}
                 disabled={!selectedMatrixId || isGenerating}
-                title="Mô hình AI tự động tạo mới 100% câu hỏi theo ma trận và chuẩn chương trình khối lớp"
-                className="inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 hover:from-violet-500 hover:to-blue-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-500/20 transition disabled:opacity-50"
+                title="Mô hình AI tự động tạo mới 100% câu hỏi theo ma trận và tự động lưu vào Ngân hàng câu hỏi"
+                className="inline-flex items-center justify-center space-x-1.5 bg-slate-100 hover:bg-violet-50 text-violet-700 font-bold text-xs px-3.5 py-2.5 rounded-xl border border-violet-300 transition disabled:opacity-50"
               >
-                <Sparkles className="h-4 w-4 text-amber-300" />
-                <span>{isGenerating ? 'ĐANG TẠO ĐỀ...' : '🤖 AI SINH MỚI THEO MA TRẬN'}</span>
+                <Sparkles className="h-4 w-4 text-violet-600" />
+                <span>100% AI sinh mới</span>
               </button>
             </div>
             <span className="text-[10px] text-slate-500 mt-1 flex items-center gap-1 font-medium">
               <CheckCircle2 className="h-3 w-3 text-emerald-500 inline shrink-0" />
-              Khớp 100% Ma trận & chuẩn GDPT 2018 theo khối lớp tương ứng
+              <span>Tỉ lệ 50/50 chuẩn • Tự động lưu câu hỏi mới vào Ngân hàng • Chuẩn GDPT 2018 THCS</span>
             </span>
           </div>
         </div>
@@ -378,6 +399,62 @@ function TestsContent() {
 
       {activeTest ? (
         <div className="space-y-4">
+          {/* 50% Bank / 50% AI Question Composition Banner */}
+          {(() => {
+            const allQ = activeTest.parts.flatMap(p => p.questions);
+            const aiCount = activeTest.stats?.aiQuestionCount ?? allQ.filter(q => q.source === 'AI' || q.question.author === 'AI_SYNTHESIZER' || q.question.tags?.includes('AI_GENERATED')).length;
+            const bankCount = activeTest.stats?.bankQuestionCount ?? (allQ.length - aiCount);
+            const totalCount = allQ.length || 22;
+            const aiPercent = Math.round((aiCount / totalCount) * 100);
+            const bankPercent = 100 - aiPercent;
+
+            return (
+              <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-4 rounded-2xl border border-indigo-500/30 shadow-md">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center space-x-3">
+                    <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-teal-400 p-0.5 flex items-center justify-center shrink-0">
+                      <div className="h-full w-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                        <Sparkles className="h-4 w-4 text-teal-300" />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <h4 className="font-black text-xs tracking-wider uppercase text-indigo-200">
+                          Cơ chế tạo đề kết hợp: 50% Ngân hàng câu hỏi + 50% AI Sinh mới
+                        </h4>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                          <CheckCircle2 className="h-2.5 w-2.5 text-emerald-400" />
+                          Đã tự động lưu vào Ngân hàng
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-300 mt-0.5">
+                        Tất cả câu hỏi do AI tạo mới đều bám sát chuẩn kiến thức GDPT 2018 và đã được tự động lưu vào Ngân hàng câu hỏi của hệ thống.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2.5 text-xs">
+                    <div className="bg-slate-800/90 px-3.5 py-1.5 rounded-xl border border-slate-700/80 flex items-center space-x-2">
+                      <FileText className="h-3.5 w-3.5 text-sky-400" />
+                      <div>
+                        <span className="text-[10px] text-slate-400 block font-medium">Ngân hàng ({bankPercent}%)</span>
+                        <span className="font-black text-sky-300 text-xs">{bankCount} câu hỏi</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-slate-800/90 px-3.5 py-1.5 rounded-xl border border-slate-700/80 flex items-center space-x-2">
+                      <Sparkles className="h-3.5 w-3.5 text-purple-400" />
+                      <div>
+                        <span className="text-[10px] text-slate-400 block font-medium">AI sinh mới ({aiPercent}%)</span>
+                        <span className="font-black text-purple-300 text-xs">{aiCount} câu hỏi</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
           {/* CONTEXT-BASED SCIENCE ASSESSMENT REPORT (Section LXXV) */}
           {activeTest.contextReport && (
             <div className="bg-gradient-to-r from-cyan-950 via-slate-900 to-indigo-950 text-white p-5 rounded-2xl border border-cyan-800/50 shadow-md">
@@ -531,6 +608,19 @@ function TestsContent() {
                           {/* Question Action Toolbar: Metadata & AI Regenerate */}
                           <div className="flex flex-wrap items-center justify-between gap-1.5 text-[11px] pb-1.5 border-b border-slate-100">
                             <div className="flex flex-wrap items-center gap-1.5">
+                              {/* Question Source Badge: Bank vs AI */}
+                              {tq.source === 'AI' || tq.question.author === 'AI_SYNTHESIZER' || tq.question.tags?.includes('AI_GENERATED') ? (
+                                <span className="px-2 py-0.5 rounded-full font-bold bg-purple-100 text-purple-800 border border-purple-200 flex items-center space-x-1" title="Câu hỏi do AI tạo mới bám sát ma trận và chuẩn GDPT 2018 (Đã tự động lưu vào Ngân hàng)">
+                                  <Sparkles className="h-3 w-3 text-purple-600" />
+                                  <span>AI sinh mới (Đã lưu NH)</span>
+                                </span>
+                              ) : (
+                                <span className="px-2 py-0.5 rounded-full font-bold bg-sky-100 text-sky-800 border border-sky-200 flex items-center space-x-1" title="Câu hỏi chọn lọc từ Ngân hàng câu hỏi chuẩn">
+                                  <FileText className="h-3 w-3 text-sky-600" />
+                                  <span>Ngân hàng câu hỏi</span>
+                                </span>
+                              )}
+
                               {tq.question.contextMetadata?.hasContext && (
                                 <span className="px-2 py-0.5 rounded-full font-bold bg-cyan-100 text-cyan-800 flex items-center space-x-1">
                                   <FlaskConical className="h-3 w-3" />
@@ -747,17 +837,17 @@ function TestsContent() {
             </p>
           </div>
           {currentMatrix && (
-            <div>
+            <div className="space-y-3">
               <button
-                onClick={() => handleGenerateTest()}
+                onClick={() => handleGenerateTest(undefined, 'HYBRID')}
                 disabled={isGenerating}
-                className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs px-6 py-3.5 rounded-2xl shadow-lg shadow-blue-500/25 transition disabled:opacity-50"
+                className="inline-flex items-center space-x-2 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-bold text-xs px-6 py-3.5 rounded-2xl shadow-lg shadow-teal-500/25 transition disabled:opacity-50 ring-2 ring-emerald-400/50"
               >
-                <Sparkles className="h-4 w-4 text-amber-300" />
-                <span>{isGenerating ? 'ĐANG LẮP RÁP ĐỀ THEO MA TRẬN...' : 'TẠO ĐỀ THEO MA TRẬN NÀY'}</span>
+                <Sparkles className="h-4 w-4 text-amber-300 animate-pulse" />
+                <span>{isGenerating ? 'ĐANG TẠO ĐỀ...' : '⚡ TẠO ĐỀ CHUẨN (50% NGÂN HÀNG + 50% AI)'}</span>
               </button>
-              <p className="text-[11px] text-slate-500 mt-2 font-medium">
-                Đề thi sẽ được lắp ráp chính xác theo cấu trúc điểm, YCCĐ và 4 phần chuẩn của Ma trận đã chọn.
+              <p className="text-[11px] text-slate-500 max-w-md mx-auto font-medium">
+                Đề thi sẽ được lắp ráp với tỉ lệ 50% câu hỏi từ Ngân hàng và 50% câu hỏi AI sinh mới bám sát ma trận. Tất cả câu hỏi mới sẽ tự động được lưu vào Ngân hàng câu hỏi.
               </p>
             </div>
           )}

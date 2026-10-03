@@ -16,6 +16,7 @@ export interface GenerateTestInput {
   departmentName?: string;
   mode: 'AUTO' | 'MANUAL' | 'AI';
   generationSource?: 'BANK' | 'AI' | 'HYBRID';
+  aiRatio?: number; // e.g. 0.5 (defaults to 0.5 when HYBRID)
   manualQuestionSelections?: Record<string, string[]>; // specItemId -> questionIds
 }
 
@@ -32,10 +33,20 @@ export class TestService {
     hasMissingQuestions: boolean;
   }> {
     const isAIMode = input.mode === 'AI' || input.generationSource === 'AI';
-    const matching = QuestionMatchingEngine.matchAll(input.specification.items, { forceAI: isAIMode });
+    const isBankMode = input.generationSource === 'BANK';
+    const isHybridMode = input.generationSource === 'HYBRID' || input.aiRatio !== undefined;
+
+    const targetAiRatio = isAIMode ? 1.0 : (isBankMode ? 0.0 : (input.aiRatio ?? (isHybridMode ? 0.5 : undefined)));
+
+    const matching = QuestionMatchingEngine.matchAll(input.specification.items, {
+      forceAI: isAIMode,
+      aiRatio: isHybridMode ? targetAiRatio : undefined
+    });
     
-    // Auto-generate missing questions concurrently if in AUTO or AI mode
-    if ((input.mode === 'AUTO' || isAIMode) && !matching.isComplete) {
+    const newlyGeneratedIds = new Set<string>();
+
+    // Auto-generate missing questions concurrently if in AUTO, HYBRID or AI mode
+    if ((input.mode === 'AUTO' || isAIMode || isHybridMode) && !matching.isComplete) {
       const generationTasks: Promise<void>[] = [];
       for (const res of matching.results) {
         const countToGenerate = res.missingCount;
@@ -48,8 +59,13 @@ export class TestService {
                 questionType: res.specItem.questionType,
                 score: res.specItem.score / res.specItem.questionCount
               });
+              generated.author = 'AI_SYNTHESIZER';
+              if (!generated.tags) generated.tags = [];
+              if (!generated.tags.includes('AI_GENERATED')) generated.tags.push('AI_GENERATED');
+
               // Continuously save freshly generated AI questions into bank
               localDb.saveQuestion(generated);
+              newlyGeneratedIds.add(generated.id);
               res.matchedQuestions.push(generated);
               res.missingCount--;
             } catch (e) {
@@ -154,33 +170,40 @@ export class TestService {
     matching.results.forEach(res => {
       res.matchedQuestions.forEach(q => {
         const itemScore = res.specItem.score / res.specItem.questionCount;
+        const isAI = newlyGeneratedIds.has(q.id) || q.author === 'AI_SYNTHESIZER' || q.tags?.includes('AI_GENERATED');
+        const questionSource: 'BANK' | 'AI' = isAI ? 'AI' : 'BANK';
+
         if (q.questionType === 'MCQ') {
           mcqQuestions.push({
             orderInPart: 0,
             globalOrderIndex: 0,
             question: q,
-            assignedScore: itemScore
+            assignedScore: itemScore,
+            source: questionSource
           });
         } else if (q.questionType === 'TRUE_FALSE') {
           tfQuestions.push({
             orderInPart: 0,
             globalOrderIndex: 0,
             question: q,
-            assignedScore: itemScore
+            assignedScore: itemScore,
+            source: questionSource
           });
         } else if (q.questionType === 'SHORT_ANSWER') {
           saQuestions.push({
             orderInPart: 0,
             globalOrderIndex: 0,
             question: q,
-            assignedScore: itemScore
+            assignedScore: itemScore,
+            source: questionSource
           });
         } else {
           esQuestions.push({
             orderInPart: 0,
             globalOrderIndex: 0,
             question: q,
-            assignedScore: itemScore
+            assignedScore: itemScore,
+            source: questionSource
           });
         }
       });
@@ -315,6 +338,12 @@ export class TestService {
         ]
       },
       contextReport,
+      stats: {
+        bankQuestionCount: allQuestions.length - newlyGeneratedIds.size,
+        aiQuestionCount: newlyGeneratedIds.size,
+        totalQuestionCount: allQuestions.length,
+        aiRatio: allQuestions.length > 0 ? Math.round((newlyGeneratedIds.size / allQuestions.length) * 100) / 100 : 0.5
+      },
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -393,13 +422,18 @@ export class TestService {
         generated.contextMetadata = undefined;
       }
 
+      generated.author = 'AI_SYNTHESIZER';
+      if (!generated.tags) generated.tags = [];
+      if (!generated.tags.includes('AI_GENERATED')) generated.tags.push('AI_GENERATED');
+
       // Save to localDb bank
       localDb.saveQuestion(generated);
 
       // Replace in test
       targetPart.questions[targetQIndex] = {
         ...oldTestQ,
-        question: generated
+        question: generated,
+        source: 'AI'
       };
 
       // Update answer keys
