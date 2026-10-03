@@ -238,7 +238,7 @@ export class TestService {
         partNumber: 3,
         partName: 'PHẦN III. Câu trắc nghiệm trả lời ngắn',
         questionType: 'SHORT_ANSWER' as const,
-        instructions: `Thí sinh trả lời từ câu ${saStart} đến câu ${saEnd}. Điền câu trả lời ngắn gọn (thuật ngữ, tên chất hoặc kết quả tính toán). Mỗi câu trả lời đúng được 0.5 điểm.`,
+        instructions: `Thí sinh trả lời từ câu ${saStart} đến câu ${saEnd}. Viết con số kết quả tính toán (kèm đơn vị đo quy định) vào ô trả lời. Mỗi câu trả lời đúng được 0.5 điểm.`,
         totalScore: Math.round(saQuestions.reduce((s, q) => s + q.assignedScore, 0) * 100) / 100,
         questions: saQuestions
       },

@@ -135,9 +135,11 @@ Quy tắc bắt buộc:
 - correct_answer: Chuỗi JSON ví dụ "{\\"a\\": true, \\"b\\": false, \\"c\\": true, \\"d\\": false}".`;
       } else if (questionType === 'SHORT_ANSWER') {
         formatGuide = `- Dạng câu hỏi: Trả lời ngắn (SHORT_ANSWER) - PHẦN III.
-- question_text: BẮT BUỘC là bài toán định lượng có cho đầy đủ số liệu đầu vào cụ thể hoặc yêu cầu xác định một thuật ngữ/đại lượng khoa học duy nhất.
+- YÊU CẦU BẮT BUỘC: LÀ BÀI TOÁN TÍNH TOÁN ĐỊNH LƯỢNG / CON SỐ THỰC TẾ GẮN LIỀN VỚI TÌNH HUỐNG THỰC TIỄN HOẶC THÍ NGHIỆM ĐO ĐẠC. Tuyệt đối không hỏi câu hỏi lý thuyết hay nêu tên thuật ngữ.
+- question_text: Nêu tình huống thực tế hoặc bài toán thực hành có số liệu đầu vào cụ thể, yêu cầu học sinh tính toán ra kết quả số kèm đơn vị đo rõ ràng. Cuối câu hỏi BẮT BUỘC ghi rõ đơn vị cần tính (ví dụ: "...bằng bao nhiêu m/s?", "...bằng bao nhiêu gam?", "...bằng bao nhiêu kilôoát giờ (kWh)?").
 - options: null hoặc mảng rỗng.
-- correct_answer: Đáp án số cụ thể (ví dụ "40", "12.5", "250") hoặc thuật ngữ khoa học ngắn gọn duy nhất.`;
+- correct_answer: Con số cụ thể (hoặc số kèm đơn vị chuẩn, ví dụ "45 cm³", "12,5 km/h", "250 kg", "15 kWh").
+- explanation: Nêu rõ công thức áp dụng, các bước thay số và kết quả tính toán có đơn vị đo.`;
       } else {
         formatGuide = `- Dạng câu hỏi: Tự luận (ESSAY) - PHẦN IV.
 - question_text: Câu hỏi tự luận gồm 2 phần rõ ràng (1. Giải thích hiện tượng/cơ chế khoa học; 2. Vận dụng tính toán hoặc liên hệ thực tiễn sản xuất, đời sống).
@@ -191,6 +193,17 @@ ${formatGuide}
       const qWords = (result.question_text || '').trim().split(/\s+/).filter(Boolean).length;
       if (qWords < 25) {
         result.question_text = `Trong một dự án nghiên cứu thực hành môn Khoa học tự nhiên ${lesson.grade}, học sinh tiến hành quan sát thực nghiệm và thu thập số liệu chi tiết về chủ đề "${lesson.title}". Căn cứ vào các kết quả đo đạc và hiện tượng quan sát được, xét tính Đúng hoặc Sai cho mỗi nhận định sau:\n${result.question_text}`;
+      }
+    }
+
+    // Đảm bảo câu hỏi trả lời ngắn (Phần III) là bài toán định lượng/con số thực tế có số liệu và đơn vị
+    if (questionType === 'SHORT_ANSWER') {
+      const ans = (result.correct_answer || '').toString();
+      if (!/\d/.test(ans)) {
+        const synth = this.synthesizeGroundedQuestion(lesson, reqText, cognitiveLevel, questionType, score);
+        result.question_text = synth.question_text;
+        result.correct_answer = synth.correct_answer;
+        result.explanation = synth.explanation;
       }
     }
 

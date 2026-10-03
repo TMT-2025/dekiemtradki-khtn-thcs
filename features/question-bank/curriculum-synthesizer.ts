@@ -448,6 +448,7 @@ export class CurriculumSynthesizer {
 
   // ==========================================
   // 3. PHẦN III: TRẢ LỜI NGẮN (SHORT_ANSWER)
+  // BẮT BUỘC: Bài toán định lượng/con số thực tế gắn liền với tình huống thực tiễn, tính ra số kèm đơn vị cụ thể
   // ==========================================
   private static synthesizeShortAnswer(
     lesson: any,
@@ -455,110 +456,155 @@ export class CurriculumSynthesizer {
     level: CognitiveLevel,
     combined: string
   ): SynthesizedQuestionResult {
-    // Đo độ dài & Khối lượng (KHTN 6)
-    if (combined.includes('chiều dài') || combined.includes('đo') || combined.includes('thước')) {
+    // 1. Đo lường thể tích & bình chia độ (KHTN 6)
+    if (combined.includes('thể tích') || combined.includes('bình chia độ') || combined.includes('đo thể tích')) {
       return {
-        question_text: 'Đơn vị chuẩn đo độ dài trong hệ đo lường quốc tế (SI) là gì? (Viết tên đầy đủ hoặc kí hiệu)',
-        correct_answer: 'mét (m)',
-        explanation: 'Đơn vị đo độ dài hợp pháp trong hệ SI của nước ta là mét, kí hiệu là m.',
-        rationale: 'Kiểm tra khả năng ghi nhớ đơn vị đo lường chuẩn.',
-        difficulty: 'EASY'
-      };
-    }
-
-    if (combined.includes('khối lượng') || combined.includes('cân')) {
-      return {
-        question_text: 'Một vật có khối lượng 450 g. Hãy đổi khối lượng này sang đơn vị kilôgam (kg):',
-        correct_answer: '0,45 kg (hoặc 0.45)',
-        explanation: 'Ta có 1 kg = 1000 g, do đó 450 g = 450 / 1000 = 0,45 kg.',
-        rationale: 'Rèn luyện kĩ năng đổi đơn vị đo lường cơ bản.',
-        difficulty: 'EASY'
-      };
-    }
-
-    // Tế bào (KHTN 6)
-    if (combined.includes('tế bào') || combined.includes('quang hợp')) {
-      return {
-        question_text: 'Bào quan chứa chất diệp lục và là nơi diễn ra quá trình quang hợp ở tế bào thực vật có tên gọi là gì?',
-        correct_answer: 'Lục lạp',
-        explanation: 'Lục lạp là bào quan đặc trưng của tế bào thực vật chứa sắc tố quang hợp.',
-        rationale: 'Nhớ chính xác tên gọi bào quan tế bào.',
+        question_text: 'Một nhóm học sinh làm thí nghiệm xác định thể tích của một hòn sỏi bằng bình chia độ: Ban đầu thể tích nước trong bình chia độ là 120 mL. Sau khi thả chìm hoàn toàn hòn sỏi vào bình, mực nước dâng lên đến vạch 165 mL. Thể tích của hòn sỏi đó bằng bao nhiêu centimét khối (cm³)? (Biết 1 mL = 1 cm³)',
+        correct_answer: '45 cm³ (hoặc 45)',
+        explanation: 'Thể tích của hòn sỏi bằng lượng nước dâng lên trong bình: V = 165 - 120 = 45 mL = 45 cm³.',
+        rationale: 'Rèn luyện kĩ năng xử lí số liệu thực nghiệm đo thể tích vật rắn không thấm nước.',
         difficulty: 'MEDIUM'
       };
     }
 
-    // Oxygen và Không khí (KHTN 6)
-    if (combined.includes('oxygen') || combined.includes('không khí')) {
+    // 2. Khối lượng & Đổi đơn vị thực tế (KHTN 6)
+    if (combined.includes('khối lượng') || combined.includes('cân') || combined.includes('đo lường')) {
       return {
-        question_text: 'Chất khí nào chiếm khoảng 21% thể tích không khí và có vai trò duy trì sự sống, sự cháy?',
-        correct_answer: 'Oxygen (hoặc khí oxi)',
-        explanation: 'Khí oxygen chiếm khoảng 21% thể tích không khí, cần thiết cho hô hấp và duy trì sự cháy.',
-        rationale: 'Kiểm tra thành phần khí trong không khí.',
+        question_text: 'Một xe tải chở hàng có khối lượng bản thân xe là 3,5 tấn. Người ta bốc lên xe 30 bao xi măng, mỗi bao có khối lượng ghi trên bao bì là 50 kg. Tổng khối lượng của cả xe và toàn bộ số xi măng trên xe bằng bao nhiêu tấn?',
+        correct_answer: '5,0 tấn (hoặc 5)',
+        explanation: 'Đổi 30 bao xi măng: 30 . 50 = 1500 kg = 1,5 tấn. Tổng khối lượng = 3,5 + 1,5 = 5,0 tấn.',
+        rationale: 'Vận dụng kĩ năng tính toán và đổi đơn vị đo khối lượng trong đời sống thực tế.',
         difficulty: 'EASY'
       };
     }
 
-    // Tốc độ (KHTN 7)
-    if (combined.includes('tốc độ') || combined.includes('vận tốc')) {
+    // 3. Tế bào - Độ phóng đại hiển vi (KHTN 6)
+    if (combined.includes('tế bào') || combined.includes('kính hiển vi') || combined.includes('kính lúp')) {
       return {
-        question_text: 'Một người đi xe đạp chuyển động đều trên quãng đường dài 24 km trong thời gian 2 giờ. Tốc độ của người đó bằng bao nhiêu km/h?',
-        correct_answer: '12 km/h (hoặc 12)',
-        explanation: 'Áp dụng công thức v = s / t = 24 / 2 = 12 km/h.',
-        rationale: 'Tính toán tốc độ chuyển động từ số liệu bài cho.',
+        question_text: 'Một học sinh quan sát mẫu tế bào biểu bì vảy hành tím dưới kính hiển vi quang học. Học sinh lựa chọn thị kính có độ phóng đại 10x và vật kính có độ phóng đại 40x. Hình ảnh của tế bào quan sát được qua kính hiển vi được phóng đại lên bao nhiêu lần so với kích thước thật?',
+        correct_answer: '400 lần (hoặc 400)',
+        explanation: 'Độ phóng đại của kính hiển vi quang học: ĐPĐ = Thị kính . Vật kính = 10 . 40 = 400 lần.',
+        rationale: 'Kiểm tra kĩ năng tính toán độ phóng đại khi sử dụng kính hiển vi trong thực hành tế bào.',
+        difficulty: 'EASY'
+      };
+    }
+
+    // 4. Hỗn hợp & Nồng độ phần trăm muối ăn (KHTN 6, 8)
+    if (combined.includes('hỗn hợp') || combined.includes('dung dịch') || combined.includes('muối') || combined.includes('nồng độ')) {
+      return {
+        question_text: 'Để pha chế một chai nước muối sinh lí súc họng trong gia đình, bạn Nam hòa tan hoàn toàn 9 gam muối ăn (NaCl) vào nước cất để thu được vừa đúng 1000 gam dung dịch nước muối. Nồng độ phần trăm (C%) của dung dịch nước muối sinh lí thu được bằng bao nhiêu phần trăm (%)?',
+        correct_answer: '0,9% (hoặc 0.9)',
+        explanation: 'Nồng độ phần trăm C% = (m_ct / m_dd) . 100% = (9 / 1000) . 100% = 0,9%.',
+        rationale: 'Tính toán nồng độ phần trăm dung dịch gắn với ứng dụng y tế và đời sống sinh hoạt gia đình.',
         difficulty: 'MEDIUM'
       };
     }
 
-    // Nguyên tử (KHTN 7)
-    if (combined.includes('nguyên tử') || combined.includes('proton') || combined.includes('electron')) {
+    // 5. Tốc độ chuyển động thực tế (KHTN 7)
+    if (combined.includes('tốc độ') || combined.includes('quãng đường') || combined.includes('thời gian') || combined.includes('chuyển động')) {
       return {
-        question_text: 'Trong nguyên tử, loại hạt nào mang điện tích dương và nằm trong hạt nhân?',
-        correct_answer: 'Proton (hoặc hạt proton)',
-        explanation: 'Hạt proton mang điện tích dương nằm trong hạt nhân nguyên tử.',
-        rationale: 'Ghi nhớ cấu tạo hạt nhân nguyên tử.',
-        difficulty: 'EASY'
-      };
-    }
-
-    // Acid - Base - pH (KHTN 8)
-    if (combined.includes('acid') || combined.includes('base') || combined.includes('ph')) {
-      return {
-        question_text: 'Một dung dịch có giá trị pH = 3. Dung dịch này có môi trường gì (acid, base hay trung tính)?',
-        correct_answer: 'Môi trường acid (hoặc acid)',
-        explanation: 'Dung dịch có pH < 7 là môi trường acid, pH = 7 là trung tính, pH > 7 là base.',
-        rationale: 'Xác định môi trường dung dịch qua chỉ số thang đo pH.',
-        difficulty: 'EASY'
-      };
-    }
-
-    // Định luật bảo toàn khối lượng (KHTN 8)
-    if (combined.includes('phản ứng') || combined.includes('bảo toàn')) {
-      return {
-        question_text: 'Nung 10 gam đá vôi (calcium carbonate, CaCO3) thu được 5,6 gam vôi sống (CaO) và khí carbon dioxide (CO2). Khối lượng khí CO2 thoát ra là bao nhiêu gam?',
-        correct_answer: '4,4 g (hoặc 4.4)',
-        explanation: 'Theo ĐL bảo toàn khối lượng: m(CO2) = m(CaCO3) - m(CaO) = 10 - 5,6 = 4,4 gam.',
-        rationale: 'Áp dụng định luật bảo toàn khối lượng tính toán định lượng.',
+        question_text: 'Một người đi xe máy từ nhà đến cơ quan trên đoạn đường thẳng dài 12 km hết thời gian 20 phút (tức 1/3 giờ). Tốc độ chuyển động trung bình của người đi xe máy đó bằng bao nhiêu kilômét trên giờ (km/h)?',
+        correct_answer: '36 km/h (hoặc 36)',
+        explanation: 'Đổi 20 phút = 1/3 giờ. Tốc độ v = s / t = 12 / (1/3) = 36 km/h.',
+        rationale: 'Tính toán tốc độ chuyển động trong giao thông đường bộ từ số liệu thực tế.',
         difficulty: 'MEDIUM'
       };
     }
 
-    // Kim loại & Cơ năng (KHTN 9)
-    if (combined.includes('kim loại') || combined.includes('dãy hoạt động')) {
+    // 6. Tần số dao động âm thanh (KHTN 7)
+    if (combined.includes('âm') || combined.includes('tần số') || combined.includes('dao động') || combined.includes('tiếng ồn')) {
       return {
-        question_text: 'Kim loại nào có tính dẫn điện và dẫn nhiệt tốt nhất trong tất cả các kim loại?',
-        correct_answer: 'Bạc (hoặc Ag)',
-        explanation: 'Bạc (Ag) là kim loại có độ dẫn điện và dẫn nhiệt tốt nhất, tiếp theo là đồng (Cu).',
-        rationale: 'Nhớ tính chất vật lí đặc trưng của kim loại.',
+        question_text: 'Một lá thép mỏng đàn hồi được kẹp chặt một đầu vào cạnh bàn. Khi gảy mạnh đầu tự do, trong thời gian 4 giây lá thép thực hiện được 180 dao động toàn phần và phát ra âm thanh. Tần số dao động của lá thép đó bằng bao nhiêu héc (Hz)?',
+        correct_answer: '45 Hz (hoặc 45)',
+        explanation: 'Tần số dao động f = Số dao động / Thời gian = 180 / 4 = 45 Hz.',
+        rationale: 'Tính toán tần số dao động âm thanh từ thực nghiệm.',
         difficulty: 'EASY'
       };
     }
 
-    // Quantitative Calculation Fallback (có số liệu rõ ràng)
+    // 7. Cấu tạo hạt trong nguyên tử (KHTN 7)
+    if (combined.includes('nguyên tử') || combined.includes('proton') || combined.includes('electron') || combined.includes('bảng tuần hoàn')) {
+      return {
+        question_text: 'Nguyên tử của nguyên tố sodium (natri, Na) có tổng số hạt cơ bản (gồm proton, neutron và electron) là 34 hạt. Biết trong nguyên tử sodium, số hạt mang điện nhiều hơn số hạt không mang điện là 10 hạt. Số hạt proton trong hạt nhân của nguyên tử sodium bằng bao nhiêu hạt?',
+        correct_answer: '11 hạt (hoặc 11)',
+        explanation: 'Vì số p = số e nên số hạt mang điện là 2p. Ta có hệ: 2p + n = 34 và 2p - n = 10 => 4p = 44 => p = 11 hạt.',
+        rationale: 'Vận dụng mối liên hệ giữa các loại hạt cơ bản trong cấu tạo nguyên tử.',
+        difficulty: 'MEDIUM'
+      };
+    }
+
+    // 8. Định luật bảo toàn khối lượng (KHTN 8)
+    if (combined.includes('phản ứng') || combined.includes('khối lượng') || combined.includes('bảo toàn') || combined.includes('nung')) {
+      return {
+        question_text: 'Thực hiện nung 50 gam đá vôi (calcium carbonate, CaCO3) trong lò nung thủ công. Sau phản ứng hoàn toàn, người ta thu được 28 gam vôi sống (calcium oxide, CaO) và khí carbon dioxide (CO2) bay ra ngoài. Khối lượng khí CO2 đã thoát ra khí quyển bằng bao nhiêu gam?',
+        correct_answer: '22 g (hoặc 22)',
+        explanation: 'Theo định luật bảo toàn khối lượng: m(CaCO3) = m(CaO) + m(CO2) => m(CO2) = 50 - 28 = 22 gam.',
+        rationale: 'Áp dụng định luật bảo toàn khối lượng để tính toán khối lượng sản phẩm khí trong thực tế.',
+        difficulty: 'MEDIUM'
+      };
+    }
+
+    // 9. Khối lượng riêng & Trọng lượng (KHTN 8)
+    if (combined.includes('khối lượng riêng') || combined.includes('áp suất') || combined.includes('lực')) {
+      return {
+        question_text: 'Một khối sắt đặc dùng trong chế tạo máy móc có thể tích 0,04 m³. Biết khối lượng riêng của sắt là 7800 kg/m³. Lấy g = 10 m/s². Khối lượng của khối sắt đặc đó bằng bao nhiêu kilôgam (kg)?',
+        correct_answer: '312 kg (hoặc 312)',
+        explanation: 'Áp dụng công thức tính khối lượng: m = D . V = 7800 . 0,04 = 312 kg.',
+        rationale: 'Tính toán khối lượng vật thể dựa vào khối lượng riêng và thể tích thực tế.',
+        difficulty: 'MEDIUM'
+      };
+    }
+
+    // 10. Lực đẩy Archimedes trong chất lỏng (KHTN 8)
+    if (combined.includes('archimedes') || combined.includes('nổi') || combined.includes('chìm') || combined.includes('chất lỏng')) {
+      return {
+        question_text: 'Một chiếc phao cứu sinh có thể tích phần chìm ngập hoàn toàn trong nước biển là 0,03 m³. Biết trọng lượng riêng của nước biển là 10300 N/m³. Độ lớn lực đẩy Archimedes của nước biển tác dụng lên chiếc phao cứu sinh bằng bao nhiêu Newton (N)?',
+        correct_answer: '309 N (hoặc 309)',
+        explanation: 'Độ lớn lực đẩy Archimedes: FA = d . V = 10300 . 0,03 = 309 N.',
+        rationale: 'Tính toán lực đẩy chất lỏng tác dụng lên vật thể trong tình huống cứu sinh thực tế.',
+        difficulty: 'MEDIUM'
+      };
+    }
+
+    // 11. Định luật Ohm & Mạch điện (KHTN 9)
+    if (combined.includes('điện') || combined.includes('ohm') || combined.includes('điện trở') || combined.includes('hiệu điện thế')) {
+      return {
+        question_text: 'Một chiếc ấm đun nước siêu tốc có điện trở dây đốt nhiệt R = 40 Ω được cắm vào nguồn điện sinh hoạt có hiệu điện thế U = 220 V. Cường độ dòng điện chạy qua dây đốt nhiệt của ấm khi hoạt động bình thường bằng bao nhiêu Ampe (A)?',
+        correct_answer: '5,5 A (hoặc 5.5)',
+        explanation: 'Áp dụng định luật Ohm: I = U / R = 220 / 40 = 5,5 A.',
+        rationale: 'Vận dụng định luật Ohm để tính cường độ dòng điện cho thiết bị điện gia dụng.',
+        difficulty: 'MEDIUM'
+      };
+    }
+
+    // 12. Điện năng tiêu thụ & Tiền điện thực tế (KHTN 9)
+    if (combined.includes('công suất') || combined.includes('điện năng') || combined.includes('tiêu thụ') || combined.includes('tiền điện')) {
+      return {
+        question_text: 'Một chiếc quạt điện gia đình có công suất định mức 80 W được bật liên tục 5 giờ mỗi ngày. Lượng điện năng mà chiếc quạt điện này tiêu thụ trong thời gian 30 ngày của một tháng bằng bao nhiêu số điện (kilôoát giờ - kWh)?',
+        correct_answer: '12 kWh (hoặc 12)',
+        explanation: 'Đổi 80 W = 0,08 kW. Tổng thời gian sử dụng t = 5 . 30 = 150 giờ. Điện năng A = P . t = 0,08 . 150 = 12 kWh.',
+        rationale: 'Tính toán lượng điện năng tiêu thụ thực tế của thiết bị điện sinh hoạt trong gia đình.',
+        difficulty: 'MEDIUM'
+      };
+    }
+
+    // 13. Phản ứng kim loại sinh khí H2 (KHTN 9)
+    if (combined.includes('kim loại') || combined.includes('dãy hoạt động') || combined.includes('acid') || combined.includes('hóa học')) {
+      return {
+        question_text: 'Cho 4,8 gam kim loại magnesium (Mg) tác dụng hoàn toàn với lượng dư dung dịch acid HCl. Phản ứng sinh ra muối magnesium chloride và giải phóng khí hydrogen theo PTHH: Mg + 2HCl → MgCl2 + H2↑. Biết khối lượng mol của Mg là 24 g/mol. Số mol khí hydrogen (H2) thu được bằng bao nhiêu mol?',
+        correct_answer: '0,2 mol (hoặc 0.2)',
+        explanation: 'Số mol Mg = 4,8 / 24 = 0,2 mol. Theo PTHH tỉ lệ 1:1 nên số mol H2 thu được = n(Mg) = 0,2 mol.',
+        rationale: 'Tính toán lượng chất theo phương trình hoá học từ số liệu thí nghiệm thực tế.',
+        difficulty: 'MEDIUM'
+      };
+    }
+
+    // 14. Quantitative Calculation Fallback (Số liệu cụ thể gắn liền thực tế)
     return {
-      question_text: `Biết khối lượng riêng của nước nguyên chất là 1000 kg/m³. Một khối nước có thể tích 0,5 m³ sẽ có khối lượng bằng bao nhiêu kilôgam (kg)?`,
-      correct_answer: '500 kg (hoặc 500)',
-      explanation: 'Áp dụng công thức m = D . V = 1000 . 0,5 = 500 kg.',
-      rationale: 'Vận dụng công thức khối lượng riêng tính khối lượng chất.',
+      question_text: `Biết khối lượng riêng của nước sạch là 1000 kg/m³. Một bồn chứa nước sinh hoạt gia đình hình trụ có dung tích chứa được 1,5 m³ nước. Khối lượng nước khi đổ đầy bồn chứa bằng bao nhiêu kilôgam (kg)?`,
+      correct_answer: '1500 kg (hoặc 1500)',
+      explanation: 'Áp dụng công thức khối lượng: m = D . V = 1000 . 1,5 = 1500 kg.',
+      rationale: 'Vận dụng công thức khối lượng riêng tính toán khối lượng vật chất trong đời sống gia đình.',
       difficulty: 'MEDIUM'
     };
   }
