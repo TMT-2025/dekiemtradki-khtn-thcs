@@ -14,7 +14,8 @@ export interface GenerateTestInput {
   title?: string;
   schoolName?: string;
   departmentName?: string;
-  mode: 'AUTO' | 'MANUAL';
+  mode: 'AUTO' | 'MANUAL' | 'AI';
+  generationSource?: 'BANK' | 'AI' | 'HYBRID';
   manualQuestionSelections?: Record<string, string[]>; // specItemId -> questionIds
 }
 
@@ -30,10 +31,11 @@ export class TestService {
     matchingResults: MatchingResult[];
     hasMissingQuestions: boolean;
   }> {
-    const matching = QuestionMatchingEngine.matchAll(input.specification.items);
+    const isAIMode = input.mode === 'AI' || input.generationSource === 'AI';
+    const matching = QuestionMatchingEngine.matchAll(input.specification.items, { forceAI: isAIMode });
     
-    // Auto-generate missing questions concurrently if in AUTO mode
-    if (input.mode === 'AUTO' && !matching.isComplete) {
+    // Auto-generate missing questions concurrently if in AUTO or AI mode
+    if ((input.mode === 'AUTO' || isAIMode) && !matching.isComplete) {
       const generationTasks: Promise<void>[] = [];
       for (const res of matching.results) {
         const countToGenerate = res.missingCount;
@@ -46,6 +48,8 @@ export class TestService {
                 questionType: res.specItem.questionType,
                 score: res.specItem.score / res.specItem.questionCount
               });
+              // Continuously save freshly generated AI questions into bank
+              localDb.saveQuestion(generated);
               res.matchedQuestions.push(generated);
               res.missingCount--;
             } catch (e) {
@@ -279,5 +283,99 @@ export class TestService {
 
   public static getTestById(id: string): TestExam | undefined {
     return localDb.getTestById(id);
+  }
+
+  /**
+   * Regenerates a single question in an existing test using AI
+   * strictly adhering to the original lesson, cognitive level, question type, and GDPT 2018 requirements
+   */
+  public static async regenerateQuestionWithAI(params: {
+    testId: string;
+    globalOrderIndex: number;
+  }): Promise<{
+    success: boolean;
+    updatedTest?: TestExam;
+    newQuestion?: QuestionItem;
+    error?: string;
+  }> {
+    const test = localDb.getTestById(params.testId);
+    if (!test) return { success: false, error: 'Không tìm thấy đề thi' };
+
+    let targetPart: TestPart | undefined;
+    let targetQIndex = -1;
+
+    for (const part of test.parts) {
+      const idx = part.questions.findIndex(q => q.globalOrderIndex === params.globalOrderIndex);
+      if (idx >= 0) {
+        targetPart = part;
+        targetQIndex = idx;
+        break;
+      }
+    }
+
+    if (!targetPart || targetQIndex < 0) {
+      return { success: false, error: `Không tìm thấy câu hỏi số ${params.globalOrderIndex}` };
+    }
+
+    const oldTestQ = targetPart.questions[targetQIndex];
+    const oldQ = oldTestQ.question;
+
+    try {
+      const generated = await QuestionService.generateQuestionWithAI({
+        lessonId: oldQ.lessonId,
+        cognitiveLevel: oldQ.cognitiveLevel,
+        questionType: oldQ.questionType,
+        score: oldTestQ.assignedScore
+      });
+
+      // Context enrichment
+      generated.contextMetadata = ContextService.generateRichContextForQuestion(generated);
+
+      // Save to localDb bank
+      localDb.saveQuestion(generated);
+
+      // Replace in test
+      targetPart.questions[targetQIndex] = {
+        ...oldTestQ,
+        question: generated
+      };
+
+      // Update answer keys
+      const ansIdx = test.answerKeys.findIndex(a => a.questionNumber === params.globalOrderIndex);
+      if (ansIdx >= 0) {
+        test.answerKeys[ansIdx] = {
+          questionNumber: params.globalOrderIndex,
+          partNumber: targetPart.partNumber,
+          questionType: generated.questionType || targetPart.questionType,
+          correctAnswer: generated.correctAnswer || '',
+          explanation: generated.explanation || '',
+          score: oldTestQ.assignedScore
+        };
+      }
+
+      // Update scoring rubrics
+      if (test.scoringGuide?.rubrics) {
+        const rubIdx = test.scoringGuide.rubrics.findIndex(r => r.questionNumber === params.globalOrderIndex);
+        if (rubIdx >= 0) {
+          test.scoringGuide.rubrics[rubIdx] = {
+            questionNumber: params.globalOrderIndex,
+            partNumber: targetPart.partNumber,
+            criterion: generated.explanation || `Đúng đáp án theo chuẩn kiến thức ${generated.topic}`,
+            score: oldTestQ.assignedScore
+          };
+        }
+      }
+
+      test.updatedAt = new Date().toISOString();
+      localDb.saveTest(test);
+
+      return {
+        success: true,
+        updatedTest: test,
+        newQuestion: generated
+      };
+    } catch (e: any) {
+      return { success: false, error: e.message };
+    }
   }
 }

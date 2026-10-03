@@ -112,39 +112,65 @@ export class QuestionService {
 
     try {
       const systemPrompt = `Bạn là Chuyên gia Khảo thí Khoa học tự nhiên THCS Việt Nam (GDPT 2018).
-Nguyên tắc: Tuyệt đối trung thực với nội dung SGK KHTN ${lesson.grade} Kết nối tri thức. Không bịa kiến thức ngoài SGK.
-Chỉ trả về JSON theo schema quy định.`;
+Nhiệm vụ: Tạo câu hỏi kiểm tra đánh giá năng lực môn KHTN ${lesson.grade} bám sát 100% Chương trình GDPT 2018 và SGK hiện hành.
+Quy tắc bắt buộc:
+1. Nội dung phải phù hợp tuyệt đối với lứa tuổi học sinh lớp ${lesson.grade} (${lesson.grade === 6 ? '11-12' : lesson.grade === 7 ? '12-13' : lesson.grade === 8 ? '13-14' : '14-15'} tuổi). Không đưa kiến thức vượt cấp.
+2. Câu hỏi phải gắn liền với hiện tượng thực tế, thí nghiệm hoặc ứng dụng đời sống, số liệu khoa học chính xác.
+3. Chỉ trả về duy nhất chuỗi JSON hợp lệ theo đúng schema quy định.`;
 
-      const userPrompt = `Hãy tạo một câu hỏi kiểm tra:
+      let formatGuide = '';
+      if (questionType === 'MCQ') {
+        formatGuide = `- Dạng câu hỏi: Trắc nghiệm 4 lựa chọn (MCQ).
+- question_text: Nêu tình huống thực tế hoặc câu hỏi kiểm tra rõ ràng.
+- options: BẮT BUỘC có đúng 4 phương án key "A", "B", "C", "D" với nội dung độc lập, không trùng lặp, chỉ có 1 đáp án đúng.
+- correct_answer: Một chữ cái duy nhất ("A", "B", "C" hoặc "D").`;
+      } else if (questionType === 'TRUE_FALSE') {
+        formatGuide = `- Dạng câu hỏi: Trắc nghiệm Đúng/Sai (TRUE_FALSE).
+- question_text: Tình huống thí nghiệm hoặc bối cảnh thực tế: "Dựa vào bối cảnh trên, xét tính Đúng hoặc Sai cho mỗi nhận định sau:".
+- options: BẮT BUỘC có đúng 4 ý key "a", "b", "c", "d" (chữ thường), mỗi ý là một nhận định khoa học độc lập; kèm trường "isCorrect": true hoặc false.
+- correct_answer: Chuỗi JSON ví dụ "{\\"a\\": true, \\"b\\": false, \\"c\\": true, \\"d\\": false}".`;
+      } else if (questionType === 'SHORT_ANSWER') {
+        formatGuide = `- Dạng câu hỏi: Trả lời ngắn (SHORT_ANSWER).
+- question_text: BẮT BUỘC là bài toán định lượng có cho đầy đủ số liệu đầu vào cụ thể hoặc yêu cầu xác định một thuật ngữ/đại lượng khoa học duy nhất.
+- options: null hoặc mảng rỗng.
+- correct_answer: Đáp án số cụ thể (ví dụ "40", "12.5", "250") hoặc thuật ngữ khoa học ngắn gọn duy nhất.`;
+      } else {
+        formatGuide = `- Dạng câu hỏi: Tự luận (ESSAY).
+- question_text: Câu hỏi tự luận gồm 2 phần rõ ràng (1. Giải thích hiện tượng/cơ chế khoa học; 2. Vận dụng tính toán hoặc liên hệ thực tiễn sản xuất, đời sống).
+- options: null.
+- correct_answer: Hướng dẫn chấm cụ thể theo từng ý (tổng điểm ${score}đ).`;
+      }
+
+      const userPrompt = `Hãy tạo một câu hỏi kiểm tra môn Khoa học tự nhiên:
 - Khối lớp: KHTN ${lesson.grade}
 - Bài học: ${lesson.title}
 - Phân môn: ${lesson.subjectArea}
 - Mạch kiến thức: ${lesson.contentDomain}
-- Yêu cầu cần đạt: ${reqText}
+- Yêu cầu cần đạt chuẩn GDPT 2018: ${reqText}
 - Mức độ nhận thức: ${cognitiveLevel}
-- Dạng câu hỏi: ${questionType}
 - Điểm số: ${score}
+${formatGuide}
 
-Trả về định dạng JSON:
+Định dạng JSON trả về:
 {
   "question_text": "...",
-  "options": [{"key": "A", "text": "..."}, {"key": "B", "text": "..."}, {"key": "C", "text": "..."}, {"key": "D", "text": "..."}],
+  "options": [{"key": "A", "text": "...", "isCorrect": true}],
   "correct_answer": "...",
-  "explanation": "...",
-  "rationale": "...",
+  "explanation": "Lời giải thích khoa học chi tiết...",
+  "rationale": "Mục tiêu khảo thí đánh giá mức độ ${cognitiveLevel}...",
   "difficulty": "MEDIUM"
 }`;
 
       const provider = AIProviderFactory.getProvider();
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('AI generation timeout')), 2000)
+        setTimeout(() => reject(new Error('AI generation timeout')), 15000)
       );
 
       result = await Promise.race([
         provider.generateStructuredJson({
           systemPrompt,
           userPrompt,
-          temperature: 0.2
+          temperature: 0.7
         }),
         timeoutPromise
       ]);

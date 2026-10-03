@@ -51,6 +51,8 @@ function TestsContent() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationStep, setGenerationStep] = useState<string>('');
   const [generationMode, setGenerationMode] = useState<'AUTO' | 'MANUAL'>('AUTO');
+  const [generationSource, setGenerationSource] = useState<'BANK' | 'AI'>('AI');
+  const [regeneratingQuestionOrder, setRegeneratingQuestionOrder] = useState<number | null>(null);
   const [sourceModalQuestion, setSourceModalQuestion] = useState<QuestionItem | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -126,7 +128,7 @@ function TestsContent() {
     }
   }, [selectedMatrixId, tests.length]);
 
-  const handleGenerateTest = async (overrideCode?: string) => {
+  const handleGenerateTest = async (overrideCode?: string, sourceMode: 'BANK' | 'AI' = generationSource) => {
     if (!selectedMatrixId) {
       alert('Vui lòng chọn một Ma trận đã duyệt để tạo đề.');
       return;
@@ -150,7 +152,9 @@ function TestsContent() {
     }
 
     setIsGenerating(true);
-    setGenerationStep('Đang trích xuất câu hỏi chuẩn YCCĐ & lắp ráp đề thi...');
+    setGenerationStep(sourceMode === 'AI' 
+      ? 'Mô hình AI đang tạo mới 22 câu hỏi bám sát ma trận và chuẩn chương trình...' 
+      : 'Đang trích xuất câu hỏi chuẩn YCCĐ từ ngân hàng & lắp ráp đề thi...');
     try {
       const res = await fetch('/api/tests/generate', {
         method: 'POST',
@@ -159,7 +163,8 @@ function TestsContent() {
           matrixId: selectedMatrixId,
           matrix: curMat,
           specification: currentSpec,
-          mode: generationMode,
+          mode: sourceMode === 'AI' ? 'AI' : generationMode,
+          generationSource: sourceMode,
           testCode: targetCode
         })
       });
@@ -174,7 +179,7 @@ function TestsContent() {
         ClientStorage.saveTest(data.test);
         setTests(prev => [data.test, ...prev.filter(t => t.id !== data.test.id)]);
         setActiveTest(data.test);
-        setToastMessage(`Đã tạo thành công Đề kiểm tra KHTN ${data.test.grade} — Mã đề: ${data.test.testCode}!`);
+        setToastMessage(`Đã tạo thành công Đề kiểm tra KHTN ${data.test.grade} — Mã đề: ${data.test.testCode} (${sourceMode === 'AI' ? 'AI Sinh mới 100%' : 'Ngân hàng'})!`);
         setTimeout(() => setToastMessage(null), 4000);
       } else {
         throw new Error('Dữ liệu trả về không hợp lệ');
@@ -185,6 +190,31 @@ function TestsContent() {
     } finally {
       setIsGenerating(false);
       setGenerationStep('');
+    }
+  };
+
+  const handleRegenerateQuestion = async (questionOrder: number) => {
+    if (!activeTest) return;
+    setRegeneratingQuestionOrder(questionOrder);
+    try {
+      const res = await fetch(`/api/tests/${activeTest.id}/regenerate-question`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ questionOrder })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Lỗi khi tạo lại câu hỏi');
+      if (data.test) {
+        ClientStorage.saveTest(data.test);
+        setActiveTest(data.test);
+        setTests(prev => prev.map(t => t.id === data.test.id ? data.test : t));
+        setToastMessage(`Đã dùng AI đổi mới thành công Câu ${questionOrder}!`);
+        setTimeout(() => setToastMessage(null), 3000);
+      }
+    } catch (e: any) {
+      alert(`Không thể đổi câu hỏi: ${e.message}`);
+    } finally {
+      setRegeneratingQuestionOrder(null);
     }
   };
 
@@ -264,18 +294,30 @@ function TestsContent() {
           </div>
 
           <div className="flex flex-col">
-            <button
-              onClick={() => handleGenerateTest()}
-              disabled={!selectedMatrixId || isGenerating}
-              title="Lắp ráp đề thi bám sát 100% Ma trận & Bản đặc tả đang chọn"
-              className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-blue-500/20 transition disabled:opacity-50"
-            >
-              <Sparkles className="h-4 w-4 text-amber-300" />
-              <span>{isGenerating ? 'ĐANG LẮP RÁP ĐỀ THEO MA TRẬN...' : 'TẠO ĐỀ THEO MA TRẬN NÀY'}</span>
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => handleGenerateTest(undefined, 'BANK')}
+                disabled={!selectedMatrixId || isGenerating}
+                title="Lắp ráp đề thi từ Ngân hàng câu hỏi (ngẫu nhiên hóa)"
+                className="inline-flex items-center justify-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 transition disabled:opacity-50"
+              >
+                <FileText className="h-4 w-4 text-slate-500" />
+                <span>Lấy từ Ngân hàng</span>
+              </button>
+
+              <button
+                onClick={() => handleGenerateTest(undefined, 'AI')}
+                disabled={!selectedMatrixId || isGenerating}
+                title="Mô hình AI tự động tạo mới 100% câu hỏi theo ma trận và chuẩn chương trình khối lớp"
+                className="inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 hover:from-violet-500 hover:to-blue-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-500/20 transition disabled:opacity-50"
+              >
+                <Sparkles className="h-4 w-4 text-amber-300" />
+                <span>{isGenerating ? 'ĐANG TẠO ĐỀ...' : '🤖 AI SINH MỚI THEO MA TRẬN'}</span>
+              </button>
+            </div>
             <span className="text-[10px] text-slate-500 mt-1 flex items-center gap-1 font-medium">
               <CheckCircle2 className="h-3 w-3 text-emerald-500 inline shrink-0" />
-              Khớp 100% Ma trận đã chọn (không tạo ngẫu nhiên)
+              Khớp 100% Ma trận & chuẩn GDPT 2018 theo khối lớp tương ứng
             </span>
           </div>
         </div>
@@ -486,22 +528,42 @@ function TestsContent() {
                     <div className="space-y-4 pt-1">
                       {part.questions.map(tq => (
                         <div key={tq.globalOrderIndex} className="space-y-2 p-3 rounded-xl hover:bg-slate-50/80 transition border border-transparent hover:border-slate-200">
-                          {/* Context Badge & Provenance Button */}
-                          {tq.question.contextMetadata?.hasContext && (
-                            <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] pb-1 border-b border-slate-100">
-                              <span className="px-2 py-0.5 rounded-full font-bold bg-cyan-100 text-cyan-800 flex items-center space-x-1">
-                                <FlaskConical className="h-3 w-3" />
-                                <span>Bối cảnh: {tq.question.contextMetadata.phenomenon || tq.question.contextMetadata.applicationArea}</span>
+                          {/* Question Action Toolbar: Metadata & AI Regenerate */}
+                          <div className="flex flex-wrap items-center justify-between gap-1.5 text-[11px] pb-1.5 border-b border-slate-100">
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              {tq.question.contextMetadata?.hasContext && (
+                                <span className="px-2 py-0.5 rounded-full font-bold bg-cyan-100 text-cyan-800 flex items-center space-x-1">
+                                  <FlaskConical className="h-3 w-3" />
+                                  <span>Bối cảnh: {tq.question.contextMetadata.phenomenon || tq.question.contextMetadata.applicationArea}</span>
+                                </span>
+                              )}
+                              <span className="px-2 py-0.5 rounded-md font-semibold bg-slate-100 text-slate-700">
+                                {tq.question.topic || `Bài ${tq.question.lessonId}`} • {tq.question.cognitiveLevel} ({tq.assignedScore}đ)
                               </span>
-                              <button
-                                onClick={() => setSourceModalQuestion(tq.question)}
-                                className="text-blue-600 hover:text-blue-800 font-semibold flex items-center space-x-1 hover:underline"
-                              >
-                                <Info className="h-3 w-3" />
-                                <span>Xem nguồn & Bối cảnh</span>
-                              </button>
                             </div>
-                          )}
+
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() => handleRegenerateQuestion(tq.globalOrderIndex)}
+                                disabled={regeneratingQuestionOrder === tq.globalOrderIndex}
+                                title="Mô hình AI tự động tạo lại câu hỏi mới cùng YCCĐ & chuẩn GDPT 2018"
+                                className="inline-flex items-center space-x-1 text-xs font-semibold px-2.5 py-1 rounded-lg bg-violet-50 hover:bg-violet-100 text-violet-700 hover:text-violet-800 border border-violet-200 transition disabled:opacity-50"
+                              >
+                                <Sparkles className={`h-3 w-3 text-violet-600 ${regeneratingQuestionOrder === tq.globalOrderIndex ? 'animate-spin' : ''}`} />
+                                <span>{regeneratingQuestionOrder === tq.globalOrderIndex ? 'AI đang tạo...' : 'Đổi câu hỏi (AI)'}</span>
+                              </button>
+
+                              {tq.question.contextMetadata?.hasContext && (
+                                <button
+                                  onClick={() => setSourceModalQuestion(tq.question)}
+                                  className="text-blue-600 hover:text-blue-800 font-semibold flex items-center space-x-1 hover:underline"
+                                >
+                                  <Info className="h-3 w-3" />
+                                  <span>Xem nguồn</span>
+                                </button>
+                              )}
+                            </div>
+                          </div>
 
                           {/* Rich Context & Stimulus Box */}
                           {tq.question.contextMetadata?.stimulus && (

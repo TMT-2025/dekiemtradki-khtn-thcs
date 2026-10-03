@@ -21,7 +21,8 @@ export async function POST(req: Request) {
       matrix,
       specification: spec,
       testCode: body.testCode || '101',
-      mode: body.mode || 'AUTO'
+      mode: body.mode || 'AUTO',
+      generationSource: body.generationSource
     });
 
     return NextResponse.json({

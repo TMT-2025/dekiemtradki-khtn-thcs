@@ -9,12 +9,30 @@ export interface MatchingResult {
   status: 'FULL' | 'PARTIAL' | 'EMPTY';
 }
 
+export interface MatchingOptions {
+  forceAI?: boolean;
+  shuffle?: boolean;
+}
+
 export class QuestionMatchingEngine {
   /**
    * Matches questions strictly based on curriculum constraints
    * (lessonId, cognitiveLevel, questionType)
    */
-  public static matchSpecItem(item: SpecificationItem, allQuestions?: QuestionItem[]): MatchingResult {
+  public static matchSpecItem(
+    item: SpecificationItem,
+    allQuestions?: QuestionItem[],
+    options?: MatchingOptions
+  ): MatchingResult {
+    if (options?.forceAI) {
+      return {
+        specItem: item,
+        matchedQuestions: [],
+        missingCount: item.questionCount,
+        status: 'EMPTY'
+      };
+    }
+
     const questions = allQuestions || QuestionService.getQuestions();
 
     // Exact matching
@@ -36,7 +54,12 @@ export class QuestionMatchingEngine {
       candidateMatches.push(...topicMatches);
     }
 
-    const matched = candidateMatches.slice(0, item.questionCount);
+    // Shuffle candidate matches to ensure rich variety across tests
+    const candidates = options?.shuffle !== false
+      ? [...candidateMatches].sort(() => Math.random() - 0.5)
+      : candidateMatches;
+
+    const matched = candidates.slice(0, item.questionCount);
     const missing = Math.max(0, item.questionCount - matched.length);
 
     let status: 'FULL' | 'PARTIAL' | 'EMPTY' = 'FULL';
@@ -54,7 +77,10 @@ export class QuestionMatchingEngine {
   /**
    * Matches all specification items for a test
    */
-  public static matchAll(specItems: SpecificationItem[]): {
+  public static matchAll(
+    specItems: SpecificationItem[],
+    options?: MatchingOptions
+  ): {
     results: MatchingResult[];
     isComplete: boolean;
     totalMissing: number;
@@ -63,7 +89,7 @@ export class QuestionMatchingEngine {
     let totalMissing = 0;
 
     const results = specItems.map(item => {
-      const res = this.matchSpecItem(item, allQuestions);
+      const res = this.matchSpecItem(item, allQuestions, options);
       totalMissing += res.missingCount;
       return res;
     });
