@@ -483,6 +483,53 @@ export class ContextService {
     const textLow = (q.questionText || '').toLowerCase();
     const combined = `${topicLow} ${reqLow} ${textLow}`;
 
+    // 0. Search from the enriched phenomenon library for exact grade matching
+    const phenomList = this.getPhenomena().filter(p => p.grade === q.grade);
+    let bestMatch: PhenomenonItem | null = null;
+    let bestScore = 0;
+
+    for (const p of phenomList) {
+      const pCombined = `${p.title} ${p.topic} ${p.description} ${p.curriculum_alignment}`.toLowerCase();
+      const words = combined.split(/[\s,.;:()\-–—\/]+/).filter(w => w.length > 2);
+      let score = 0;
+      for (const w of words) {
+        if (pCombined.includes(w)) {
+          score++;
+        }
+      }
+      if (score > bestScore && score >= 2) {
+        bestScore = score;
+        bestMatch = p;
+      }
+    }
+
+    if (bestMatch && bestMatch.stimulus) {
+      return {
+        hasContext: true,
+        contextId: `${bestMatch.phenomenon_id}_${q.id}`,
+        contextType: bestMatch.context_type,
+        contextLevel: bestMatch.context_level,
+        applicationArea: bestMatch.application_area,
+        phenomenon: bestMatch.title,
+        realWorldRelevance: true,
+        scientificPractice: 'Apply science knowledge',
+        sourceType: 'ADAPTED_FROM',
+        sourceTitle: bestMatch.source,
+        sourceUrl: bestMatch.source_url,
+        sourceCountry: bestMatch.source_country || 'Việt Nam',
+        adaptationNote: `Tình huống thực tế chuẩn GDPT 2018 gắn kết với ${bestMatch.topic}.`,
+        stimulus: {
+          type: q.questionType === 'TRUE_FALSE' ? (bestMatch.stimulus.type || 'TABLE') : 'TEXT',
+          title: bestMatch.stimulus.title,
+          leadParagraph: bestMatch.stimulus.leadParagraph,
+          ...(q.questionType === 'TRUE_FALSE' && bestMatch.stimulus.dataHeaders ? {
+            dataHeaders: bestMatch.stimulus.dataHeaders,
+            dataRows: bestMatch.stimulus.dataRows
+          } : {})
+        }
+      };
+    }
+
     // Grade 6 Priority: Đo lường (thước, cân, nhiệt kế, thể tích)
     if (q.grade === 6 && (combined.includes('đo') || combined.includes('thước') || combined.includes('cân') || combined.includes('nhiệt kế') || combined.includes('kính lúp'))) {
       const res: ContextMetadata = {

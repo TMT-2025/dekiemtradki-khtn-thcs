@@ -159,6 +159,33 @@ function ContextLibraryContent() {
 
       {/* Filter Toolbar */}
       <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+        {/* Quick Grade Filter Badges */}
+        <div className="flex flex-wrap items-center gap-2 pb-2 border-b border-slate-100">
+          <span className="text-xs font-semibold text-slate-500 mr-1">Lọc nhanh khối lớp:</span>
+          {[
+            { id: 'ALL', label: 'Tất cả khối lớp' },
+            { id: '6', label: 'KHTN Lớp 6' },
+            { id: '7', label: 'KHTN Lớp 7' },
+            { id: '8', label: 'KHTN Lớp 8' },
+            { id: '9', label: 'KHTN Lớp 9' },
+          ].map(g => {
+            const isSelected = selectedGrade === g.id;
+            return (
+              <button
+                key={g.id}
+                onClick={() => setSelectedGrade(g.id)}
+                className={`px-3 py-1.5 rounded-lg text-xs transition flex items-center space-x-1.5 ${
+                  isSelected
+                    ? 'bg-cyan-600 text-white shadow-sm font-semibold'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+              >
+                <span>{g.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
           {/* Grade */}
           <div>

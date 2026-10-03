@@ -1,16 +1,16 @@
 [
   {
-    "id": "STIM_6_WATER_FREEZE",
+    "id": "STIM_PHENOM_6_01",
     "contextId": "PHENOM_6_01",
     "type": "TABLE",
     "title": "Bảng thí nghiệm đo nhiệt độ đông đặc của nước muối ở các nồng độ khác nhau",
-    "content": "Một nhóm học sinh lớp 6 tiến hành hòa tan muối ăn (NaCl) vào 100 mL nước cất với khối lượng khác nhau rồi đưa vào tủ đông đo nhiệt độ bắt đầu xuất hiện tinh thể đá.",
-    "readingLoad": "LOW",
+    "content": "Một nhóm học sinh lớp 6 tiến hành hòa tan muối ăn (NaCl) vào 100 mL nước cất với khối lượng khác nhau rồi đưa vào tủ đông đo nhiệt độ bắt đầu xuất hiện tinh thể đá:",
+    "readingLoad": "MEDIUM",
     "isSynthetic": false,
     "sourceRefs": [
       {
-        "organization": "OECD PISA",
-        "title": "PISA Science Framework & THCS KHTN 6 Kết nối tri thức",
+        "organization": "PISA Science Framework & THCS KHTN 6 Kết nối tri thức",
+        "title": "Vì sao nước biển không dễ đóng băng như nước ngọt?",
         "url": "https://www.oecd.org/pisa/",
         "sourceMode": "ADAPTED_FROM",
         "licenseStatus": "OPEN_LICENSE",
@@ -22,18 +22,18 @@
     "qualityStatus": "PASSED"
   },
   {
-    "id": "STIM_7_PHOTOSYNTHESIS",
-    "contextId": "PHENOM_7_01",
+    "id": "STIM_PHENOM_6_02",
+    "contextId": "PHENOM_6_02",
     "type": "EXPERIMENT",
-    "title": "Thực nghiệm đo số bọt khí oxygen giải phóng từ cành rong đuôi chó theo khoảng cách nguồn sáng",
-    "content": "Học sinh lớp 7 bố trí cành rong đuôi chó trong ống nghiệm chứa nước có hòa ít NaHCO3 (nguồn cung cấp CO2), chiếu sáng bằng bóng đèn ở các khoảng cách khác nhau và đếm số bọt khí nổi lên trong 1 phút.",
+    "title": "Thí nghiệm theo dõi sự hư hỏng của canh rau ở các điều kiện nhiệt độ",
+    "content": "Học sinh chia đều bát canh rau muống vào 3 hộp thủy tinh vô trùng giống hệt nhau và để ở các môi trường khác nhau trong 24 giờ:",
     "readingLoad": "MEDIUM",
     "isSynthetic": false,
     "sourceRefs": [
       {
-        "organization": "NGSS Middle School",
-        "title": "Next Generation Science Standards & KHTN 7",
-        "url": "https://www.nextgenscience.org/",
+        "organization": "Viện Dinh dưỡng Quốc gia & WHO Food Safety Guide",
+        "title": "Hiện tượng thối rữa và bảo quản thực phẩm bằng nhiệt độ thấp trong gia đình",
+        "url": "https://www.who.int/news-room/fact-sheets/detail/food-safety",
         "sourceMode": "ADAPTED_FROM",
         "licenseStatus": "OPEN_LICENSE",
         "attributionRequired": true,
@@ -44,42 +44,922 @@
     "qualityStatus": "PASSED"
   },
   {
-    "id": "STIM_8_SALINITY_HAMLUONG",
-    "contextId": "PHENOM_8_01",
-    "type": "CHART",
-    "title": "Diễn biến độ mặn (gam muối / lít nước) tại trạm đo sông Hàm Luông theo các tháng mùa khô",
-    "content": "Biểu đồ ghi nhận nồng độ muối hòa tan (g/L) đo được tại trạm Hàm Luông (Bến Tre) trong mùa khô năm 2024.",
+    "id": "STIM_PHENOM_6_03",
+    "contextId": "PHENOM_6_03",
+    "type": "DIAGRAM",
+    "title": "Sơ đồ nguyên lý hoạt động của rơ-le lưỡng kim trong ấm đun nước",
+    "content": "Thanh lưỡng kim gồm một bản đồng ép chặt vào một bản sắt. Khi đun sôi nước, hơi nước bốc lên làm nóng thanh lưỡng kim. Do đồng nở vì nhiệt nhiều hơn sắt, thanh bị uốn cong về phía bản sắt, đẩy lẫy ngắt mạch điện.",
     "readingLoad": "LOW",
     "isSynthetic": false,
     "sourceRefs": [
       {
-        "organization": "Trung tâm Dự báo Khí tượng Thủy văn Quốc gia",
-        "title": "Bản tin xâm nhập mặn Đồng bằng sông Cửu Long",
-        "url": "https://nchmf.gov.vn/",
-        "sourceMode": "DIRECT_SOURCE",
-        "licenseStatus": "PUBLIC_DOMAIN",
+        "organization": "Vật lí ứng dụng trong đời sống & KHTN 6 Kết nối tri thức",
+        "title": "Ứng dụng thanh lưỡng kim trong rơ-le tự ngắt của ấm đun nước siêu tốc",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
         "attributionRequired": true,
         "verificationStatus": "VERIFIED"
       }
     ],
-    "localizationStatus": "ORIGINAL_VIETNAM",
+    "localizationStatus": "LOCALIZED",
     "qualityStatus": "PASSED"
   },
   {
-    "id": "STIM_9_ACID_RAIN_EROSION",
-    "contextId": "PHENOM_9_02",
-    "type": "EXPERIMENT",
-    "title": "Mô phỏng tác động ăn mòn của mưa acid lên mẩu đá vôi tự nhiên",
-    "content": "Học sinh ngâm 3 mẩu đá vôi CaCO3 có khối lượng ban đầu chính xác 10.00 gam vào 3 cốc nước có độ acid khác nhau trong 48 giờ để đo mức độ hao hụt khối lượng.",
+    "id": "STIM_PHENOM_6_04",
+    "contextId": "PHENOM_6_04",
+    "type": "TABLE",
+    "title": "Bảng dữ liệu thực nghiệm đo thể tích và khối lượng hòn sỏi",
+    "content": "Trong giờ thực hành KHTN 6, nhóm học sinh dùng cân điện tử để đo khối lượng và dùng bình chia độ chứa nước ban đầu để đo thể tích hòn sỏi:",
     "readingLoad": "MEDIUM",
     "isSynthetic": false,
     "sourceRefs": [
       {
-        "organization": "USGS (United States Geological Survey)",
-        "title": "Acid Rain and Water Science School",
-        "url": "https://www.usgs.gov/special-topics/water-science-school/science/acid-rain-and-water",
+        "organization": "SGK KHTN 6 Chân trời sáng tạo & Thực hành Vật lí THCS",
+        "title": "Xác định thể tích và khối lượng riêng của hòn sỏi bằng bình chia độ và cân điện tử",
+        "url": "https://khtn.edu.vn",
         "sourceMode": "ADAPTED_FROM",
-        "licenseStatus": "PUBLIC_DOMAIN",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_6_05",
+    "contextId": "PHENOM_6_05",
+    "type": "TABLE",
+    "title": "Biến thiên nhiệt độ và độ ẩm không khí qua các mốc thời gian tại Sa Pa",
+    "content": "Trạm khí tượng ghi nhận các thông số thời tiết trong một đêm mùa đông tại thị xã Sa Pa (Lào Cai):",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Trung tâm Dự báo Khí tượng Thủy văn Quốc gia & SGK KHTN 6",
+        "title": "Hiện tượng sương mù bức xạ và ngưng tụ hơi nước tại vùng núi cao Sa Pa",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_6_06",
+    "contextId": "PHENOM_6_06",
+    "type": "EXPERIMENT",
+    "title": "Mô hình xác định phần trăm thể tích oxygen trong không khí",
+    "content": "Thí nghiệm kinh điển xác định hàm lượng oxygen hỗ trợ sự cháy:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "SGK KHTN 6 Cánh Diều & Lịch sử khám phá Oxygen của Lavoisier",
+        "title": "Thí nghiệm úp chuông thủy tinh lên ngọn nến đang cháy và tỉ lệ thể tích oxygen trong không khí",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_6_07",
+    "contextId": "PHENOM_6_07",
+    "type": "TABLE",
+    "title": "Hiệu quả lọc các chỉ tiêu nước qua các lớp vật liệu của bể lọc giếng khoan",
+    "content": "Kết quả phân tích mẫu nước giếng khoan trước và sau khi qua từng tầng lọc:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Trung tâm Nước sạch và Vệ sinh Môi trường Nông thôn & SGK KHTN 6",
+        "title": "Hệ thống bể lọc nước giếng khoan gia đình bằng giàn mưa, cát sỏi và than hoạt tính",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_6_08",
+    "contextId": "PHENOM_6_08",
+    "type": "TABLE",
+    "title": "Đặc điểm quan sát được ở tiêu bản tế bào thực vật dưới kính hiển vi quang học",
+    "content": "Bảng ghi chép kết quả thực hành quan sát tế bào của nhóm học sinh lớp 6:",
+    "readingLoad": "LOW",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "SGK KHTN 6 Kết nối tri thức — Bài 18: Tế bào",
+        "title": "Quan sát tế bào biểu bì vảy hành và tế bào thịt quả cà chua chín dưới kính hiển vi",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_6_09",
+    "contextId": "PHENOM_6_09",
+    "type": "TABLE",
+    "title": "Khảo sát độ nở của khối bột bánh mì ở các nhiệt độ ủ khác nhau sau 60 phút",
+    "content": "Thí nghiệm theo dõi thể tích khối bột mì 100g pha men ở 4 điều kiện nhiệt độ:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Kĩ thuật làm bánh thực phẩm & SGK KHTN 6 Chân trời sáng tạo",
+        "title": "Vai trò của nấm men (Yeast) trong quá trình lên men làm nở bột bánh mì",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_6_10",
+    "contextId": "PHENOM_6_10",
+    "type": "TABLE",
+    "title": "Quãng đường trượt của xe đạp khi phanh gấp ở tốc độ 20 km/h trên các mặt đường",
+    "content": "Số liệu đo đạc thực nghiệm quãng đường xe trượt thêm trước khi dừng hẳn khi phanh cùng một lực:",
+    "readingLoad": "LOW",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Ủy ban An toàn Giao thông Quốc gia & SGK KHTN 6 Cánh Diều",
+        "title": "Lực ma sát và độ bám đường của rãnh gai lốp xe máy, xe đạp khi phanh gấp",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_6_11",
+    "contextId": "PHENOM_6_11",
+    "type": "TABLE",
+    "title": "Các pha chính của Mặt Trăng quan sát từ Trái Đất theo ngày Âm lịch",
+    "content": "Bảng theo dõi các pha nhìn thấy của Mặt Trăng và thời điểm quan sát thuận lợi trong tháng:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Hội Thiên văn và Vũ trụ học Việt Nam (VACA) & SGK KHTN 6 Kết nối tri thức",
+        "title": "Hiện tượng biến đổi hình dạng nhìn thấy của Mặt Trăng (Tuần trăng) trong một tháng",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_7_01",
+    "contextId": "PHENOM_7_01",
+    "type": "TABLE",
+    "title": "Số bọt khí oxygen thoát ra từ cành rong đuôi chó ở các khoảng cách đèn chiếu khác nhau",
+    "content": "Nhóm học sinh đặt cành rong đuôi chó trong ống nghiệm chứa nước rồi chiếu đèn sợi đốt ở các khoảng cách khác nhau trong 5 phút:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "SGK KHTN 7 Cánh Diều & Thí nghiệm Sinh lí Thực vật Đại học Sư phạm",
+        "title": "Quang hợp của rong đuôi chó dưới các cường độ ánh sáng khác nhau",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_7_02",
+    "contextId": "PHENOM_7_02",
+    "type": "TABLE",
+    "title": "Khảo sát chỉ số độ pH của đất ruộng phèn trước và sau khi bón vôi nông nghiệp",
+    "content": "Số liệu đo đạc thực nghiệm tại trạm khuyến nông tỉnh An Giang:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Viện Lúa Đồng bằng sông Cửu Long & SGK KHTN 7",
+        "title": "Sử dụng vôi bột (CaO) để khử chua đất nông nghiệp phèn tại Đồng bằng sông Cửu Long",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_7_03",
+    "contextId": "PHENOM_7_03",
+    "type": "TABLE",
+    "title": "Mức cường độ âm đo tại khu dân cư ven đường cao tốc khi có và không có tường cách âm",
+    "content": "Số liệu đo bằng máy đo độ ồn chuyên dụng tại khu đô thị cách lề đường cao tốc 25 m:",
+    "readingLoad": "LOW",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Bộ Tài nguyên và Môi trường (QCVN 26:2010/BTNMT) & SGK KHTN 7",
+        "title": "Tiếng vang và ô nhiễm tiếng ồn tại khu dân cư ven đường cao tốc",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_7_04",
+    "contextId": "PHENOM_7_04",
+    "type": "TABLE",
+    "title": "Bảng ghi nhận tốc độ và quãng đường của các phương tiện qua trạm kiểm soát",
+    "content": "Số liệu đo tốc độ phương tiện trên đoạn đường khu đông dân cư quy định tốc độ tối đa 50 km/h:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Cục Cảnh sát Giao thông — Bộ Công an & SGK KHTN 7 Kết nối tri thức",
+        "title": "Thiết bị bắn tốc độ tự động bằng sóng laser và kiểm soát an toàn giao thông đường bộ",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_7_05",
+    "contextId": "PHENOM_7_05",
+    "type": "TABLE",
+    "title": "So sánh góc nhìn (vùng thị trường) của gương cầu lồi và gương phẳng cùng kích thước",
+    "content": "Kết quả khảo sát tầm quan sát của tài xế xe tải khi đặt 2 loại gương tại cùng một vị trí khúc quanh 90 độ:",
+    "readingLoad": "LOW",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Cục Đường bộ Việt Nam & SGK KHTN 7 Chân trời sáng tạo",
+        "title": "Ứng dụng gương cầu lồi tại các khúc cua đường đèo nguy hiểm",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_7_06",
+    "contextId": "PHENOM_7_06",
+    "type": "DIAGRAM",
+    "title": "Sơ đồ định hướng của kim la bàn trong từ trường Trái Đất",
+    "content": "Khi đặt la bàn thăng bằng trên bàn cách xa các thanh kim loại có từ tính và dòng điện mạnh, cực Bắc của kim nam châm (thường sơn đỏ) luôn quay về hướng Bắc địa lí vì bị cực từ Nam của Trái Đất hút.",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Tổng công ty Bảo đảm An toàn Hàng hải Việt Nam & SGK KHTN 7",
+        "title": "Sự định hướng của kim la bàn theo từ trường Trái Đất và ứng dụng hàng hải",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_7_07",
+    "contextId": "PHENOM_7_07",
+    "type": "TABLE",
+    "title": "So sánh nhiệt độ sôi và nhiệt độ nóng chảy của nước với các hợp chất có khối lượng phân tử tương đương",
+    "content": "Số liệu hóa lí chứng minh liên kết cộng hóa trị phân cực và liên kết hydrogen giữa các phân tử nước tạo nên nhiệt độ sôi cao bất thường:",
+    "readingLoad": "HIGH",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "IUPAC Chemistry Databook & SGK KHTN 7 Kết nối tri thức",
+        "title": "Cấu tạo phân tử nước (H2O) và liên kết cộng hóa trị tạo nên các tính chất đặc biệt của nước",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_7_08",
+    "contextId": "PHENOM_7_08",
+    "type": "EXPERIMENT",
+    "title": "Thí nghiệm chứng minh sự thoát hơi nước ở hai mặt lá cây",
+    "content": "Dùng giấy tẩm dung dịch cobalt chloride (CoCl2) khô có màu xanh da trời kẹp vào mặt trên và mặt dưới của lá cây bàng đang còn trên cây:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "SGK KHTN 7 Kết nối tri thức — Bài Trao đổi nước ở thực vật",
+        "title": "Sự thoát hơi nước qua khí khổng ở lá cây và vai trò động lực hút nước từ rễ lên ngọn",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_7_09",
+    "contextId": "PHENOM_7_09",
+    "type": "TABLE",
+    "title": "Đo nhiệt độ và nồng độ khí CO2 trong bình chứa hạt đậu nảy mầm theo thời gian",
+    "content": "Học sinh cho 200g hạt đậu xanh đã ngâm nở vào bình kín cách nhiệt có gắn nhiệt kế và cảm biến đo khí CO2:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "SGK KHTN 7 Cánh Diều & Giáo trình Sinh học Đại học Nông nghiệp",
+        "title": "Hô hấp tế bào ở hạt đậu nảy mầm và hiện tượng tăng nhiệt trong các đống ủ giống",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_7_10",
+    "contextId": "PHENOM_7_10",
+    "type": "EXPERIMENT",
+    "title": "Khảo sát phản ứng hướng sáng của mầm cây đậu xanh trong hộp giấy có khe hở",
+    "content": "Học sinh gieo hạt đậu xanh vào 2 chậu nhỏ đặt trong 2 hộp các tông kín:",
+    "readingLoad": "LOW",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "SGK KHTN 7 Chân trời sáng tạo — Bài Cảm ứng ở thực vật",
+        "title": "Hiện tượng tính hướng sáng của ngọn cây bên cửa sổ và tính hướng đất của rễ cây",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_7_11",
+    "contextId": "PHENOM_7_11",
+    "type": "TABLE",
+    "title": "Thời gian và đặc điểm sinh học qua các giai đoạn phát triển của tằm dâu",
+    "content": "Dữ liệu kĩ thuật nuôi tằm tại Hợp tác xã dệt lụa truyền thống:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Viện Khoa học Nông nghiệp Việt Nam & Làng nghề Dệt lụa Vạn Phúc",
+        "title": "Vòng đời biến thái hoàn toàn của loài tằm dâu trong làng nghề ươm tơ dệt lụa Vạn Phúc",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_8_01",
+    "contextId": "PHENOM_8_01",
+    "type": "TABLE",
+    "title": "Độ mặn đo được tại các trạm quan trắc trên sông Hàm Luông (Bến Tre) trong đợt triều cường",
+    "content": "Số liệu đo đạc nồng độ muối hòa tan (g/L hay ‰) của Đài Khí tượng Thủy văn tỉnh Bến Tre:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Đài Khí tượng Thủy văn khu vực Nam Bộ & SGK KHTN 8",
+        "title": "Xâm nhập mặn tại các cửa sông ven biển Bến Tre và Trà Vinh vào mùa khô",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_8_02",
+    "contextId": "PHENOM_8_02",
+    "type": "TABLE",
+    "title": "Thông số nhịp tim và huyết áp của học sinh trước và sau khi vận động thể thao",
+    "content": "Nhóm học sinh lớp 8 dùng máy đo huyết áp điện tử bắp tay để ghi nhận chỉ số cơ thể:",
+    "readingLoad": "LOW",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Viện Tim mạch Quốc gia Việt Nam & SGK KHTN 8 Kết nối tri thức",
+        "title": "Đo huyết áp và nhịp tim của học sinh trước và sau khi chạy cự ly 100m",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_8_03",
+    "contextId": "PHENOM_8_03",
+    "type": "TABLE",
+    "title": "Áp suất chất lỏng tác dụng lên thợ lặn ở các độ sâu khác nhau dưới nước biển",
+    "content": "Số liệu tính toán với khối lượng riêng của nước biển D = 1030 kg/m³ và gia tốc trọng trường g = 9.8 m/s²:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Hội Y học Dưới nước và Cao áp Quốc tế & SGK KHTN 8",
+        "title": "Áp suất chất lỏng và sự an toàn khi lặn sâu dưới đáy biển",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_8_04",
+    "contextId": "PHENOM_8_04",
+    "type": "TABLE",
+    "title": "Khối lượng các chất trước và sau phản ứng nung đá vôi trong ống nghiệm kín và hở",
+    "content": "Thực nghiệm kiểm chứng định luật bảo toàn khối lượng của nhóm học sinh lớp 8:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "SGK KHTN 8 Cánh Diều — Bài Định luật bảo toàn khối lượng",
+        "title": "Định luật bảo toàn khối lượng trong phản ứng nung đá vôi (CaCO3) sản xuất vôi sống",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_8_05",
+    "contextId": "PHENOM_8_05",
+    "type": "TABLE",
+    "title": "Tốc độ sủi bọt khí oxygen khi nhỏ H2O2 vào các mẫu khoai tây xử lí khác nhau",
+    "content": "Thí nghiệm khảo sát vai trò của enzyme xúc tác sinh học trong tế bào thực vật:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "SGK KHTN 8 Kết nối tri thức — Bài Tốc độ phản ứng và chất xúc tác",
+        "title": "Tác dụng xúc tác sinh học của enzyme catalase trong củ khoai tây phân hủy hydrogen peroxide (H2O2)",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_8_06",
+    "contextId": "PHENOM_8_06",
+    "type": "TABLE",
+    "title": "Đo độ pH của một số đồ uống thông dụng bằng giấy chỉ thị và bút đo pH điện tử",
+    "content": "Kết quả kiểm tra độ pH của các loại nước uống học sinh thường dùng:",
+    "readingLoad": "LOW",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Viện Răng Hàm Mặt Quốc gia & Hiệp hội Nha khoa Hoa Kỳ (ADA)",
+        "title": "Khảo sát độ pH của các loại đồ uống có gas và nguy cơ ăn mòn men răng ở học sinh",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_8_07",
+    "contextId": "PHENOM_8_07",
+    "type": "DIAGRAM",
+    "title": "Sơ đồ đòn bẩy của kìm cắt kim loại và cơ bắp tay người",
+    "content": "So sánh cánh tay đòn d1, d2 và lực F1, F2 theo điều kiện cân bằng của đòn bẩy F1.d1 = F2.d2:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "SGK KHTN 8 Chân trời sáng tạo — Bài Đòn bẩy và tác dụng làm quay",
+        "title": "Ứng dụng quy tắc đòn bẩy trong kéo cắt kim loại và cơ chế gập khớp khuỷu tay người",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_8_08",
+    "contextId": "PHENOM_8_08",
+    "type": "TABLE",
+    "title": "Khảo sát sự nóng lên và đứt của dây cầu chì ở các cường độ dòng điện khác nhau",
+    "content": "Thí nghiệm thử tải của sợi dây cầu chì định mức 5A mắc nối tiếp trong mạch điện:",
+    "readingLoad": "LOW",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Tập đoàn Điện lực Việt Nam (EVN) & SGK KHTN 8 Kết nối tri thức",
+        "title": "Tác dụng nhiệt và tác dụng phát sáng của dòng điện trong cầu chì và bóng đèn sợi đốt",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_8_09",
+    "contextId": "PHENOM_8_09",
+    "type": "TABLE",
+    "title": "Nhiệt độ bề mặt đất cát ven biển và mặt nước biển qua các mốc thời gian trong ngày",
+    "content": "Số liệu quan trắc tại trạm bờ biển Sầm Sơn (Thanh Hóa):",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Đài Khí tượng Thủy văn Bắc Trung Bộ & SGK KHTN 8 Cánh Diều",
+        "title": "Sự truyền nhiệt bằng đối lưu và hiện tượng gió biển - gió đất tại các vùng duyên hải",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_8_10",
+    "contextId": "PHENOM_8_10",
+    "type": "TABLE",
+    "title": "Đo dung tích sống của các nhóm học sinh bằng phế dung kế",
+    "content": "Kết quả khảo sát y tế học đường trên 120 học sinh THCS lứa tuổi 14:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Bệnh viện Phổi Trung ương & Chương trình Phòng chống tác hại thuốc lá Quốc gia",
+        "title": "Dung tích sống của phổi và tác hại của khói thuốc lá thụ động đến hệ hô hấp",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_8_11",
+    "contextId": "PHENOM_8_11",
+    "type": "TABLE",
+    "title": "Hệ số tích tụ sinh học của thuốc trừ sâu qua các bậc dinh dưỡng trong hệ sinh thái hồ",
+    "content": "Số liệu nghiên cứu về sự khuếch đại sinh học của chất độc tồn dư trong chuỗi thức ăn:",
+    "readingLoad": "HIGH",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Viện Sinh thái và Tài nguyên Sinh vật & SGK KHTN 8 Kết nối tri thức",
+        "title": "Hiện tượng tích tụ sinh học hóa chất thuốc bảo vệ thực vật qua chuỗi thức ăn trong hệ sinh thái hồ",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_9_01",
+    "contextId": "PHENOM_9_01",
+    "type": "TABLE",
+    "title": "Công suất phát điện của giàn pin mặt trời 10 kWp theo các khung giờ trong ngày nắng",
+    "content": "Số liệu giám sát thời gian thực của hệ thống điện mặt trời áp mái tại một trường học ở TP Phan Rang (Ninh Thuận):",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Trung tâm Điều độ Hệ thống điện Quốc gia (A0) & EVN",
+        "title": "Hiệu suất chuyển hóa năng lượng mặt trời của tấm pin quang điện (Solar PV)",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_9_02",
+    "contextId": "PHENOM_9_02",
+    "type": "TABLE",
+    "title": "Tốc độ ăn mòn khối đá vôi mỹ nghệ khi ngâm trong các dung dịch có độ pH khác nhau",
+    "content": "Thí nghiệm mô phỏng tác động của mưa acid lên đá vôi (CaCO3) trong 30 ngày:",
+    "readingLoad": "HIGH",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Tổng cục Môi trường & Viện Địa chất và Khoáng sản Việt Nam",
+        "title": "Sự hình thành mưa acid do khí thải công nghiệp và tác động ăn mòn công trình đá vôi",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_9_03",
+    "contextId": "PHENOM_9_03",
+    "type": "TABLE",
+    "title": "Đặc điểm kháng nguyên, kháng thể và khả năng tiếp nhận máu trong hệ ABO",
+    "content": "Bảng đối chiếu nhóm máu chuẩn trong quy trình an toàn truyền máu y tế:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Viện Huyết học - Truyền máu Trung ương & SGK KHTN 9 Kết nối tri thức",
+        "title": "Di truyền nhóm máu hệ ABO ở người và ứng dụng trong truyền máu cấp cứu",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_9_04",
+    "contextId": "PHENOM_9_04",
+    "type": "TABLE",
+    "title": "Chuyển hóa năng lượng của vận động viên nhảy Bungee nặng 60 kg từ cầu cao 50 m",
+    "content": "Số liệu tính toán cơ năng qua các vị trí trong một cú nhảy thăng hoa:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "SGK KHTN 9 Cánh Diều — Bài Động năng, Thế năng và Cơ năng",
+        "title": "Sự bảo toàn và chuyển hóa cơ năng trong trò chơi nhảy Bungee và vận động viên nhảy sào",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_9_05",
+    "contextId": "PHENOM_9_05",
+    "type": "DIAGRAM",
+    "title": "Đường truyền của tia sáng laser trong sợi cáp quang viễn thông",
+    "content": "Sợi quang gồm lõi thủy tinh chiết suất n1 = 1.48 và lớp vỏ phản quang chiết suất n2 = 1.44. Góc giới hạn phản xạ toàn phần được tính bởi sin(igh) = n2/n1 = 1.44/1.48 ≈ 0.973 => igh ≈ 76.7°:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Tập đoàn Bưu chính Viễn thông Việt Nam (VNPT) & SGK KHTN 9",
+        "title": "Hiện tượng phản xạ toàn phần trong sợi cáp quang truyền dẫn internet tốc độ cao xuyên đại dương",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_9_06",
+    "contextId": "PHENOM_9_06",
+    "type": "TABLE",
+    "title": "Khảo sát khoảng cách nhìn rõ và độ tụ kính phân kì của học sinh cận thị",
+    "content": "Kết quả đo thị lực định kì tại phòng y tế học đường trường THCS:",
+    "readingLoad": "LOW",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Bệnh viện Mắt Trung ương & SGK KHTN 9 Chân trời sáng tạo",
+        "title": "Tật cận thị học đường và nguyên tắc lựa chọn thấu kính phân kì để khắc phục",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_9_07",
+    "contextId": "PHENOM_9_07",
+    "type": "DIAGRAM",
+    "title": "Sơ đồ nguyên lý tạo ra dòng điện xoay chiều trong máy phát điện",
+    "content": "Thí nghiệm mô hình: Cho một nam châm quay đều trước một cuộn dây có đèn LED đôi đấu song song ngược chiều. Khi nam châm quay, hai đèn LED luân phiên chớp sáng biểu thị chiều dòng điện liên tục đổi chiều:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Tổng công ty Phát điện 1 (EVNGENCO1) & SGK KHTN 9 Kết nối tri thức",
+        "title": "Hiện tượng cảm ứng điện từ và nguyên lí phát điện của máy phát điện xoay chiều tại đập thủy điện",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_9_08",
+    "contextId": "PHENOM_9_08",
+    "type": "TABLE",
+    "title": "Tốc độ ăn mòn của thép vỏ tàu trong nước biển khi được và không được bảo vệ bằng kẽm hi sinh",
+    "content": "Số liệu kiểm tra kĩ thuật sau 12 tháng tàu biển hoạt động trên vùng biển Quảng Ninh:",
+    "readingLoad": "HIGH",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Tổng công ty Công nghiệp Tàu thủy Việt Nam (SBIC) & SGK KHTN 9",
+        "title": "Sự ăn mòn điện hóa của vỏ tàu biển bằng thép và phương pháp bảo vệ bằng các khối kẽm (Zn)",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_9_09",
+    "contextId": "PHENOM_9_09",
+    "type": "TABLE",
+    "title": "So sánh mức phát thải khí ô nhiễm của động cơ xe máy khi sử dụng xăng khoáng RON92 và xăng E5",
+    "content": "Kết quả đo kiểm định khí thải xe máy tại Trung tâm Đăng kiểm Phương tiện Giao thông:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Tập đoàn Dầu khí Việt Nam (PVN) & Cục Đăng kiểm Việt Nam",
+        "title": "Sản xuất cồn sinh học (Bio-ethanol) từ sắn lát và pha chế xăng sinh học E5 RON92",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_9_10",
+    "contextId": "PHENOM_9_10",
+    "type": "TABLE",
+    "title": "Kết quả phân tích các locus gene STR trong xét nghiệm ADN xác định quan hệ huyết thống bố con",
+    "content": "Bảng dữ liệu điện di giải trình tự gene của 3 mẫu thử tại Viện Pháp y Quốc gia:",
+    "readingLoad": "HIGH",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Viện Pháp y Quốc gia & SGK KHTN 9 Kết nối tri thức",
+        "title": "Cơ chế nhân đôi DNA và cơ sở di truyền phân tử của xét nghiệm huyết thống ADN",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
+        "attributionRequired": true,
+        "verificationStatus": "VERIFIED"
+      }
+    ],
+    "localizationStatus": "LOCALIZED",
+    "qualityStatus": "PASSED"
+  },
+  {
+    "id": "STIM_PHENOM_9_11",
+    "contextId": "PHENOM_9_11",
+    "type": "TABLE",
+    "title": "Tỉ lệ san hô bị tẩy trắng theo nhiệt độ nước biển tại Vườn Quốc gia Côn Đảo",
+    "content": "Số liệu quan trắc lặn khảo sát của Viện Hải dương học Nha Trang trong đợt nắng nóng cực đoan:",
+    "readingLoad": "MEDIUM",
+    "isSynthetic": false,
+    "sourceRefs": [
+      {
+        "organization": "Viện Hải dương học Nha Trang (VAST) & NOAA Coral Reef Watch",
+        "title": "Hiện tượng ấm lên toàn cầu, El Nino và sự suy thoái rạn san hô tẩy trắng tại Côn Đảo và Nha Trang",
+        "url": "https://khtn.edu.vn",
+        "sourceMode": "ADAPTED_FROM",
+        "licenseStatus": "OPEN_LICENSE",
         "attributionRequired": true,
         "verificationStatus": "VERIFIED"
       }
