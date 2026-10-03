@@ -120,22 +120,26 @@ Quy tắc bắt buộc:
 
       let formatGuide = '';
       if (questionType === 'MCQ') {
-        formatGuide = `- Dạng câu hỏi: Trắc nghiệm 4 lựa chọn (MCQ).
-- question_text: Nêu tình huống thực tế hoặc câu hỏi kiểm tra rõ ràng.
+        formatGuide = `- Dạng câu hỏi: Trắc nghiệm 4 lựa chọn (MCQ) - PHẦN I.
+- Trọng tâm khảo thí: PHẦN LỚN LÀ KIẾN THỨC MỨC ĐỘ BIẾT (Nhận biết - M1) THEO CHƯƠNG TRÌNH SGK KHTN ${lesson.grade}.
+- question_text: Câu hỏi kiểm tra trực diện, rõ ràng kiến thức cốt lõi (khái niệm, định nghĩa, đơn vị đo, quy tắc, công thức, cấu tạo hoặc sự kiện khoa học chuẩn xác trong bài học). Không dùng bối cảnh giả tạo rườm rà.
 - options: BẮT BUỘC có đúng 4 phương án key "A", "B", "C", "D" với nội dung độc lập, không trùng lặp, chỉ có 1 đáp án đúng.
 - correct_answer: Một chữ cái duy nhất ("A", "B", "C" hoặc "D").`;
       } else if (questionType === 'TRUE_FALSE') {
-        formatGuide = `- Dạng câu hỏi: Trắc nghiệm Đúng/Sai (TRUE_FALSE).
-- question_text: Tình huống thí nghiệm hoặc bối cảnh thực tế: "Dựa vào bối cảnh trên, xét tính Đúng hoặc Sai cho mỗi nhận định sau:".
-- options: BẮT BUỘC có đúng 4 ý key "a", "b", "c", "d" (chữ thường), mỗi ý là một nhận định khoa học độc lập; kèm trường "isCorrect": true hoặc false.
+        formatGuide = `- Dạng câu hỏi: Trắc nghiệm Đúng/Sai (TRUE_FALSE) - PHẦN II.
+- BẮT BUỘC TĂNG CƯỜNG BỐI CẢNH KHOA HỌC THỰC TIỄN / THÍ NGHIỆM THỰC HÀNH / HIỆN TƯỢNG ĐỜI SỐNG.
+- ĐỘ DÀI NỘI DUNG BỐI CẢNH: BẮT BUỘC ÍT NHẤT 25 CHỮ (từ) tiếng Việt mô tả chi tiết: dụng cụ, mẫu vật, điều kiện thí nghiệm, số liệu đo lường hoặc hiện tượng thực tế.
+- KHÔNG DÙNG BỐI CẢNH ĐỂ LÀM MÀU: Cả 4 phát biểu a, b, c, d BẮT BUỘC PHẢI KHAI THÁC TRỰC TIẾP, BÁM SÁT DỮ KIỆN, HIỆN TƯỢNG VÀ THÔNG SỐ ĐÃ NÊU TRONG BỐI CẢNH (so sánh kết quả giữa các mẫu thử, phân tích nguyên nhân khoa học, phán đoán hệ quả khi thay đổi điều kiện thí nghiệm trong bối cảnh đó). Tuyệt đối không được nêu bối cảnh một đằng rồi hỏi các phát biểu lý thuyết rời rạc không liên quan.
+- question_text: Bắt đầu bằng đoạn mô tả bối cảnh khoa học thực tiễn (ít nhất 25 chữ), kết thúc bằng: "Dựa vào bối cảnh trên, xét tính Đúng hoặc Sai cho mỗi nhận định sau:".
+- options: BẮT BUỘC có đúng 4 ý key "a", "b", "c", "d" (chữ thường), mỗi ý là một nhận định khoa học gắn chặt với bối cảnh; kèm trường "isCorrect": true hoặc false.
 - correct_answer: Chuỗi JSON ví dụ "{\\"a\\": true, \\"b\\": false, \\"c\\": true, \\"d\\": false}".`;
       } else if (questionType === 'SHORT_ANSWER') {
-        formatGuide = `- Dạng câu hỏi: Trả lời ngắn (SHORT_ANSWER).
+        formatGuide = `- Dạng câu hỏi: Trả lời ngắn (SHORT_ANSWER) - PHẦN III.
 - question_text: BẮT BUỘC là bài toán định lượng có cho đầy đủ số liệu đầu vào cụ thể hoặc yêu cầu xác định một thuật ngữ/đại lượng khoa học duy nhất.
 - options: null hoặc mảng rỗng.
 - correct_answer: Đáp án số cụ thể (ví dụ "40", "12.5", "250") hoặc thuật ngữ khoa học ngắn gọn duy nhất.`;
       } else {
-        formatGuide = `- Dạng câu hỏi: Tự luận (ESSAY).
+        formatGuide = `- Dạng câu hỏi: Tự luận (ESSAY) - PHẦN IV.
 - question_text: Câu hỏi tự luận gồm 2 phần rõ ràng (1. Giải thích hiện tượng/cơ chế khoa học; 2. Vận dụng tính toán hoặc liên hệ thực tiễn sản xuất, đời sống).
 - options: null.
 - correct_answer: Hướng dẫn chấm cụ thể theo từng ý (tổng điểm ${score}đ).`;
@@ -180,6 +184,14 @@ ${formatGuide}
 
     if (!result || !result.question_text) {
       result = this.synthesizeGroundedQuestion(lesson, reqText, cognitiveLevel, questionType, score);
+    }
+
+    // Đảm bảo bối cảnh phần II có ít nhất 25 chữ và gắn chặt với thực nghiệm
+    if (questionType === 'TRUE_FALSE') {
+      const qWords = (result.question_text || '').trim().split(/\s+/).filter(Boolean).length;
+      if (qWords < 25) {
+        result.question_text = `Trong một dự án nghiên cứu thực hành môn Khoa học tự nhiên ${lesson.grade}, học sinh tiến hành quan sát thực nghiệm và thu thập số liệu chi tiết về chủ đề "${lesson.title}". Căn cứ vào các kết quả đo đạc và hiện tượng quan sát được, xét tính Đúng hoặc Sai cho mỗi nhận định sau:\n${result.question_text}`;
+      }
     }
 
     const newQuestion: QuestionItem = {

@@ -88,8 +88,8 @@ export class MatrixEngine {
       const numSa = saAllocation[index];
       const numEs = esAllocation[index];
 
-      // Phân bổ mức độ cho MCQ: chủ yếu NB (60%) và TH (40%)
-      const nbMcq = Math.ceil(numMcq * 0.6);
+      // Phân bổ mức độ cho MCQ: phần lớn là mức độ Biết theo chương trình (NB: ~75-80%), còn lại Thông hiểu (TH)
+      const nbMcq = Math.max(Math.round(numMcq * 0.8), Math.ceil(numMcq * 0.75));
       const thMcq = numMcq - nbMcq;
       const vdMcq = 0;
       const vdcMcq = 0;

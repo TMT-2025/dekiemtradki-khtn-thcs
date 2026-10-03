@@ -61,7 +61,7 @@
     "description": "Nghiên cứu so sánh hiệu quả tẩy rửa dầu mỡ và cặn vôi của các hóa chất gia dụng có tính acid hoặc base.",
     "original_language": "en",
     "translated_text": "Cleaning agents chemistry and surface reactions with acidic and basic solutions.",
-    "adapted_context": "Sử dụng giấm ăn (acid acetic loãng) để làm sạch cặn vôi (CaCO3) bám ở đáy ấm đun nước và dùng xà phòng kiềm để nhũ hóa dầu mỡ bát đĩa.",
+    "adapted_context": "Học sinh tại trường THCS ở Việt Nam sử dụng giấm ăn (acid acetic loãng) để làm sạch cặn vôi (CaCO3) bám ở đáy ấm đun nước và dùng xà phòng kiềm để nhũ hóa dầu mỡ bát đĩa.",
     "application_area": "DAILY_LIFE",
     "context_type": "FAMILY_SCHOOL",
     "context_level": "C2",
@@ -382,5 +382,29 @@
     "copyright_status": "Free educational use",
     "verified": true,
     "date_checked": "2026-10-02"
+  },
+  {
+    "id": "INT_CTX_17",
+    "title": "Chỉ số chất lượng không khí (AQI) và giám sát nồng độ bụi mịn PM2.5",
+    "country": "Hoa Kỳ",
+    "organization": "EPA (United States Environmental Protection Agency)",
+    "url": "https://www.airnow.gov/aqi/aqi-basics/",
+    "source_url": "https://www.airnow.gov/aqi/aqi-basics/",
+    "source_type": "ADAPTED_FROM",
+    "scientific_topic": "Không khí - Ô nhiễm không khí - Sức khỏe học đường",
+    "grade": 6,
+    "age_range": "11-12 tuổi",
+    "description": "Thang đo chỉ số chất lượng không khí AQI theo chuẩn EPA đánh giá mức độ rủi ro sức khỏe từ ô nhiễm hạt bụi mịn PM2.5 và các khí độc hại.",
+    "original_language": "en",
+    "translated_text": "The AQI is divided into six categories corresponding to different levels of health concern.",
+    "adapted_context": "Học sinh các trường THCS tại Việt Nam theo dõi bảng cảnh báo chất lượng không khí AQI của trạm quan trắc để quyết định việc đeo khẩu trang chống bụi mịn khi tham gia hoạt động ngoài trời.",
+    "application_area": "ENVIRONMENT",
+    "context_type": "NATIONAL",
+    "context_level": "C2",
+    "curriculum_alignment": "Nêu được một số nguyên nhân gây ô nhiễm không khí và các biện pháp bảo vệ môi trường không khí.",
+    "license": "Public Domain (US Government Work)",
+    "copyright_status": "Free for educational reuse",
+    "verified": true,
+    "date_checked": "2026-10-03"
   }
 ]

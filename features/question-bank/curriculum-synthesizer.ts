@@ -249,26 +249,27 @@ export class CurriculumSynthesizer {
       };
     }
 
-    // Default Fallback: Phân hóa chuẩn xác theo YCCĐ cụ thể
+    // Default Fallback: Phân hóa chuẩn xác theo kiến thức chương trình (phần lớn là mức độ Biết)
     return {
       question_text: isM1
-        ? `Nội dung nào sau đây phản ánh chính xác nhất yêu cầu cần đạt của bài học "${lesson.title}"?`
-        : `Trong thực tiễn đời sống, hiện tượng khoa học nào sau đây là minh chứng rõ nét cho nội dung "${lesson.title}"?`,
+        ? `Theo chương trình Khoa học tự nhiên ${lesson.grade}, nội dung nào sau đây là đúng khi nói về "${lesson.title}"?`
+        : `Trong thực tiễn đời sống, phát biểu nào sau đây giải thích chính xác hiện tượng liên quan đến "${lesson.title}"?`,
       options: [
         { key: 'A', text: `${reqText}` },
-        { key: 'B', text: `Quá trình diễn ra độc lập và không tuân theo các định luật bảo toàn tự nhiên.` },
-        { key: 'C', text: `Hiện tượng chỉ mang tính ngẫu nhiên, không thể tiến hành thực nghiệm kiểm chứng.` },
-        { key: 'D', text: `Mọi vật thể trong quá trình biến đổi đều không chịu tác động của môi trường ngoài.` }
+        { key: 'B', text: `Quá trình diễn ra độc lập và không tuân theo các định luật bảo toàn của tự nhiên.` },
+        { key: 'C', text: `Hiện tượng xảy ra ngẫu nhiên và không chịu sự chi phối của các yếu tố môi trường.` },
+        { key: 'D', text: `Kết quả khảo sát không thể kiểm chứng lại bằng các phương pháp thực nghiệm khoa học.` }
       ],
       correct_answer: 'A',
       explanation: `Phương án A phản ánh trực tiếp và chuẩn xác yêu cầu cần đạt của bài học "${lesson.title}" trong chương trình GDPT 2018.`,
-      rationale: `Đánh giá mức độ nhận thức ${level} bám sát YCCĐ của SGK KHTN ${lesson.grade}.`,
+      rationale: `Đánh giá mức độ nhận thức ${level} bám sát kiến thức SGK KHTN ${lesson.grade}.`,
       difficulty: isM1 ? 'EASY' : 'MEDIUM'
     };
   }
 
   // ==========================================
   // 2. PHẦN II: TRẮC NGHIỆM ĐÚNG/SAI (TRUE_FALSE)
+  // BẮT BUỘC: Bối cảnh thực tiễn ít nhất 25 chữ, các ý a, b, c, d bám sát bối cảnh, không làm màu
   // ==========================================
   private static synthesizeTrueFalse(
     lesson: any,
@@ -276,86 +277,171 @@ export class CurriculumSynthesizer {
     level: CognitiveLevel,
     combined: string
   ): SynthesizedQuestionResult {
-    // Topic: Đo lường hoặc Kính hiển vi / Kính lúp (KHTN 6)
-    if (combined.includes('đo') || combined.includes('kính lúp') || combined.includes('kính hiển vi') || combined.includes('thực hành')) {
+    // 1. Đo lường & Kính hiển vi, Kính lúp (KHTN 6)
+    if (combined.includes('đo') || combined.includes('kính lúp') || combined.includes('kính hiển vi') || combined.includes('thực hành') || combined.includes('nhiệt kế') || combined.includes('bình chia độ')) {
       return {
-        question_text: `Trong giờ thực hành môn Khoa học tự nhiên ${lesson.grade}, một nhóm học sinh tiến hành quan sát mẫu vật nhỏ và đo lường kích thước bằng các dụng cụ trong phòng thí nghiệm. Xét tính Đúng hoặc Sai của các nhận định sau:`,
+        question_text: `Trong giờ thực hành môn Khoa học tự nhiên ${lesson.grade} tại phòng thí nghiệm, một nhóm học sinh được giao nhiệm vụ quan sát cấu tạo mẫu vật hiển vi và đo lường kích thước các vật thể bằng các dụng cụ: kính lúp cầm tay, kính hiển vi quang học, bình chia độ và nhiệt kế y tế. Bạn nhóm trưởng ghi nhận toàn bộ thao tác chuẩn bị và kết quả thực hiện vào phiếu học tập. Dựa vào bối cảnh thực hành trên, xét tính Đúng hoặc Sai của mỗi nhận định sau:`,
         options: [
-          { key: 'a', text: 'Kính lúp cầm tay có tác dụng phóng to hình ảnh của mẫu vật lên từ 3 đến 20 lần để quan sát bằng mắt thường.', isCorrect: true },
-          { key: 'b', text: 'Để quan sát cấu tạo chi tiết của tế bào vảy hành, chỉ cần dùng kính lúp cầm tay mà không cần đến kính hiển vi quang học.', isCorrect: false },
-          { key: 'c', text: 'Khi đọc chỉ số trên vạch chia của bình chia độ, cần đặt mắt nhìn ngang bằng với đáy của mặt thoáng chất lỏng lõm.', isCorrect: true },
-          { key: 'd', text: 'Để tiết kiệm thời gian, học sinh có thể dùng nhiệt kế y tế để đo trực tiếp nhiệt độ của nước đang sôi trên ngọn lửa đèn cồn.', isCorrect: false }
+          { key: 'a', text: 'Kính lúp cầm tay phù hợp để quan sát các vật thể có kích thước nhỏ như gân lá cây, mắt côn trùng với độ phóng đại từ 3 đến 20 lần.', isCorrect: true },
+          { key: 'b', text: 'Để quan sát rõ màng tế bào và nhân của tế bào biểu bì vảy hành, nhóm học sinh chỉ cần dùng kính lúp cầm tay mà không cần đến kính hiển vi.', isCorrect: false },
+          { key: 'c', text: 'Khi sử dụng bình chia độ để đo thể tích chất lỏng, học sinh cần đặt bình thẳng đứng và đặt mắt nhìn ngang bằng với đáy của mặt thoáng chất lỏng lõm.', isCorrect: true },
+          { key: 'd', text: 'Để đo nhiệt độ của cốc nước đang đun sôi trên ngọn lửa đèn cồn (khoảng 100°C), học sinh có thể sử dụng nhiệt kế y tế có giới hạn đo 42°C.', isCorrect: false }
         ],
         correct_answer: JSON.stringify({ a: true, b: false, c: true, d: false }),
-        explanation: 'Ý a, c đúng theo quy tắc sử dụng dụng cụ đo. Ý b sai vì tế bào có kích thước hiển vi cần kính hiển vi (phóng đại 40x-1000x). Ý d sai vì nhiệt kế y tế chỉ đo tối đa 42°C, nhúng vào nước sôi (100°C) sẽ làm nổ vỡ bầu thủy ngân.',
-        rationale: 'Đánh giá năng lực sử dụng dụng cụ thực hành và tuân thủ an toàn phòng thí nghiệm.',
+        explanation: 'Ý a, c đúng quy chuẩn thực hành đo lường. Ý b sai vì tế bào có kích thước hiển vi (vài chục micromet) bắt buộc phải dùng kính hiển vi quang học. Ý d sai vì nhiệt kế y tế chỉ đo tối đa 42°C, nhúng vào nước sôi 100°C sẽ làm nứt vỡ bầu đựng chất lỏng.',
+        rationale: 'Đánh giá năng lực lựa chọn và sử dụng chính xác các dụng cụ quan sát, đo lường trong phòng thí nghiệm KHTN.',
         difficulty: 'MEDIUM'
       };
     }
 
-    // Topic: Tế bào và cơ thể sinh vật (KHTN 6, 7)
-    if (combined.includes('tế bào') || combined.includes('quang hợp') || combined.includes('hô hấp') || combined.includes('sinh vật')) {
+    // 2. Tế bào và cơ thể sinh vật (KHTN 6, 7)
+    if (combined.includes('tế bào') || combined.includes('vảy hành') || combined.includes('niêm mạc') || combined.includes('sinh vật')) {
       return {
-        question_text: `Hai học sinh làm tiêu bản tạm thời tế bào biểu bì vảy hành và tế bào niêm mạc khoang miệng để quan sát dưới kính hiển vi quang học ở độ phóng đại 400 lần. Xét tính Đúng hoặc Sai của các phát biểu sau:`,
+        question_text: `Hai bạn học sinh tiến hành làm hai tiêu bản hiển vi tạm thời gồm: mẫu lát biểu bì vảy hành tím và mẫu tế bào niêm mạc khoang miệng người. Sau khi nhỏ một giọt dung dịch xanh methylene để nhuộm màu, hai bạn đặt mẫu lên kính hiển vi quang học và điều chỉnh ốc sơ cấp rồi vi cấp để quan sát ở độ phóng đại 400 lần. Dựa vào quá trình quan sát thực tế trên, xét tính Đúng hoặc Sai của các phát biểu sau:`,
         options: [
-          { key: 'a', text: 'Tiêu bản vảy hành đại diện cho tế bào thực vật, còn tiêu bản niêm mạc khoang miệng đại diện cho tế bào động vật.', isCorrect: true },
-          { key: 'b', text: 'Cả hai loại tế bào trên đều có màng sinh chất, chất tế bào và vùng nhân/nhân tế bào.', isCorrect: true },
-          { key: 'c', text: 'Tế bào niêm mạc khoang miệng có hình đa giác cố định nhờ được bao bọc bởi thành tế bào dày chứa cellulose.', isCorrect: false },
-          { key: 'd', text: 'Lục lạp có mặt ở cả tế bào biểu bì vảy hành và tế bào niêm mạc khoang miệng để thực hiện chức năng quang hợp.', isCorrect: false }
+          { key: 'a', text: 'Tiêu bản tế bào vảy hành đại diện cho tế bào thực vật, còn tiêu bản niêm mạc khoang miệng đại diện cho tế bào động vật.', isCorrect: true },
+          { key: 'b', text: 'Dưới kính hiển vi ở độ phóng đại 400 lần, cả hai mẫu tế bào đều quan sát thấy màng sinh chất, tế bào chất và nhân tế bào.', isCorrect: true },
+          { key: 'c', text: 'Tế bào niêm mạc khoang miệng người có hình đa giác cố định và vững chắc nhờ được bao bọc bởi lớp thành tế bào chứa cellulose.', isCorrect: false },
+          { key: 'd', text: 'Bào quan lục lạp chứa chất diệp lục có mặt ở cả tế bào vảy hành tím và tế bào niêm mạc khoang miệng người.', isCorrect: false }
         ],
-        correct_answer: JSON.stringify({ a: true, b: false, c: true, d: false }),
-        explanation: 'Ý a, b đúng về đặc điểm chung của tế bào nhân thực. Ý c sai vì tế bào động vật không có thành tế bào. Ý d sai vì vảy hành ở dưới đất không có lục lạp, tế bào động vật cũng không có lục lạp.',
-        rationale: 'Đánh giá khả năng phân tích đối chiếu đặc điểm tế bào thực vật và động vật.',
+        correct_answer: JSON.stringify({ a: true, b: true, c: false, d: false }),
+        explanation: 'Ý a, b đúng về đặc điểm tế bào nhân thực. Ý c sai vì tế bào động vật không có thành tế bào. Ý d sai vì vảy hành ở dưới đất không có lục lạp, tế bào động vật cũng không có lục lạp.',
+        rationale: 'Đánh giá khả năng so sánh đối chiếu đặc điểm cấu tạo tế bào thực vật và động vật từ mẫu tiêu bản thực nghiệm.',
         difficulty: 'MEDIUM'
       };
     }
 
-    // Topic: Tốc độ và Chuyển động (KHTN 7)
+    // 3. Quang hợp & Hô hấp tế bào ở thực vật (KHTN 7)
+    if (combined.includes('quang hợp') || combined.includes('hô hấp') || combined.includes('tinh bột') || combined.includes('diệp lục')) {
+      return {
+        question_text: `Một nhóm học sinh tiến hành thí nghiệm chứng minh sự tạo thành tinh bột trong quang hợp: Lấy một chậu cây khoai lang để trong bóng tối 2 ngày, sau đó dùng băng giấy đen bịt kín một phần của một chiếc lá ở cả hai mặt rồi đem chậu cây ra chiếu sáng liên tục trong 6 giờ. Sau đó, nhóm ngắt chiếc lá, gỡ bỏ băng giấy đen, đun sôi trong cồn để tẩy hết diệp lục rồi nhỏ dung dịch iodine lên khắp mặt lá. Dựa vào tiến trình thực nghiệm trên, xét tính Đúng hoặc Sai của mỗi khẳng định sau:`,
+        options: [
+          { key: 'a', text: 'Phần lá bị bịt kín bởi băng giấy đen không nhận được ánh sáng mặt trời nên không diễn ra quá trình quang hợp.', isCorrect: true },
+          { key: 'b', text: 'Khi nhỏ dung dịch thuốc thử iodine, phần lá được chiếu sáng chuyển sang màu xanh tím đặc trưng chứng tỏ có sự tạo thành tinh bột.', isCorrect: true },
+          { key: 'c', text: 'Bước đun sôi chiếc lá trong cồn nhằm mục đích cung cấp năng lượng nhiệt để kích thích phản ứng quang hợp diễn ra mạnh mẽ hơn.', isCorrect: false },
+          { key: 'd', text: 'Kết quả thí nghiệm này chứng minh ánh sáng mặt trời là điều kiện bắt buộc để lá cây tổng hợp chất hữu cơ qua quang hợp.', isCorrect: true }
+        ],
+        correct_answer: JSON.stringify({ a: true, b: true, c: false, d: true }),
+        explanation: 'Ý a, b, d đúng chuẩn thí nghiệm SGK KHTN 7. Ý c sai vì việc đun trong cồn là để hòa tan và tẩy sạch sắc tố diệp lục, giúp quan sát rõ sự đổi màu với iodine.',
+        rationale: 'Đánh giá năng lực phân tích các bước thí nghiệm sinh học và chứng minh vai trò của ánh sáng trong quang hợp.',
+        difficulty: 'MEDIUM'
+      };
+    }
+
+    // 4. Tốc độ, Quãng đường & Đồ thị chuyển động (KHTN 7)
     if (combined.includes('tốc độ') || combined.includes('quãng đường') || combined.includes('thời gian') || combined.includes('chuyển động')) {
       return {
-        question_text: `Khảo sát chuyển động của một ô tô đồ chơi chạy pin trên đoạn đường thẳng dài 10 mét. Cổng quang điện ghi nhận thời gian chạy qua các mốc quãng đường 2m, 5m và 10m. Xét tính Đúng hoặc Sai của các khẳng định sau:`,
+        question_text: `Một nhóm học sinh lớp 7 thực hiện bài thực hành khảo sát chuyển động của xe đồ chơi chạy bằng pin trên một máng nghiêng thẳng dài 1,2 mét. Nhóm gắn hai cổng quang điện A và B nối với đồng hồ đo thời gian hiện số để ghi nhận thời gian xe đi qua quãng đường 0,4 mét đầu tiên là 0,8 giây và đi hết toàn bộ quãng đường 1,2 mét là 2,4 giây. Dựa vào thông số và điều kiện thực nghiệm trên, xét tính Đúng hoặc Sai của mỗi khẳng định sau:`,
         options: [
-          { key: 'a', text: 'Tốc độ chuyển động của ô tô cho biết mức độ chuyển động nhanh hay chậm của vật.', isCorrect: true },
-          { key: 'b', text: 'Nếu thời gian chạy qua các quãng đường bằng nhau là như nhau thì ô tô chuyển động đều.', isCorrect: true },
-          { key: 'c', text: 'Đơn vị đo tốc độ thường dùng trong giao thông đường bộ ở Việt Nam là mét trên giây (m/s).', isCorrect: false },
-          { key: 'd', text: 'Tốc độ của ô tô càng lớn thì thời gian để đi hết quãng đường 10m càng kéo dài.', isCorrect: false }
+          { key: 'a', text: 'Tốc độ trung bình của xe đồ chơi trên đoạn đường 0,4 mét đầu tiên được tính bằng 0,5 m/s.', isCorrect: true },
+          { key: 'b', text: 'Vì tỉ số giữa quãng đường và thời gian ở hai giai đoạn là như nhau (0,5 m/s) nên xe đồ chơi chuyển động đều trên máng.', isCorrect: true },
+          { key: 'c', text: 'Để chuyển đổi tốc độ 0,5 m/s của xe sang đơn vị giao thông phổ biến km/h, ta lấy 0,5 chia cho 3,6.', isCorrect: false },
+          { key: 'd', text: 'Nếu nhóm nâng độ dốc của máng nghiêng lên cao hơn thì thời gian xe di chuyển qua đoạn AB dài 1,2 mét sẽ tăng lên.', isCorrect: false }
         ],
         correct_answer: JSON.stringify({ a: true, b: true, c: false, d: false }),
-        explanation: 'Ý a, b đúng định nghĩa tốc độ. Ý c sai vì thực tế biển báo giao thông dùng km/h. Ý d sai vì thời gian tỉ lệ nghịch với tốc độ (tốc độ càng lớn thì thời gian càng ngắn).',
-        rationale: 'Đánh giá năng lực phân tích quy luật chuyển động và liên hệ giao thông thực tế.',
+        explanation: 'Ý a đúng vì v = 0,4 / 0,8 = 0,5 m/s. Ý b đúng vì tốc độ toàn đoạn v = 1,2 / 2,4 = 0,5 m/s. Ý c sai vì từ m/s sang km/h phải nhân 3,6 (0,5 * 3,6 = 1,8 km/h). Ý d sai vì độ dốc lớn hơn làm xe chạy nhanh hơn nên thời gian giảm.',
+        rationale: 'Đánh giá năng lực đo đạc, xử lí số liệu thực nghiệm và tính toán tốc độ chuyển động.',
         difficulty: 'MEDIUM'
       };
     }
 
-    // Topic: Phản ứng hóa học, Định luật bảo toàn khối lượng (KHTN 8, 9)
-    if (combined.includes('phản ứng') || combined.includes('khối lượng') || combined.includes('acid') || combined.includes('kim loại')) {
+    // 5. Phản ứng hóa học, Định luật bảo toàn khối lượng (KHTN 8, 9)
+    if (combined.includes('phản ứng') || combined.includes('khối lượng') || combined.includes('acid') || combined.includes('kim loại') || combined.includes('kẽm')) {
       return {
-        question_text: `Trong phòng thực hành, học sinh thực hiện thí nghiệm cho viên kẽm (zinc, Zn) vào ống nghiệm chứa dung dịch acid hydrochloric (HCl). Sau phản ứng thấy viên kẽm tan dần và có nhiều bọt khí không màu thoát ra. Xét tính Đúng hoặc Sai:`,
+        question_text: `Trong giờ thực hành Hoá học lớp 8, học sinh tiến hành thí nghiệm: Cho một mẩu kẽm (zinc, Zn) nặng 2,0 gam vào một ống nghiệm chứa 15 ml dung dịch acid hydrochloric (HCl) nồng độ 1M ở nhiệt độ phòng (25°C). Ngay sau khi kẽm tiếp xúc với dung dịch, học sinh quan sát thấy bọt khí không màu thoát ra mãnh liệt trên bề mặt thanh kẽm và thành ống nghiệm ấm dần lên. Dựa vào diễn biến thực nghiệm trên, xét tính Đúng hoặc Sai của mỗi nhận định sau:`,
         options: [
-          { key: 'a', text: 'Khí không màu thoát ra trong thí nghiệm trên là khí hydrogen (H2).', isCorrect: true },
-          { key: 'b', text: 'Hiện tượng sủi bọt khí chứng tỏ đã có phản ứng hoá học xảy ra và sinh ra chất mới.', isCorrect: true },
-          { key: 'c', text: 'Tổng khối lượng của dung dịch và các chất trong ống nghiệm sau phản ứng tăng lên so với ban đầu.', isCorrect: false },
-          { key: 'd', text: 'Nếu tăng nồng độ dung dịch acid HCl thì tốc độ bọt khí thoát ra sẽ chậm lại.', isCorrect: false }
+          { key: 'a', text: 'Khí không màu thoát ra mãnh liệt trong thí nghiệm trên là khí hydrogen (H2), có thể nhận biết bằng que đóm đang cháy phát ra tiếng nổ nhỏ.', isCorrect: true },
+          { key: 'b', text: 'Hiện tượng sủi bọt khí và sinh nhiệt chứng tỏ đã có phản ứng hoá học toả nhiệt xảy ra giữa zinc và dung dịch acid HCl.', isCorrect: true },
+          { key: 'c', text: 'Tổng khối lượng của ống nghiệm hở và dung dịch sau phản ứng sẽ lớn hơn tổng khối lượng của chúng trước khi thả viên kẽm vào.', isCorrect: false },
+          { key: 'd', text: 'Nếu dùng mẩu kẽm được tán mịn thành dạng bột với cùng khối lượng 2,0 gam thì tốc độ thoát khí sẽ diễn ra chậm hơn dạng mẩu viên.', isCorrect: false }
         ],
         correct_answer: JSON.stringify({ a: true, b: true, c: false, d: false }),
-        explanation: 'Ý a, b đúng (Zn + 2HCl -> ZnCl2 + H2↑). Ý c sai vì có khí H2 bay ra khỏi cốc hở làm khối lượng còn lại giảm. Ý d sai vì tăng nồng độ làm tăng tốc độ phản ứng.',
-        rationale: 'Đánh giá dấu hiệu nhận biết phản ứng hoá học và định luật bảo toàn khối lượng.',
+        explanation: 'Ý a, b đúng phương trình Zn + 2HCl -> ZnCl2 + H2↑ (phản ứng toả nhiệt). Ý c sai vì có khí H2 bay ra khỏi ống nghiệm hở làm tổng khối lượng giảm. Ý d sai vì dạng bột có diện tích tiếp xúc lớn hơn nên tốc độ phản ứng sẽ nhanh hơn.',
+        rationale: 'Đánh giá nhận thức về dấu hiệu phản ứng hoá học, định luật bảo toàn khối lượng và các yếu tố ảnh hưởng tốc độ phản ứng.',
         difficulty: 'MEDIUM'
       };
     }
 
-    // Default Fallback
+    // 6. Dung dịch, Nồng độ & Thang đo pH (KHTN 8)
+    if (combined.includes('dung dịch') || combined.includes('nồng độ') || combined.includes('ph') || combined.includes('muối') || combined.includes('độ tan')) {
+      return {
+        question_text: `Trong phòng thực hành, bạn Lan tiến hành pha chế dung dịch và kiểm tra tính acid - base: Lan cho 40 gam muối ăn (NaCl) vào cốc chứa 100 gam nước cất ở 25°C rồi khuấy kĩ bằng đũa thuỷ tinh, sau đó dùng giấy chỉ thị màu đo độ pH của nước vắt quả chanh tươi và dung dịch nước vôi trong. Biết độ tan của NaCl ở 25°C là 36 gam trong 100 gam nước. Dựa vào các thao tác thí nghiệm trên, xét tính Đúng hoặc Sai của mỗi phát biểu sau:`,
+        options: [
+          { key: 'a', text: 'Sau khi khuấy kĩ ở 25°C, trong cốc có 4 gam muối ăn NaCl không tan bị lắng đọng dưới đáy cốc và dung dịch phía trên là dung dịch bão hoà.', isCorrect: true },
+          { key: 'b', text: 'Nước cốt chanh tươi có chứa acid citric nên khi thử bằng giấy chỉ thị pH sẽ cho giá trị pH nhỏ hơn 7.', isCorrect: true },
+          { key: 'c', text: 'Dung dịch nước vôi trong có môi trường base nên khi thử bằng giấy quỳ tím sẽ làm quỳ tím chuyển sang màu đỏ.', isCorrect: false },
+          { key: 'd', text: 'Nếu đun nóng cốc nước muối lên 80°C thì toàn bộ lượng muối lắng cặn có xu hướng tan thêm do độ tan của chất rắn thường tăng khi nhiệt độ tăng.', isCorrect: true }
+        ],
+        correct_answer: JSON.stringify({ a: true, b: true, c: false, d: true }),
+        explanation: 'Ý a đúng vì tối đa chỉ tan 36g, dư 4g tạo dung dịch bão hoà. Ý b đúng vì acid có pH < 7. Ý c sai vì dung dịch base làm quỳ tím chuyển màu xanh, không phải màu đỏ. Ý d đúng vì độ tan của NaCl tăng nhẹ theo nhiệt độ.',
+        rationale: 'Đánh giá hiểu biết thực tế về độ tan dung dịch và thang đo pH đối với các chất quen thuộc.',
+        difficulty: 'MEDIUM'
+      };
+    }
+
+    // 7. Lực, Áp suất & Lực đẩy Archimedes (KHTN 8)
+    if (combined.includes('lực') || combined.includes('áp suất') || combined.includes('archimedes') || combined.includes('nổi') || combined.includes('chìm')) {
+      return {
+        question_text: `Một học sinh tiến hành thí nghiệm khảo sát lực đẩy chất lỏng: Treo một khối kim loại đặc vào móc của một lực kế thì lực kế chỉ 6,0 N khi vật ở ngoài không khí. Khi nhúng chìm hoàn toàn khối kim loại vào một bình tràn đựng đầy nước, lực kế chỉ còn 4,2 N, đồng thời lượng nước tràn ra ngoài được hứng trọn vẹn vào một ống đong chia độ. Dựa vào số liệu thực nghiệm trên, xét tính Đúng hoặc Sai của mỗi nhận định sau:`,
+        options: [
+          { key: 'a', text: 'Chỉ số của lực kế giảm đi khi nhúng vật vào nước là do có lực đẩy Archimedes của nước tác dụng lên vật hướng thẳng đứng từ dưới lên.', isCorrect: true },
+          { key: 'b', text: 'Độ lớn của lực đẩy Archimedes tác dụng lên khối kim loại khi chìm hoàn toàn trong nước có giá trị là 1,8 N.', isCorrect: true },
+          { key: 'c', text: 'Trọng lượng của lượng nước tràn ra hứng được trong ống đong có giá trị đúng bằng 1,8 N.', isCorrect: true },
+          { key: 'd', text: 'Nếu tiếp tục hạ khối kim loại xuống ngập sâu hơn nữa trong nước (nhưng chưa chạm đáy bình) thì lực kế sẽ chỉ giá trị nhỏ hơn 4,2 N.', isCorrect: false }
+        ],
+        correct_answer: JSON.stringify({ a: true, b: true, c: true, d: false }),
+        explanation: 'Ý a, b, c đúng định luật Archimedes: FA = P_kk - P_chìm = 6,0 - 4,2 = 1,8 N và bằng trọng lượng phần nước tràn ra. Ý d sai vì khi đã ngập hoàn toàn, thể tích chiếm chỗ V không đổi nên FA không đổi, lực kế vẫn chỉ 4,2 N.',
+        rationale: 'Đánh giá năng lực phân tích hiện tượng và tính toán lực đẩy Archimedes từ số liệu thí nghiệm thực tế.',
+        difficulty: 'MEDIUM'
+      };
+    }
+
+    // 8. Dãy hoạt động hoá học của kim loại & Ăn mòn (KHTN 9)
+    if (combined.includes('dãy hoạt động') || combined.includes('kim loại') || combined.includes('sắt') || combined.includes('đồng') || combined.includes('ăn mòn')) {
+      return {
+        question_text: `Để so sánh mức độ hoạt động hoá học giữa sắt (Fe), đồng (Cu) và bạc (Ag), một nhóm học sinh làm hai thí nghiệm song song ở 25°C: Ống nghiệm (1) nhúng một chiếc đinh sắt sạch vào 5 ml dung dịch copper(II) sulfate (CuSO4) màu xanh lam. Ống nghiệm (2) nhúng một đoạn dây đồng sạch vào 5 ml dung dịch silver nitrate (AgNO3) không màu. Dựa vào diễn biến thực nghiệm, xét tính Đúng hoặc Sai của mỗi nhận định sau:`,
+        options: [
+          { key: 'a', text: 'Ở ống nghiệm (1), có một lớp kim loại màu đỏ (Cu) bám ngoài chiếc đinh sắt và màu xanh lam của dung dịch nhạt dần.', isCorrect: true },
+          { key: 'b', text: 'Ở ống nghiệm (2), xuất hiện kim loại màu trắng bạc (Ag) bám ngoài dây đồng và dung dịch dần chuyển sang màu xanh lam.', isCorrect: true },
+          { key: 'c', text: 'Các hiện tượng quan sát được chứng minh thứ tự mức độ hoạt động hoá học giảm dần là: Fe > Cu > Ag.', isCorrect: true },
+          { key: 'd', text: 'Nếu nhóm học sinh thay chiếc đinh sắt ở ống (1) bằng một sợi dây bạc (Ag) sạch thì phản ứng xảy ra còn nhanh và mãnh liệt hơn.', isCorrect: false }
+        ],
+        correct_answer: JSON.stringify({ a: true, b: true, c: true, d: false }),
+        explanation: 'Ý a, b, c đúng bản chất dãy hoạt động hoá học: Fe đẩy Cu ra khỏi CuSO4, Cu đẩy Ag ra khỏi AgNO3 chứng tỏ Fe > Cu > Ag. Ý d sai vì Ag đứng sau Cu nên không thể phản ứng với dung dịch CuSO4.',
+        rationale: 'Đánh giá khả năng suy luận dãy hoạt động hoá học của kim loại dựa trên hiện tượng thực nghiệm.',
+        difficulty: 'MEDIUM'
+      };
+    }
+
+    // 9. Dòng điện, Điện trở & Định luật Ohm (KHTN 9)
+    if (combined.includes('điện') || combined.includes('ohm') || combined.includes('điện trở') || combined.includes('hiệu điện thế')) {
+      return {
+        question_text: `Một nhóm học sinh mắc một đoạn dây dẫn kim loại có điện trở R không đổi vào hai cực của một nguồn điện có hiệu điện thế U điều chỉnh được. Học sinh sử dụng một vôn kế để đo hiệu điện thế U giữa hai đầu dây và một ampe kế để đo cường độ dòng điện I chạy qua dây khi U lần lượt nhận các giá trị 3,0V, 6,0V và 9,0V. Dựa vào bối cảnh đo đạc mạch điện thực tế, xét tính Đúng hoặc Sai của mỗi nhận định sau:`,
+        options: [
+          { key: 'a', text: 'Khi hiệu điện thế đặt vào hai đầu đoạn dây dẫn tăng lên thì cường độ dòng điện chạy qua dây cũng tăng tỉ lệ thuận.', isCorrect: true },
+          { key: 'b', text: 'Thương số giữa hiệu điện thế U và cường độ dòng điện I (R = U / I) của đoạn dây dẫn này luôn giữ giá trị không đổi trong cả 3 lần đo.', isCorrect: true },
+          { key: 'c', text: 'Đồ thị biểu diễn mối quan hệ giữa cường độ dòng điện I và hiệu điện thế U đối với đoạn dây dẫn này là một đường tròn khép kín.', isCorrect: false },
+          { key: 'd', text: 'Nếu tăng hiệu điện thế U từ 3,0V lên 6,0V thì cường độ dòng điện I đo được trên ampe kế sẽ tăng gấp 2 lần giá trị ban đầu.', isCorrect: true }
+        ],
+        correct_answer: JSON.stringify({ a: true, b: true, c: false, d: true }),
+        explanation: 'Ý a, b, d đúng theo định luật Ohm: I = U/R (I tỉ lệ thuận với U, R là hằng số với dây dẫn xác định). Ý c sai vì đồ thị I theo U là đường thẳng đi qua gốc toạ độ (0;0).',
+        rationale: 'Đánh giá kĩ năng khảo sát mạch điện thực hành và hiểu bản chất định luật Ohm.',
+        difficulty: 'MEDIUM'
+      };
+    }
+
+    // 10. Default General Synthesizer for True/False (>= 35 words practical research context)
     return {
-      question_text: `Dựa trên nội dung bài học "${lesson.title}" (${reqText}) trong chương trình Khoa học tự nhiên ${lesson.grade}, hãy xác định Đúng hoặc Sai cho mỗi nhận định sau:`,
+      question_text: `Trong một dự án nghiên cứu học tập môn Khoa học tự nhiên ${lesson.grade}, nhóm học sinh tiến hành quan sát thực nghiệm và thu thập số liệu thực tế về chủ đề "${lesson.title}". Căn cứ vào các kết quả đo đạc, hiện tượng quan sát được đối với yêu cầu cần đạt "${reqText.slice(0, 100)}", nhóm học sinh thảo luận và đưa ra các nhận định khoa học sau đây:`,
       options: [
-        { key: 'a', text: `Nội dung cốt lõi của bài học phù hợp với các quan sát khoa học thực nghiệm: ${reqText.slice(0, 100)}.`, isCorrect: true },
-        { key: 'b', text: `Quá trình diễn ra hoàn toàn độc lập và không chịu tác động của bất kì điều kiện môi trường nào.`, isCorrect: false },
-        { key: 'c', text: `Kiến thức này được ứng dụng trực tiếp vào sản xuất nông nghiệp, công nghiệp hoặc đời sống hàng ngày.`, isCorrect: true },
-        { key: 'd', text: `Các kết luận khoa học rút ra từ bài học chỉ đúng trong phòng thí nghiệm mà không có giá trị thực tiễn.`, isCorrect: false }
+        { key: 'a', text: `Hiện tượng quan sát được trong thực nghiệm trên phản ánh chính xác bản chất khoa học của nội dung: ${reqText.slice(0, 90)}.`, isCorrect: true },
+        { key: 'b', text: `Trong quá trình khảo sát, các đại lượng và hiện tượng vật chất biến đổi hoàn toàn ngẫu nhiên và không tuân theo bất kì quy luật khoa học nào.`, isCorrect: false },
+        { key: 'c', text: `Quy luật khoa học được phát hiện từ bài học "${lesson.title}" được ứng dụng trực tiếp để giải quyết các vấn đề sản xuất, y tế hoặc bảo vệ môi trường.`, isCorrect: true },
+        { key: 'd', text: `Khi thay đổi các yếu tố nhiệt độ, nồng độ hoặc điều kiện môi trường ngoài, diễn biến và kết quả của hiện tượng quan sát được vẫn không có bất kì sự thay đổi nào.`, isCorrect: false }
       ],
       correct_answer: JSON.stringify({ a: true, b: false, c: true, d: false }),
-      explanation: 'Ý a, c đúng theo chuẩn kiến thức và thực tiễn SGK. Ý b, d sai vì các quá trình tự nhiên luôn tương tác với môi trường và có giá trị ứng dụng cao.',
-      rationale: `Đánh giá năng lực nhận biết và thông hiểu đa chiều về ${lesson.title}.`,
+      explanation: 'Ý a, c đúng theo quy luật khoa học tự nhiên và ứng dụng thực tiễn của bài học. Ý b, d sai vì mọi hiện tượng tự nhiên đều tuân theo các định luật khách quan và phụ thuộc chặt chẽ vào các điều kiện môi trường thực tế.',
+      rationale: `Đánh giá năng lực nhận thức bản chất khoa học và tư duy thực nghiệm đối với bài học "${lesson.title}".`,
       difficulty: 'MEDIUM'
     };
   }

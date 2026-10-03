@@ -78,19 +78,70 @@ export class TestService {
       res.matchedQuestions.forEach(q => allQuestions.push(q));
     });
 
-    const targetContextCount = Math.round(allQuestions.length * targetRatio);
-    let currentContextCount = 0;
-
+    // 1. TĂNG CƯỜNG BỐI CẢNH KHOA HỌC THỰC TIỄN Ở PHẦN II (TRUE_FALSE)
+    // Ràng buộc: 100% câu hỏi Đúng/Sai phải có bối cảnh ít nhất 25 chữ, bám sát hiện tượng thực tế/thí nghiệm
     for (const q of allQuestions) {
-      if (currentContextCount < targetContextCount) {
+      if (q.questionType === 'TRUE_FALSE') {
         if (!q.contextMetadata?.hasContext || !q.contextMetadata?.stimulus?.leadParagraph) {
           q.contextMetadata = ContextService.generateRichContextForQuestion(q);
         }
-        currentContextCount++;
-      } else if (!q.contextMetadata?.stimulus?.leadParagraph) {
-        q.contextMetadata = undefined;
+        // Đảm bảo nội dung bối cảnh dài ít nhất 25 chữ (từ)
+        const lead = q.contextMetadata?.stimulus?.leadParagraph || '';
+        const words = lead.trim().split(/\s+/).filter(Boolean).length;
+        if (words < 25 && q.contextMetadata && q.contextMetadata.stimulus) {
+          q.contextMetadata.stimulus.leadParagraph = `Trong giờ học thực hành môn Khoa học tự nhiên ${q.grade || 6}, học sinh tiến hành quan sát thực nghiệm và thu thập số liệu chi tiết về chủ đề "${q.topic || 'Khoa học tự nhiên'}". Dựa trên các dữ kiện đo lường và hiện tượng ghi nhận được: ` + lead;
+        }
       }
     }
+
+    // 2. PHẦN IV (Tự luận) và PHẦN III (Trả lời ngắn): Bổ sung bối cảnh thực tiễn giải quyết vấn đề
+    for (const q of allQuestions) {
+      if (q.questionType === 'ESSAY' || q.questionType === 'SHORT_ANSWER') {
+        if (!q.contextMetadata?.hasContext || !q.contextMetadata?.stimulus?.leadParagraph) {
+          q.contextMetadata = ContextService.generateRichContextForQuestion(q);
+        }
+      }
+    }
+
+    // 3. PHẦN I (MCQ): Phần lớn là kiến thức mức độ Biết (NB) theo chương trình (không gán bối cảnh rườm rà).
+    // Chỉ các câu M2 (Thông hiểu) hoặc khi cần đạt tỉ lệ mục tiêu mới bổ sung bối cảnh ngắn gọn
+    const targetContextCount = Math.round(allQuestions.length * targetRatio);
+    const currentContextCount = allQuestions.filter(q => q.contextMetadata?.hasContext).length;
+    let neededContext = Math.max(0, targetContextCount - currentContextCount);
+
+    for (const q of allQuestions) {
+      if (q.questionType === 'MCQ') {
+        if (q.cognitiveLevel !== 'M1' && neededContext > 0) {
+          if (!q.contextMetadata?.hasContext) {
+            q.contextMetadata = ContextService.generateRichContextForQuestion(q);
+            neededContext--;
+          }
+        } else {
+          // Các câu M1 thuần tuý kiến thức Biết thì giữ sạch sẽ
+          q.contextMetadata = undefined;
+        }
+      }
+    }
+
+    // Đa dạng hóa hiện tượng và nguồn tài liệu (tránh trùng lặp > 2 lần trong cùng một đề thi)
+    const phenomUsage: Record<string, number> = {};
+    const sourceUsage: Record<string, number> = {};
+
+    allQuestions.forEach(q => {
+      if (q.contextMetadata?.hasContext) {
+        const pName = q.contextMetadata.phenomenon || 'Bối cảnh khoa học';
+        phenomUsage[pName] = (phenomUsage[pName] || 0) + 1;
+        if (phenomUsage[pName] > 2) {
+          q.contextMetadata.phenomenon = `${pName} (Góc độ khảo sát ${phenomUsage[pName]} - ${q.topic || 'Ứng dụng'})`;
+        }
+
+        const sName = q.contextMetadata.sourceTitle || 'Tài liệu SGK KHTN';
+        sourceUsage[sName] = (sourceUsage[sName] || 0) + 1;
+        if (sourceUsage[sName] > 2) {
+          q.contextMetadata.sourceTitle = `${sName} (Chuyên đề ${q.topic || 'Khảo sát'})`;
+        }
+      }
+    });
 
     const contextReport = ContextService.generateContextReport(allQuestions, targetRatio);
 
@@ -328,8 +379,19 @@ export class TestService {
         score: oldTestQ.assignedScore
       });
 
-      // Context enrichment
-      generated.contextMetadata = ContextService.generateRichContextForQuestion(generated);
+      // Context enrichment: Tăng cường bối cảnh thực tiễn ít nhất 25 chữ cho Phần II (Đúng/Sai)
+      if (generated.questionType === 'TRUE_FALSE') {
+        generated.contextMetadata = ContextService.generateRichContextForQuestion(generated);
+        const lead = generated.contextMetadata?.stimulus?.leadParagraph || '';
+        const words = lead.trim().split(/\s+/).filter(Boolean).length;
+        if (words < 25 && generated.contextMetadata?.stimulus) {
+          generated.contextMetadata.stimulus.leadParagraph = `Trong giờ học thực hành môn Khoa học tự nhiên ${generated.grade || 6}, học sinh tiến hành quan sát thực nghiệm và thu thập số liệu chi tiết về chủ đề "${generated.topic}". Căn cứ vào các dữ kiện đo lường và hiện tượng ghi nhận được: ` + lead;
+        }
+      } else if (generated.questionType === 'ESSAY' || generated.questionType === 'SHORT_ANSWER') {
+        generated.contextMetadata = ContextService.generateRichContextForQuestion(generated);
+      } else {
+        generated.contextMetadata = undefined;
+      }
 
       // Save to localDb bank
       localDb.saveQuestion(generated);
