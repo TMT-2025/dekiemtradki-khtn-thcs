@@ -110,7 +110,7 @@ export class DocxExportService {
             })
           },
           children: [
-            this.createDocumentHeader(
+            ...this.createDocumentHeader(
               `MA TRẬN ĐỀ KIỂM TRA ${resolveExamPeriod(matrix)}`,
               `Môn: Khoa học tự nhiên — Lớp ${matrix.grade} | Năm học: ${matrix.schoolYear}`
             ),
@@ -190,7 +190,7 @@ export class DocxExportService {
             })
           },
           children: [
-            this.createDocumentHeader(
+            ...this.createDocumentHeader(
               `BẢN ĐẶC TẢ ĐỀ KIỂM TRA ${resolveExamPeriod(spec)}`,
               `Môn: Khoa học tự nhiên — Lớp ${spec.grade} | Năm học: ${spec.schoolYear}`
             ),
@@ -218,7 +218,7 @@ export class DocxExportService {
     }
 
     const paragraphs: (Paragraph | Table)[] = [
-      this.createDocumentHeader(
+      ...this.createDocumentHeader(
         docTitle,
         `Thời gian làm bài: ${test.durationMinutes} phút (Không kể thời gian phát đề) — Mã đề: ${test.testCode}`
       ),
@@ -278,14 +278,11 @@ export class DocxExportService {
           if (leadText) {
             paragraphs.push(
               new Paragraph({
-                children: [
-                  new TextRun({
-                    text: leadText,
-                    italics: true,
-                    font: 'Times New Roman',
-                    size: 21
-                  })
-                ],
+                children: this.createTextRuns(leadText, {
+                  italics: true,
+                  font: 'Times New Roman',
+                  size: 21
+                }),
                 spacing: { before: 20, after: 60 }
               })
             );
@@ -321,14 +318,11 @@ export class DocxExportService {
           if (stim?.experimentSetup?.procedureSteps && stim.experimentSetup.procedureSteps.length > 0) {
             paragraphs.push(
               new Paragraph({
-                children: [
-                  new TextRun({
-                    text: `Các bước thực nghiệm: ${stim.experimentSetup.procedureSteps.join(' → ')}`,
-                    italics: true,
-                    font: 'Times New Roman',
-                    size: 20
-                  })
-                ],
+                children: this.createTextRuns(`Các bước thực nghiệm: ${stim.experimentSetup.procedureSteps.join(' → ')}`, {
+                  italics: true,
+                  font: 'Times New Roman',
+                  size: 20
+                }),
                 spacing: { before: 20, after: 60 }
               })
             );
@@ -344,8 +338,7 @@ export class DocxExportService {
                 font: 'Times New Roman',
                 size: 22
               }),
-              new TextRun({
-                text: q.questionText,
+              ...this.createTextRuns(q.questionText, {
                 font: 'Times New Roman',
                 size: 22
               })
@@ -365,8 +358,7 @@ export class DocxExportService {
                     font: 'Times New Roman',
                     size: 22
                   }),
-                  new TextRun({
-                    text: opt.text,
+                  ...this.createTextRuns(opt.text, {
                     font: 'Times New Roman',
                     size: 22
                   })
@@ -478,7 +470,7 @@ export class DocxExportService {
             })
           },
           children: [
-            this.createDocumentHeader(
+            ...this.createDocumentHeader(
               `ĐÁP ÁN ĐỀ KIỂM TRA ${resolveExamPeriod(test)}`,
               `Môn: Khoa học tự nhiên ${test.grade} — Mã đề: ${test.testCode}`
             ),
@@ -539,7 +531,7 @@ export class DocxExportService {
             })
           },
           children: [
-            this.createDocumentHeader(
+            ...this.createDocumentHeader(
               `HƯỚNG DẪN CHẤM VÀ BIỂU ĐIỂM CHI TIẾT - ${resolveExamPeriod(test)}`,
               `Môn: Khoa học tự nhiên ${test.grade} — Mã đề: ${test.testCode}`
             ),
@@ -552,7 +544,7 @@ export class DocxExportService {
             }),
             ...test.scoringGuide.instructions.map(inst =>
               new Paragraph({
-                children: [new TextRun({ text: `- ${inst}`, font: 'Times New Roman', size: 20 })],
+                children: this.createTextRuns(`- ${inst}`, { font: 'Times New Roman', size: 20 }),
                 spacing: { after: 60 }
               })
             ),
@@ -667,7 +659,7 @@ export class DocxExportService {
             })
           },
           children: [
-            this.createDocumentHeader(
+            ...this.createDocumentHeader(
               'BÁO CÁO PHÂN TÍCH BỐI CẢNH THỰC TIỄN ĐỀ KIỂM TRA',
               `Khoa học tự nhiên ${test.grade} — Học kì: ${test.semester} — Mã đề: ${test.testCode}`
             ),
@@ -760,7 +752,7 @@ export class DocxExportService {
             })
           },
           children: [
-            this.createDocumentHeader(
+            ...this.createDocumentHeader(
               'BẢNG TRUY NGUYÊN NGUỒN GỐC & TRUY VẾT DỮ LIỆU ĐỀ KIỂM TRA',
               `Khoa học tự nhiên ${test.grade} — Chuỗi truy vết: YCCĐ → Ma trận → Đặc tả → Câu hỏi → Đề thi`
             ),
@@ -834,31 +826,77 @@ export class DocxExportService {
   }
 
   // Helper Methods for Formatting
-  private static createDocumentHeader(title: string, subtitle: string): Paragraph {
-    return new Paragraph({
-      alignment: AlignmentType.CENTER,
-      children: [
-        new TextRun({
-          text: 'TRƯỜNG THCS & THPT PHAN VĂN TRỊ\nTỔ KHOA HỌC TỰ NHIÊN\n',
-          bold: true,
-          font: 'Times New Roman',
-          size: 22
-        }),
-        new TextRun({
-          text: `\n${title}\n`,
-          bold: true,
-          font: 'Times New Roman',
-          size: 28,
-          color: '1E3A8A'
-        }),
-        new TextRun({
-          text: subtitle,
-          italics: true,
-          font: 'Times New Roman',
-          size: 22
-        })
-      ]
-    });
+  private static createTextRuns(
+    text: string,
+    options: {
+      bold?: boolean;
+      italics?: boolean;
+      font?: string;
+      size?: number;
+      color?: string;
+    } = {}
+  ): TextRun[] {
+    if (!text) return [];
+    const lines = String(text).replace(/\r\n/g, '\n').split('\n');
+    return lines.map((line, idx) => new TextRun({
+      ...options,
+      text: line,
+      break: idx > 0 ? 1 : undefined
+    }));
+  }
+
+  private static createDocumentHeader(title: string, subtitle: string): Paragraph[] {
+    return [
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        children: [
+          new TextRun({
+            text: 'TRƯỜNG THCS & THPT PHAN VĂN TRỊ',
+            bold: true,
+            font: 'Times New Roman',
+            size: 22
+          })
+        ],
+        spacing: { before: 0, after: 20 }
+      }),
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        children: [
+          new TextRun({
+            text: 'TỔ KHOA HỌC TỰ NHIÊN',
+            bold: true,
+            font: 'Times New Roman',
+            size: 22
+          })
+        ],
+        spacing: { after: 120 }
+      }),
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        children: [
+          new TextRun({
+            text: title.trim(),
+            bold: true,
+            font: 'Times New Roman',
+            size: 28,
+            color: '1E3A8A'
+          })
+        ],
+        spacing: { before: 60, after: 60 }
+      }),
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        children: [
+          new TextRun({
+            text: subtitle.trim(),
+            italics: true,
+            font: 'Times New Roman',
+            size: 22
+          })
+        ],
+        spacing: { after: 200 }
+      })
+    ];
   }
 
   private static createHeaderCell(text: string, width: number): TableCell {
@@ -868,9 +906,7 @@ export class DocxExportService {
       children: [
         new Paragraph({
           alignment: AlignmentType.CENTER,
-          children: [
-            new TextRun({ text, bold: true, font: 'Times New Roman', size: 18 })
-          ]
+          children: this.createTextRuns(text || '', { bold: true, font: 'Times New Roman', size: 18 })
         })
       ]
     });
@@ -887,9 +923,7 @@ export class DocxExportService {
       children: [
         new Paragraph({
           alignment,
-          children: [
-            new TextRun({ text, bold, font: 'Times New Roman', size: 18 })
-          ]
+          children: this.createTextRuns(text || '', { bold, font: 'Times New Roman', size: 18 })
         })
       ]
     });

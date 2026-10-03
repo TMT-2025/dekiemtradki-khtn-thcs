@@ -242,7 +242,10 @@ function TestsContent() {
         })
       });
       if (!res.ok) throw new Error(await res.text());
-      const blob = await res.blob();
+      const rawBlob = await res.blob();
+      const blob = new Blob([rawBlob], {
+        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      });
       const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = downloadUrl;

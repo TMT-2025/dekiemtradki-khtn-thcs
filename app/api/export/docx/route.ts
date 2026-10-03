@@ -69,11 +69,12 @@ async function handleExport(params: {
       return new NextResponse('Invalid export type', { status: 400 });
     }
 
-    return new NextResponse(buffer as any, {
+    return new NextResponse(new Uint8Array(buffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'Content-Disposition': `attachment; filename="${fileName}"`
+        'Content-Disposition': `attachment; filename="${fileName}"`,
+        'Content-Length': String(buffer.length)
       }
     });
   } catch (e: any) {
